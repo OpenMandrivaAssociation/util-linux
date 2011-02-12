@@ -1,8 +1,8 @@
-%define name util-linux-ng
-%define version 2.18
-%define mainver 2.18
+%define name util-linux
+%define version 2.19
+%define mainver 2.19
 %define rc_ver 0
-%define rel 3
+%define rel 1
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -28,7 +28,7 @@
 %define lib_mount %mklibname mount %{lib_mount_major}
 %define lib_mount_devel %mklibname mount -d
 
-%define git_url git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git
+%define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 1
 
@@ -43,7 +43,7 @@ Version:	%{version}
 Release:	%{release}
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
-URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng
+URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
 
 ### Features
 %define include_raw 1
@@ -88,9 +88,10 @@ Obsoletes:	mount <= 2.13-0.pre7.6mdv2008.0
 Obsoletes:	losetup <= 2.13-0.pre7.6mdv2008.0
 Provides:	mount = %{version}-%{release}
 Provides:	losetup = %{version}-%{release}
-# fork and rename from util-linux to util-linux-ng
+Obsoletes:	util-linux-ng <= 2.18
 Obsoletes:	util-linux <= 2.13-0.pre7.6mdv2008.0
 Provides:	util-linux = %{version}-%{release}
+Provides:	util-linux-ng = %{version}-%{release}
 # old versions of e2fsprogs provides blkid / uuidd
 Conflicts:	e2fsprogs < 1.41.8-2mnb2
 
@@ -142,13 +143,6 @@ Patch8:		util-linux-ng-2.15-ipcs-32bit.patch
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
 ### Upstream patches
-# (bor) agetty -s support requested for systemd. This combines upstream
-# commits 848e5e, e143d1, bb1eea, e98f4a. We really need only the first
-# and the last, but they are too related and it is easier
-Patch20:	util-linux-ng-2.18-agetty_options_-s_-c_with-fixes.patch
-# (bor) fsck -l support requested for systemd. This combines upstream
-# commits 0c0f93 and dd0bd9 for the same reasons as previous patch.
-Patch21:	util-linux-ng-2.18-fsck_option_-l.patch
 
 ### Mandriva Specific patches
 
@@ -311,23 +305,20 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch111 -p1 -b .mkfsman
 %patch114 -p0 -b .dumboctal
 %patch115 -p1 -b .fix-ioctl
-%patch116 -p0 -b .autodav
+%patch116 -p1 -b .autodav
 
-%patch1100 -p1 -b .loopAES
-%patch1101 -p0 -b .swapon-encrypted
-%patch1102 -p0 -b .loopAES-password
-%patch1103 -p0 -b .load-module
-%patch1104 -p1 -b .set-as-encrypted
+#%patch1100 -p1 -b .loopAES
+#%patch1101 -p0 -b .swapon-encrypted
+#%patch1102 -p0 -b .loopAES-password
+#%patch1103 -p0 -b .load-module
+#%patch1104 -p1 -b .set-as-encrypted
 
-%patch1300 -p1 -b .CHANGE-FD
+#%patch1300 -p1 -b .CHANGE-FD
 
 %patch1207 -p1 -b .users
 %patch1212 -p1 -b .sparc
 %patch1218 -p1 -b .silly
 %patch1219 -p0
-
-%patch20   -p1 -b .agetty-s
-%patch21   -p1 -b .fsck-l
 
 # rebuild build system for loop-AES patch
 ./autogen.sh
@@ -387,11 +378,6 @@ gcc %{optflags} -o nologin nologin.c
 gcc clock-ppc.c -o clock-ppc
 %endif
 
-# build docs
-pushd sys-utils
-    makeinfo --number-sections ipc.texi
-popd
-
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/{bin,sbin}
@@ -444,8 +430,6 @@ echo
 E-O-F
 chmod 755 %{buildroot}%{_bindir}/sunhostid
 %endif
-
-#gzip -9nf %{buildroot}%{_infodir}/ipc.info
 
 # PAM settings
 {
@@ -560,7 +544,6 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 rm -rf %{buildroot}
 
 %post
-%_install_info ipc.info
 %ifarch ppc
 ISCHRP=`grep CHRP /proc/cpuinfo`
 if [ -z "$ISCHRP" ]; then
@@ -569,7 +552,6 @@ fi
 %endif
 
 %preun
-%_remove_install_info ipc.info
 
 %post -n %{lib_blkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
@@ -590,6 +572,7 @@ fi
 /bin/arch
 /bin/dmesg
 %attr(755,root,root)	/bin/login
+/bin/lsblk
 /bin/more
 /bin/kill
 /bin/taskset
@@ -607,6 +590,7 @@ fi
 %{_mandir}/man8/agetty.8*
 /sbin/blkid
 /sbin/blockdev
+/sbin/fstrim
 /sbin/pivot_root
 /sbin/ctrlaltdel
 /sbin/addpart
@@ -619,6 +603,8 @@ fi
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/findmnt.8*
 %{_mandir}/man8/fsfreeze.8*
+%{_mandir}/man8/fstrim.8*
+%{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/swaplabel.8*
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sunsparc} %mips %arm
 /sbin/sfdisk
@@ -706,7 +692,6 @@ fi
 %endif
 %{_sbindir}/rtcwake
 %{_sbindir}/ldattach
-%{_infodir}/ipc.info*
 %{_mandir}/man1/arch.1*
 %{_mandir}/man1/cal.1*
 %{_mandir}/man1/chfn.1*
@@ -785,6 +770,7 @@ fi
 %{_mandir}/man8/switch_root.8*
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/losetup.8*
+%lang(ru)	%{_mandir}/ru/man1/ddate.1*
 /sbin/losetup
 /sbin/wipefs
 
@@ -845,7 +831,7 @@ fi
 
 %files -n %{lib_mount_devel}
 %defattr(-,root,root)
-%{_includedir}/mount
+%{_includedir}/libmount/libmount.h
 %{_libdir}/libmount.so
 %{_libdir}/libmount.*a
 %{_libdir}/pkgconfig/mount.pc
