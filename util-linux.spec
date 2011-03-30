@@ -70,6 +70,7 @@ BuildRequires:	libaudit-devel
 %if %{with uclibc}
 BuildRequires:	uClibc-devel
 %endif
+BuildRequires:	libtool
 
 ### Sources
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%{mainver}/%{tarname}.tar.bz2
