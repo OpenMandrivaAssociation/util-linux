@@ -2,7 +2,7 @@
 %define version 2.19
 %define mainver 2.19
 %define rc_ver 0
-%define rel 1
+%define rel 2
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -89,7 +89,7 @@ Obsoletes:	mount <= 2.13-0.pre7.6mdv2008.0
 Obsoletes:	losetup <= 2.13-0.pre7.6mdv2008.0
 Provides:	mount = %{version}-%{release}
 Provides:	losetup = %{version}-%{release}
-Obsoletes:	util-linux-ng <= 2.18
+Obsoletes:	util-linux-ng < 2.19
 Obsoletes:	util-linux <= 2.13-0.pre7.6mdv2008.0
 Provides:	util-linux = %{version}-%{release}
 Provides:	util-linux-ng = %{version}-%{release}
