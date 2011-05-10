@@ -1,5 +1,5 @@
 %define rc_ver 0
-%define rel 2
+%define rel 3
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -27,7 +27,7 @@
 
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
-%define build_bootstrap 1
+%define build_bootstrap 0
 
 %if !%{build_bootstrap}
 %bcond_without	uclibc
@@ -37,7 +37,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.19
-Release:	3
+Release:	%{release}
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -46,8 +46,6 @@ URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
 %define include_raw 1
 ### Macros
 %define no_hwclock_archs s390 s390x
-### Paths
-BuildRoot:	%{_tmppath}/%{name}-%{version}-root
 
 ### Dependences
 BuildRequires:	gcc
@@ -82,10 +80,8 @@ Source10:	uuidd.init
 
 ### Obsoletes & Conflicts & Provides
 # old versions of util-linux have been splited to more sub-packages
-Obsoletes:	mount <= 2.13-0.pre7.6mdv2008.0
-Obsoletes:	losetup <= 2.13-0.pre7.6mdv2008.0
-Provides:	mount = %{version}-%{release}
-Provides:	losetup = %{version}-%{release}
+%rename		mount
+%rename		losetup
 Obsoletes:	util-linux-ng < 2.19
 Obsoletes:	util-linux <= 2.13-0.pre7.6mdv2008.0
 Provides:	util-linux = %{version}-%{release}
@@ -93,23 +89,17 @@ Provides:	util-linux-ng = %{version}-%{release}
 # old versions of e2fsprogs provides blkid / uuidd
 Conflicts:	e2fsprogs < 1.41.8-2mnb2
 
-Obsoletes:	fdisk < %{version}-%{release}
-Obsoletes:	tunelp < %{version}-%{release}
-Obsoletes:	schedutils < %{version}-%{release}
-Provides:	fdisk = %{version}-%{release}
-Provides:	tunelp = %{version}-%{release}
-Provides:	schedutils = %{version}-%{release}
-%ifarch alpha %{sunsparc} ppc
+%rename		fdisk
+%rename		tunelp
+%rename		schedutils
+%ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
 
 # setarch merge in util-linux-ng-2.13
-Obsoletes:	sparc32 < %{version}-%{release}
-Obsoletes:	linux32 < %{version}-%{release}
-Provides:	linux32 = %{version}-%{release}
-Provides:	sparc32 = %{version}-%{release}
-Obsoletes:	setarch <= 2.0
-Provides:	setarch = %{version}-%{release}
+%rename		sparc32
+%rename		linux32
+%rename		setarch
 Requires(preun):	info-install
 Requires(post):	info-install
 Requires(pre):	mktemp
@@ -186,7 +176,7 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%package -n %{lib_blkid}
+%package -n	%{lib_blkid}
 Summary:	Block device ID library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -195,7 +185,7 @@ Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
 %description -n %{lib_blkid}
 This is block device identification library, part of util-linux-ng.
 
-%package -n %{lib_blkid_devel}
+%package -n	%{lib_blkid_devel}
 Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
@@ -203,11 +193,11 @@ Requires:	%{lib_blkid} = %{version}-%{release}
 Conflicts:	%{lib_ext2fs_devel} < 1.41.6-2mnb2
 Provides:	libblkid-devel = %{version}-%{release}
 
-%description -n %{lib_blkid_devel}
+%description -n	%{lib_blkid_devel}
 This is the block device identification development library and headers,
 part of util-linux-ng.
 
-%package -n %{lib_uuid}
+%package -n	%{lib_uuid}
 Summary:	Universally unique ID library
 Group:		System/Libraries
 License:	BSD
@@ -223,7 +213,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n %{lib_uuid_devel}
+%package -n	%{lib_uuid_devel}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	BSD
@@ -242,35 +232,35 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n uuidd
+%package -n	uuidd
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
 Requires(pre):	shadow-utils
 
-%description -n uuidd
+%description -n	uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
 uniqueness of time-based UUID generation even at very high rates on
 SMP systems.
 
-%package -n %{lib_mount}
+%package -n	%{lib_mount}
 Summary:	Universal mount library
 Group:		System/Libraries
 License:	LGPL2+
 
-%description -n %{lib_mount}
+%description -n	%{lib_mount}
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
-%package -n %{lib_mount_devel}
+%package -n	%{lib_mount_devel}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPL2+
 Requires:	%{lib_mount} = %{version}-%{release}
 Provides:	libmount-devel = %{version}-%{release}
 
-%description -n %{lib_mount_devel}
+%description -n	%{lib_mount_devel}
 Development files and headers for libmount library.
 
 %prep
@@ -336,10 +326,9 @@ pushd uclibc
 		CFLAGS="%{uclibc_cflags} %{make_cflags}" \
 		--enable-shared=no \
 		--enable-static=yes \
-		--without-ncurses \
-		--with-ncurses
+		--without-ncurses
 
-%make -C shlibs
+%make -C shlibs/blkid
 popd
 %endif
 
@@ -537,9 +526,6 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64)\.8.*" \
 	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
-%clean
-rm -rf %{buildroot}
-
 %post
 %ifarch ppc
 ISCHRP=`grep CHRP /proc/cpuinfo`
@@ -562,7 +548,6 @@ fi
 %_preun_service uuidd
 
 %files -f %{name}.files
-%defattr(-,root,root)
 %doc */README.* NEWS AUTHORS
 %doc getopt/getopt-*.{bash,tcsh}
 %doc docs/*-ReleaseNotes
@@ -772,7 +757,6 @@ fi
 /sbin/wipefs
 
 %files -n uuidd
-%defattr(-,root,root)
 %{_initrddir}/uuidd
 %{_mandir}/man8/uuidd.8*
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
@@ -780,12 +764,10 @@ fi
 %dir %attr(2775, uuidd, uuidd) /var/run/uuidd
 
 %files -n %{lib_blkid}
-%defattr(-,root,root)
 %dir /etc/blkid
 /%{_lib}/libblkid.so.%{lib_blkid_major}*
 
 %files -n %{lib_blkid_devel}
-%defattr(-,root,root)
 %{_libdir}/libblkid.a
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libblkid.a
@@ -797,11 +779,9 @@ fi
 %{_libdir}/pkgconfig/blkid.pc
 
 %files -n %{lib_uuid}
-%defattr(-,root,root)
 /%{_lib}/libuuid.so.%{lib_uuid_major}*
 
 %files -n %{lib_uuid_devel}
-%defattr(-,root,root)
 %{_libdir}/libuuid.a
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libuuid.a
@@ -823,11 +803,9 @@ fi
 %{_libdir}/pkgconfig/uuid.pc
 
 %files -n %{lib_mount}
-%defattr(-,root,root)
 /%{_lib}/libmount.so.%{lib_mount_major}*
 
 %files -n %{lib_mount_devel}
-%defattr(-,root,root)
 %{_includedir}/libmount/libmount.h
 %{_libdir}/libmount.so
 %{_libdir}/libmount.*a
