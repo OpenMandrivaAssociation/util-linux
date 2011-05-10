@@ -358,10 +358,10 @@ export CFLAGS="%{make_cflags} %{optflags} -Os"
 popd
 
 # build nologin
-gcc %{optflags} -o nologin nologin.c
+gcc %{optflags} %{ldflags} -o nologin nologin.c
 
 %ifarch ppc
-gcc clock-ppc.c -o clock-ppc
+gcc clock-ppc.c %{ldflags} -o clock-ppc
 %endif
 
 %install
