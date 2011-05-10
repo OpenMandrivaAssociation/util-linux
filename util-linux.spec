@@ -1,6 +1,3 @@
-%define name util-linux
-%define version 2.19
-%define mainver 2.19
 %define rc_ver 0
 %define rel 2
 %if %{rc_ver}
@@ -38,9 +35,9 @@
 
 ### Header
 Summary:	A collection of basic system utilities
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
+Name:		util-linux
+Version:	2.19
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -233,7 +230,6 @@ License:	BSD
 Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
 Requires:	%{lib_uuid} = %{version}
 Provides:	libuuid-devel = %{version}-%{release}
-Conflicts:	ossp_uuid-devel
 
 %description -n %{lib_uuid_devel}
 This is the universally unique ID development library and headers,
