@@ -1,5 +1,6 @@
+%define mainver 2.19
 %define rc_ver 0
-%define rel 3
+%define rel 1
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -36,7 +37,7 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.19
+Version:	2.19.1
 Release:	%{release}
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
