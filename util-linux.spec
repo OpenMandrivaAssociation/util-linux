@@ -1,4 +1,4 @@
-%define mainver 2.19
+%define mainver 2.20
 %define rc_ver 0
 %define rel 1
 %if %{rc_ver}
@@ -37,7 +37,7 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.19.1
+Version:	2.20
 Release:	%{release}
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -121,13 +121,13 @@ Requires:	udev
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-ng-2.15-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
-Patch3:		util-linux-ng-2.13-fdformat-man-ide.patch
+Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-ng-2.13-login-lastlog.patch
 # 199745 - Non-existant simpleinit(8) mentioned in ctrlaltdel(8)
 Patch6:		util-linux-ng-2.13-ctrlaltdel-man.patch
 # 231192 - ipcs is not printing correct values on pLinux
-Patch8:		util-linux-ng-2.15-ipcs-32bit.patch
+Patch8:		util-linux-ng-2.20-ipcs-32bit.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
@@ -139,7 +139,7 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 Patch70:	util-linux-2.12q-miscfixes.patch
 Patch111:	util-linux-2.11t-mkfsman.patch
 Patch114:	util-linux-2.11t-dumboctal.patch
-Patch115:	util-linux-ng-2.15-fix-ioctl.patch
+Patch115:	util-linux-ng-2.20-fix-ioctl.patch
 Patch116:	util-linux-2.12q-autodav.patch
 
 # crypto patches
@@ -157,13 +157,13 @@ Patch1200:	util-linux-2.10r-clock-1.1-ppc.patch
 # leng options for clock-ppc
 Patch1201:	util-linux-2.10s-clock-syntax-ppc.patch
 # Added r & w options to chfn (lsb mandate)
-Patch1202:	util-linux-2.11o-chfn-lsb-usergroups.patch
+Patch1202:	util-linux-2.20-chfn-lsb-usergroups.patch
 # fix build on alpha with newer kernel-headers
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
 # do not hide users option in mtab
 Patch1207:	util-linux-ng-2.14.1-users.patch
 # (peroyvind) fixes for sparc
-Patch1212:	util-linux-2.12r-sparc.patch
+Patch1212:	util-linux-ng-2.20-sparc.patch
 # remove mode= from udf mounts (architecture done so that more may come)
 Patch1218:	util-linux-ng-2.13-mount-remove-silly-options-in-auto.patch
 # (misc) enable option -x on fsck.cramfs , bug 48224
@@ -309,7 +309,7 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch1219 -p0
 
 # rebuild build system for loop-AES patch
-./autogen.sh
+#./autogen.sh
 
 %build
 %serverbuild
@@ -329,7 +329,7 @@ pushd uclibc
 		--enable-static=yes \
 		--without-ncurses
 
-%make -C shlibs/blkid
+%make -C libblkid
 popd
 %endif
 
@@ -346,6 +346,8 @@ export CFLAGS="%{make_cflags} %{optflags} -Os"
 	--enable-kill \
 	--enable-write \
 	--enable-arch \
+	--enable-ddate \
+	--disable-mountpoint \
 %if %{include_raw}
 	--enable-raw \
 %endif
@@ -375,7 +377,7 @@ mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,security/console.apps,blkid}
 
 %if %{with uclibc}
-for lib in `find uclibc/shlibs -name libblkid.a -o -name libuuid.a`; do
+for lib in `find uclibc -name libblkid.a -o -name libuuid.a`; do
 	install -m644 $lib -D %{buildroot}%{uclibc_root}%{_libdir}/$(basename $lib)
 done
 %endif
@@ -716,6 +718,7 @@ fi
 %{_mandir}/man1/dmesg.1*
 %{_mandir}/man1/ipcmk.1*
 %{_mandir}/man1/lscpu.1*
+%{_mandir}/man3/uuid_generate_time_safe.3*
 %{_mandir}/man8/blockdev.8*
 %{_mandir}/man8/blkid.8*
 %{_mandir}/man8/ctrlaltdel.8*
