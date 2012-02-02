@@ -1,6 +1,6 @@
 %define mainver 2.20
 %define rc_ver 0
-%define rel 1
+%define rel 2
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -31,7 +31,7 @@
 %define build_bootstrap 0
 
 %if !%{build_bootstrap}
-%bcond_without	uclibc
+%bcond_with	uclibc
 %endif
 
 ### Header
@@ -448,9 +448,6 @@ install -D -m 755 %{SOURCE10} %{buildroot}/etc/rc.d/init.d/uuidd
 install -d %{buildroot}/var/run/uuidd
 install -d %{buildroot}/var/lib/libuuid
 
-# remove libtool junk  (TODO)
-rm -f %{buildroot}/%{_lib}/libblkid.la
-
 # move flock in /bin, required for udev
 # logger is useful in initscripts while /usr isn't mounted as well
 # ionice needed for readahead_early
@@ -776,7 +773,6 @@ fi
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libblkid.a
 %endif
-%{_libdir}/libblkid.la
 %{_libdir}/libblkid.so
 %{_includedir}/blkid
 %{_mandir}/man3/libblkid.3*
@@ -790,7 +786,6 @@ fi
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libuuid.a
 %endif
-%{_libdir}/libuuid.la
 %{_libdir}/libuuid.so
 %{_includedir}/uuid
 %{_mandir}/man3/uuid.3*
