@@ -52,7 +52,7 @@ URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
 BuildRequires:	gcc
 BuildRequires:	sed
 %if !%{build_bootstrap}
-BuildRequires:	e2fsprogs-devel >= 1.41.6-2mnb2
+BuildRequires:	ext2fs-devel
 %endif
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
