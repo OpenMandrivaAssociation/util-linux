@@ -1,6 +1,6 @@
-%define mainver 2.20
+%define mainver 2.20.1
 %define rc_ver 0
-%define rel 2
+%define rel 1
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -37,7 +37,7 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.20
+Version:	2.20.1
 Release:	%{release}
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -69,7 +69,7 @@ BuildRequires:	uClibc-devel
 BuildRequires:	libtool
 
 ### Sources
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%{mainver}/%{tarname}.tar.bz2
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%{mainver}/%{tarname}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-ng-login.pamd
 Source2:	util-linux-ng-remote.pamd
@@ -512,7 +512,7 @@ done
 # remove vipw and vigr, they belong in shadow-utils
 rm -f %{buildroot}%{_sbindir}/{vipw,vigr} %{buildroot}%{_mandir}/man8/{vigr,vipw}.*
 
-%find_lang %{name}
+%find_lang %{name} %{name}.lang
 
 # the files section supports only one -f option...
 mv %{name}.lang %{name}.files
