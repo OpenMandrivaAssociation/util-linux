@@ -1,4 +1,4 @@
-%define mainver 2.20.1
+%define mainver 2.21
 %define rc_ver 0
 %define rel 1
 %if %{rc_ver}
@@ -37,7 +37,7 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.20.1
+Version:	2.21
 Release:	%{release}
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -124,8 +124,6 @@ Patch1:		util-linux-ng-2.15-mount-managed.patch
 Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-ng-2.13-login-lastlog.patch
-# 199745 - Non-existant simpleinit(8) mentioned in ctrlaltdel(8)
-Patch6:		util-linux-ng-2.13-ctrlaltdel-man.patch
 # 231192 - ipcs is not printing correct values on pLinux
 Patch8:		util-linux-ng-2.20-ipcs-32bit.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
@@ -136,7 +134,6 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 ### Mandriva Specific patches
 
 # misc documentation fixes for man pages
-Patch70:	util-linux-2.12q-miscfixes.patch
 Patch111:	util-linux-2.11t-mkfsman.patch
 Patch114:	util-linux-2.11t-dumboctal.patch
 Patch115:	util-linux-ng-2.20-fix-ioctl.patch
@@ -268,22 +265,19 @@ Development files and headers for libmount library.
 %setup -q -n %{distname}
 cp %{SOURCE8} %{SOURCE9} .
 
-%patch1 -p1
-%patch3 -p1
-%patch5 -p1
-%patch6 -p1
+%patch1 -p1 -b .options
+%patch3 -p1 -b .atapifloppy
+%patch5 -p1 -b .lastlog
 %patch8 -p1 -b .p8
 
 # Mandriva
-%patch70 -p1 -b .miscfixes
-
 %ifarch ppc
 %patch1200 -p0
 %patch1201 -p1
 %endif
 
 #LSB (sb)
-%patch1202 -p1
+%patch1202 -p1 -b .chfnlsb
 
 #fix build on alpha with newer kernel-headers
 %ifarch alpha
@@ -316,7 +310,7 @@ cp %{SOURCE8} %{SOURCE9} .
 unset LINGUAS || :
 
 # CFLAGS
-%define make_cflags -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+%define make_cflags -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing
 
 export CONFIGURE_TOP="`pwd`"
 
@@ -548,9 +542,8 @@ fi
 %_preun_service uuidd
 
 %files -f %{name}.files
-%doc */README.* NEWS AUTHORS
+%doc NEWS AUTHORS
 %doc getopt/getopt-*.{bash,tcsh}
-%doc docs/*-ReleaseNotes
 /bin/arch
 /bin/dmesg
 %attr(755,root,root)	/bin/login
@@ -591,7 +584,6 @@ fi
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sunsparc} %mips %arm
 /sbin/sfdisk
 %{_mandir}/man8/sfdisk.8*
-%doc fdisk/sfdisk.examples
 %{_sbindir}/cfdisk
 %{_mandir}/man8/cfdisk.8*
 %endif
@@ -649,7 +641,9 @@ fi
 %endif
 /sbin/fsck.minix
 /sbin/mkfs.minix
+/sbin/chcpu
 %{_bindir}/namei
+%_bindir/prlimit
 %{_bindir}/rename
 %{_bindir}/renice
 %{_bindir}/rev
@@ -676,6 +670,7 @@ fi
 %{_sbindir}/ldattach
 %{_mandir}/man1/arch.1*
 %{_mandir}/man1/cal.1*
+%_mandir/man8/chcpu.8*
 %{_mandir}/man1/chfn.1*
 %{_mandir}/man1/chsh.1*
 %{_mandir}/man1/col.1*
@@ -694,7 +689,7 @@ fi
 %{_mandir}/man1/mcookie.1*
 %{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
-%{_mandir}/man1/readprofile.1*
+%_mandir/man1/prlimit.1*
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/rev.1*
 %{_mandir}/man1/script.1*
@@ -732,6 +727,7 @@ fi
 %{_mandir}/man8/raw.8*
 %{_mandir}/man8/rawdevices.8*
 %endif
+%_mandir/man8/readprofile.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
 %endif
