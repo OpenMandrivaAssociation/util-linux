@@ -1,6 +1,6 @@
 %define mainver 2.21
 %define rc_ver 0
-%define rel 1
+%define rel 2
 %if %{rc_ver}
 %define release %mkrel 0.rc%{rc_ver}.%{rel}
 %define tarname %{name}-%{version}-rc%{rc_ver}
@@ -165,6 +165,8 @@ Patch1212:	util-linux-ng-2.20-sparc.patch
 Patch1218:	util-linux-ng-2.13-mount-remove-silly-options-in-auto.patch
 # (misc) enable option -x on fsck.cramfs , bug 48224
 Patch1219:	util-linux-ng-enable_fsck_cramfs.diff
+# https://qa.mandriva.com/show_bug.cgi?id=65355
+Patch1220:	util-linux-2.21-login.defs.patch
 # Mandrivamove patches
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
 
@@ -301,6 +303,8 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch1212 -p1 -b .sparc
 %patch1218 -p1 -b .silly
 %patch1219 -p0
+
+%patch1220 -p1 -b .logindefs~
 
 # rebuild build system for loop-AES patch
 #./autogen.sh
