@@ -387,7 +387,7 @@ echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
 # Correct mail spool path.
 perl -pi -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
 
-%ifarch %{sunsparc}
+%ifarch %{sparcx}
 rm -rf %{buildroot}%{_bindir}/sunhostid
 cat << E-O-F > %{buildroot}%{_bindir}/sunhostid
 #!/bin/sh
@@ -571,7 +571,7 @@ fi
 %{_mandir}/man8/fstrim.8*
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/swaplabel.8*
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sunsparc} %mips %arm
+%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm
 /sbin/sfdisk
 %{_mandir}/man8/sfdisk.8*
 %{_sbindir}/cfdisk
@@ -605,7 +605,7 @@ fi
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
-%ifarch %ix86 alpha ppc ppc64 %{sunsparc} x86_64 %mips %arm
+%ifarch %ix86 alpha ppc ppc64 %{sparcx} x86_64 %mips %arm
 %{_bindir}/cytune
 %{_mandir}/man8/cytune.8*
 %endif
@@ -625,7 +625,7 @@ fi
 %{_bindir}/logger
 %{_bindir}/look
 %{_bindir}/mcookie
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sunsparc} %mips %arm
+%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
 %endif
@@ -641,7 +641,7 @@ fi
 %{_bindir}/setarch
 %{_bindir}/setsid
 %{_bindir}/setterm
-%ifarch %{sunsparc}
+%ifarch %{sparcx}
 %{_bindir}/sunhostid
 %endif
 %{_bindir}/tailf
