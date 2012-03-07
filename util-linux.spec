@@ -1,16 +1,3 @@
-%define mainver 2.21
-%define rc_ver 0
-%define rel 2
-%if %{rc_ver}
-%define release %mkrel 0.rc%{rc_ver}.%{rel}
-%define tarname %{name}-%{version}-rc%{rc_ver}
-%define distname %{tarname}
-%else
-%define release %mkrel %{rel}
-%define tarname %{name}-%{version}
-%define distname %{tarname}
-%endif
-
 %define lib_blkid_major 1
 %define lib_blkid %mklibname blkid %{lib_blkid_major}
 %define lib_blkid_devel %mklibname blkid -d
@@ -38,7 +25,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.21
-Release:	%{release}
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -69,7 +56,7 @@ BuildRequires:	uClibc-devel
 BuildRequires:	libtool
 
 ### Sources
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%{mainver}/%{tarname}.tar.xz
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%{version}/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-ng-login.pamd
 Source2:	util-linux-ng-remote.pamd
@@ -264,7 +251,7 @@ Provides:	libmount-devel = %{version}-%{release}
 Development files and headers for libmount library.
 
 %prep
-%setup -q -n %{distname}
+%setup -q
 cp %{SOURCE8} %{SOURCE9} .
 
 %patch1 -p1 -b .options
@@ -366,7 +353,6 @@ gcc clock-ppc.c %{ldflags} -o clock-ppc
 %endif
 
 %install
-rm -rf %{buildroot}
 mkdir -p %{buildroot}/{bin,sbin}
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_infodir}
