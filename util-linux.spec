@@ -158,7 +158,7 @@ Patch1220:	util-linux-2.21-login.defs.patch
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
 
 %description
-The util-linux-ng package contains a large variety of low-level system
+The util-linux package contains a large variety of low-level system
 utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
@@ -170,7 +170,7 @@ License:	LGPLv2+
 Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
 
 %description -n %{lib_blkid}
-This is block device identification library, part of util-linux-ng.
+This is block device identification library, part of util-linux.
 
 %package -n	%{lib_blkid_devel}
 Summary:	Block device ID library
@@ -182,7 +182,7 @@ Provides:	libblkid-devel = %{version}-%{release}
 
 %description -n	%{lib_blkid_devel}
 This is the block device identification development library and headers,
-part of util-linux-ng.
+part of util-linux.
 
 %package -n	%{lib_uuid}
 Summary:	Universally unique ID library
@@ -340,7 +340,7 @@ export CFLAGS="%{make_cflags} %{optflags} -Os"
 	--disable-rpath \
 	--with-audit
 
-# build util-linux-ng
+# build util-linux
 %make
 
 popd
@@ -366,7 +366,7 @@ for lib in `find uclibc -name libblkid.a -o -name libuuid.a`; do
 done
 %endif
 
-# install util-linux-ng
+# install util-linux
 %makeinstall_std -C system install DESTDIR=%{buildroot} MANDIR=%{buildroot}/%{_mandir} INFODIR=%{buildroot}/%{_infodir}
 
 # install nologin
