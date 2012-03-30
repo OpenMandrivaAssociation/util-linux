@@ -24,8 +24,8 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.21
-Release:	3
+Version:	2.21.1
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -56,7 +56,7 @@ BuildRequires:	uClibc-devel
 BuildRequires:	libtool
 
 ### Sources
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%{version}/%{name}-%{version}.tar.xz
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-ng-login.pamd
 Source2:	util-linux-ng-remote.pamd
@@ -88,8 +88,6 @@ Obsoletes:	clock < %{version}-%{release}
 %rename		sparc32
 %rename		linux32
 %rename		setarch
-Requires(preun):	info-install
-Requires(post):	info-install
 Requires(pre):	mktemp
 # for /bin/awk
 Requires(pre):	gawk
@@ -152,8 +150,6 @@ Patch1212:	util-linux-ng-2.20-sparc.patch
 Patch1218:	util-linux-ng-2.13-mount-remove-silly-options-in-auto.patch
 # (misc) enable option -x on fsck.cramfs , bug 48224
 Patch1219:	util-linux-ng-enable_fsck_cramfs.diff
-# https://qa.mandriva.com/show_bug.cgi?id=65355
-Patch1220:	util-linux-2.21-login.defs.patch
 # Mandrivamove patches
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
 
@@ -290,8 +286,6 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch1212 -p1 -b .sparc
 %patch1218 -p1 -b .silly
 %patch1219 -p0
-
-%patch1220 -p1 -b .logindefs~
 
 # rebuild build system for loop-AES patch
 #./autogen.sh
