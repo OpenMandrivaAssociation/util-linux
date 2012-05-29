@@ -25,7 +25,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.21.2
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -46,7 +46,6 @@ BuildRequires:	pam-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	ncursesw-devel
 BuildRequires:	termcap-devel
-BuildRequires:	texinfo
 BuildRequires:	slang-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libaudit-devel
@@ -466,6 +465,9 @@ chmod 644 getopt/getopt-*.{bash,tcsh}
 rm -f %{buildroot}%{_datadir}/getopt/*
 rmdir %{buildroot}%{_datadir}/getopt
 
+# link mtab 
+ln -sf /proc/mounts %{buildroot}/etc/mtab
+
 # /usr/sbin -> /sbin
 for I in addpart delpart partx; do
 	if [ -e %{buildroot}/usr/sbin/$I ]; then
@@ -517,6 +519,8 @@ fi
 %post -n %{lib_blkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
 [ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
+rm -f /etc/mtab
+ln -sf /proc/mounts /etc/mtab
 
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
@@ -545,6 +549,7 @@ fi
 %config(noreplace) %{_sysconfdir}/pam.d/chsh
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
+%ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
 /sbin/agetty
 %{_mandir}/man8/agetty.8*
 /sbin/blkid
