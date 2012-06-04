@@ -25,7 +25,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.21.2
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -75,6 +75,7 @@ Provides:	util-linux = %{version}-%{release}
 Provides:	util-linux-ng = %{version}-%{release}
 # old versions of e2fsprogs provides blkid / uuidd
 Conflicts:	e2fsprogs < 1.41.8-2mnb2
+Conflicts:	setup < 2.7.18-6
 
 %rename		fdisk
 %rename		tunelp
