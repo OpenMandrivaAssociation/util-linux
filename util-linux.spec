@@ -291,7 +291,7 @@ cp %{SOURCE8} %{SOURCE9} .
 #./autogen.sh
 
 %build
-%serverbuild
+%serverbuild_hardened
 unset LINGUAS || :
 
 # CFLAGS
