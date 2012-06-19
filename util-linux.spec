@@ -25,7 +25,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.21.2
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -306,6 +306,7 @@ pushd uclibc
 		CFLAGS="%{uclibc_cflags} %{make_cflags}" \
 		--enable-shared=no \
 		--enable-static=yes \
+		--enable-new-mount \
 		--without-ncurses
 
 %make -C libblkid
@@ -332,7 +333,8 @@ export CFLAGS="%{make_cflags} %{optflags} -Os"
 %endif
 	--disable-makeinstall-chown \
 	--disable-rpath \
-	--with-audit
+	--with-audit \
+	--enable-new-mount
 
 # build util-linux
 %make
