@@ -16,6 +16,8 @@
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
+# Define to %nil for release builds
+%define beta rc2
 
 %if !%{build_bootstrap}
 %bcond_with	uclibc
@@ -24,8 +26,14 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.21.2
-Release:	4
+Version:	2.22
+%if "%beta" == ""
+Release:	1
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
+%else
+Release:	0.%beta.1
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}-%beta.tar.xz
+%endif
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -55,7 +63,6 @@ BuildRequires:	uClibc-devel
 BuildRequires:	libtool
 
 ### Sources
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-ng-login.pamd
 Source2:	util-linux-ng-remote.pamd
@@ -76,6 +83,13 @@ Provides:	util-linux-ng = %{version}-%{release}
 # old versions of e2fsprogs provides blkid / uuidd
 Conflicts:	e2fsprogs < 1.41.8-2mnb2
 Conflicts:	setup < 2.7.18-6
+# old version of sysvinit-tools provides sulogin and utmpdump
+Conflicts:	sysvinit < 2.87-11
+# eject used to be a separate package. 2.1.5 was the last released version,
+# eject was merged into util-linux 2.22, so our %version is guaranteed to
+# be bigger than the last eject's
+Obsoletes:	eject
+Provides:	eject = %version-%release
 
 %rename		fdisk
 %rename		tunelp
@@ -104,7 +118,7 @@ Requires:	udev
 %endif
 
 # RHEL/Fedora specific mount options
-Patch1:		util-linux-ng-2.15-mount-managed.patch
+Patch1:		util-linux-2.22-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
 Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
@@ -120,9 +134,10 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
-Patch114:	util-linux-2.11t-dumboctal.patch
-Patch115:	util-linux-ng-2.20-fix-ioctl.patch
-Patch116:	util-linux-2.12q-autodav.patch
+# sparc build fix
+Patch115:	util-linux-2.22-fix-ioctl.patch
+# Autodetect davfs mount attempts
+Patch116:	util-linux-2.22-autodav.patch
 
 # crypto patches
 # loop-AES patch
@@ -142,10 +157,6 @@ Patch1201:	util-linux-2.10s-clock-syntax-ppc.patch
 Patch1202:	util-linux-2.20-chfn-lsb-usergroups.patch
 # fix build on alpha with newer kernel-headers
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
-# do not hide users option in mtab
-Patch1207:	util-linux-ng-2.14.1-users.patch
-# (peroyvind) fixes for sparc
-Patch1212:	util-linux-ng-2.20-sparc.patch
 # remove mode= from udf mounts (architecture done so that more may come)
 Patch1218:	util-linux-ng-2.13-mount-remove-silly-options-in-auto.patch
 # (misc) enable option -x on fsck.cramfs , bug 48224
@@ -247,7 +258,11 @@ Provides:	libmount-devel = %{version}-%{release}
 Development files and headers for libmount library.
 
 %prep
+%if "%beta" == ""
 %setup -q
+%else
+%setup -q -n %name-%version-%beta
+%endif
 cp %{SOURCE8} %{SOURCE9} .
 
 %patch1 -p1 -b .options
@@ -270,7 +285,6 @@ cp %{SOURCE8} %{SOURCE9} .
 %endif
 
 %patch111 -p1 -b .mkfsman
-%patch114 -p0 -b .dumboctal
 %patch115 -p1 -b .fix-ioctl
 %patch116 -p1 -b .autodav
 
@@ -282,9 +296,8 @@ cp %{SOURCE8} %{SOURCE9} .
 
 #%patch1300 -p1 -b .CHANGE-FD
 
-%patch1207 -p1 -b .users
-%patch1212 -p1 -b .sparc
-%patch1218 -p1 -b .silly
+# FIXME: double-check if this is really obsoleted by the mount rewrite
+#patch1218 -p1 -b .silly
 %patch1219 -p0
 
 # rebuild build system for loop-AES patch
@@ -307,6 +320,7 @@ pushd uclibc
 		--enable-shared=no \
 		--enable-static=yes \
 		--enable-new-mount \
+		--enable-chfn-chsh \
 		--without-ncurses
 
 %make -C libblkid
@@ -334,7 +348,8 @@ export CFLAGS="%{make_cflags} %{optflags} -Os"
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
-	--enable-new-mount
+	--enable-new-mount \
+	--enable-chfn-chsh
 
 # build util-linux
 %make
@@ -464,7 +479,7 @@ done
 
 # we install getopt/getopt-*.{bash,tcsh} as doc files
 # note: versions <=2.12 use path "%{_datadir}/misc/getopt/*"
-chmod 644 getopt/getopt-*.{bash,tcsh}
+chmod 644 misc-utils/getopt-*.{bash,tcsh}
 rm -f %{buildroot}%{_datadir}/getopt/*
 rmdir %{buildroot}%{_datadir}/getopt
 
@@ -509,15 +524,13 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64)\.8.*" \
 	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
-%post
 %ifarch ppc
+%post
 ISCHRP=`grep CHRP /proc/cpuinfo`
 if [ -z "$ISCHRP" ]; then
   ln -sf /sbin/clock-ppc /sbin/hwclock
 fi
 %endif
-
-%preun
 
 %post -n %{lib_blkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
@@ -534,7 +547,7 @@ ln -sf /proc/mounts /etc/mtab
 
 %files -f %{name}.files
 %doc NEWS AUTHORS
-%doc getopt/getopt-*.{bash,tcsh}
+%doc misc-utils/getopt-*.{bash,tcsh}
 /bin/arch
 /bin/dmesg
 %attr(755,root,root)	/bin/login
@@ -544,6 +557,8 @@ ln -sf /proc/mounts /etc/mtab
 /bin/taskset
 /bin/ionice
 /bin/findmnt
+/bin/su
+/bin/wdctl
 %if %{include_raw}
 /bin/raw
 %config %{_sysconfdir}/udev/rules.d/60-raw.rules
@@ -597,6 +612,7 @@ ln -sf /proc/mounts /etc/mtab
 /sbin/mkfs
 /sbin/mkswap
 /sbin/nologin
+/sbin/sulogin
 %{_mandir}/man8/nologin.8*
 %{_bindir}/chrt
 %{_bindir}/ionice
@@ -612,6 +628,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man8/cytune.8*
 %endif
 %{_bindir}/ddate
+%{_bindir}/eject
 %ifnarch s390 s390x
 %{_sbindir}/fdformat
 %endif
@@ -626,7 +643,9 @@ ln -sf /proc/mounts /etc/mtab
 /bin/logger
 %{_bindir}/logger
 %{_bindir}/look
+%{_bindir}/lslocks
 %{_bindir}/mcookie
+%{_bindir}/utmpdump
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
@@ -660,6 +679,7 @@ ln -sf /proc/mounts /etc/mtab
 %endif
 %{_sbindir}/rtcwake
 %{_sbindir}/ldattach
+%{_sbindir}/resizepart
 %{_mandir}/man1/arch.1*
 %{_mandir}/man1/cal.1*
 %_mandir/man8/chcpu.8*
@@ -670,6 +690,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man1/colrm.1*
 %{_mandir}/man1/column.1*
 %{_mandir}/man1/ddate.1*
+%{_mandir}/man1/eject.1*
 %{_mandir}/man1/flock.1*
 %{_mandir}/man1/fallocate.1*
 %{_mandir}/man1/getopt.1*
@@ -690,6 +711,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man1/ul.1*
 %{_mandir}/man1/uuidgen.1*
 %{_mandir}/man1/unshare.1*
+%{_mandir}/man1/utmpdump.1*
 %{_mandir}/man1/whereis.1*
 %{_mandir}/man1/write.1*
 %{_mandir}/man1/chrt.1*
@@ -712,6 +734,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man8/findfs.8*
 %{_mandir}/man8/fsck.8*
 %{_mandir}/man8/isosize.8*
+%{_mandir}/man8/lslocks.8*
 %{_mandir}/man8/mkfs.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/pivot_root.8*
@@ -720,13 +743,16 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man8/rawdevices.8*
 %endif
 %_mandir/man8/readprofile.8*
+%_mandir/man8/resizepart.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
 %endif
 %{_mandir}/man8/setarch.8*
+%{_mandir}/man8/sulogin.8*
 %{_mandir}/man8/rtcwake.8*
 %{_mandir}/man8/ldattach.8*
 %{_mandir}/man8/wipefs.8*
+%{_mandir}/man8/wdctl.8*
 %{_mandir}/man8/fsck.minix.8*
 %{_mandir}/man8/mkfs.minix.8*
 %attr(4755,root,root)	/bin/mount
@@ -748,6 +774,7 @@ ln -sf /proc/mounts /etc/mtab
 %files -n uuidd
 %{_initrddir}/uuidd
 %{_mandir}/man8/uuidd.8*
+/lib/systemd/system/uuidd.*
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 %dir %attr(2775, uuidd, uuidd) /var/run/uuidd
