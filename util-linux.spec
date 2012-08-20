@@ -57,6 +57,7 @@ BuildRequires:	termcap-devel
 BuildRequires:	slang-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libaudit-devel
+BuildRequires:	pkgconfig(systemd)
 %if %{with uclibc}
 BuildRequires:	uClibc-devel
 %endif
