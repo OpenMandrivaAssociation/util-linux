@@ -31,7 +31,7 @@ Version:	2.22
 Release:	1
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 %else
-Release:	0.%beta.1
+Release:	0.%beta.2
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}-%beta.tar.xz
 %endif
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
@@ -69,6 +69,8 @@ Source1:	util-linux-ng-login.pamd
 Source2:	util-linux-ng-remote.pamd
 Source3:	util-linux-ng-chsh-chfn.pamd
 Source4:	util-linux-ng-60-raw.rules
+Source5:	su.pamd
+Source6:	su-l.pamd
 Source8:	nologin.c
 Source9:	nologin.8
 Source10:	uuidd.init
@@ -90,7 +92,7 @@ Conflicts:	sysvinit < 2.87-11
 # eject was merged into util-linux 2.22, so our %version is guaranteed to
 # be bigger than the last eject's
 Obsoletes:	eject
-Provides:	eject = %version-%release
+Provides:	eject = %{version}-%{release}
 
 %rename		fdisk
 %rename		tunelp
@@ -109,6 +111,9 @@ Requires(pre):	gawk
 # for /usr/bin/cmp
 Requires(pre):	diffutils
 Requires(pre):	coreutils
+# (tpg) add conflicts on older version dues to move su
+Conflicts:	coreutils < 8.19-2
+Provides:	/bin/su
 Requires:	pam >= 0.66-4
 Requires:	shadow-utils >= 4.0.3
 Requires:	%{lib_blkid} = %{version}-%{release}
@@ -423,6 +428,8 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE2} ./remote
   install -m 644 %{SOURCE3} ./chsh
   install -m 644 %{SOURCE3} ./chfn
+  install -m 644 %{SOURCE5} ./su
+  install -m 644 %{SOURCE6} ./su-l
   popd
 }
 
@@ -568,6 +575,8 @@ ln -sf /proc/mounts /etc/mtab
 %config(noreplace) %{_sysconfdir}/pam.d/chsh
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
+%config(noreplace) %{_sysconfdir}/pam.d/su
+%config(noreplace) %{_sysconfdir}/pam.d/su-l
 %ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
 /sbin/agetty
 %{_mandir}/man8/agetty.8*
