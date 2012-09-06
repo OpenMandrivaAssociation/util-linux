@@ -16,8 +16,8 @@
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
-# Define to %nil for release builds
-%define beta rc2
+# Define to %nil for release builds, e.g. rc2 for rc builds
+%define beta %nil
 
 %if !%{build_bootstrap}
 %bcond_with	uclibc
