@@ -20,7 +20,7 @@
 %define beta %nil
 
 %if !%{build_bootstrap}
-%bcond_with	uclibc
+%bcond_without	uclibc
 %endif
 
 ### Header
@@ -28,7 +28,7 @@ Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.22
 %if "%beta" == ""
-Release:	1
+Release:	2
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 %else
 Release:	0.%beta.2
@@ -144,6 +144,7 @@ Patch111:	util-linux-2.11t-mkfsman.patch
 Patch115:	util-linux-2.22-fix-ioctl.patch
 # Autodetect davfs mount attempts
 Patch116:	util-linux-2.22-autodav.patch
+Patch117:	util-linux-2.22-fix-libblkid-linking-against-libintl.patch
 
 # crypto patches
 # loop-AES patch
@@ -185,6 +186,15 @@ Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
 %description -n %{lib_blkid}
 This is block device identification library, part of util-linux.
 
+%package -n	uclibc-%{lib_blkid}
+Summary:	Block device ID library (uClibc linked)
+Group:		System/Libraries
+License:	LGPLv2+
+Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
+
+%description -n uclibc-%{lib_blkid}
+This is block device identification library, part of util-linux.
+
 %package -n %{lib_blkid_devel}
 Summary:	Block device ID library
 Group:		Development/C
@@ -204,6 +214,22 @@ License:	BSD
 Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
 
 %description -n %{lib_uuid}
+This is the universally unique ID library, part of e2fsprogs.
+
+The libuuid library generates and parses 128-bit universally unique
+id's (UUID's).A UUID is an identifier that is unique across both
+space and time, with respect to the space of all UUIDs.  A UUID can
+be used for multiple purposes, from tagging objects with an extremely
+short lifetime, to reliably identifying very persistent objects
+across a network.
+
+%package -n	uclibc-%{lib_uuid}
+Summary:	Universally unique ID library (uClibc linked)
+Group:		System/Libraries
+License:	BSD
+Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
+
+%description -n uclibc-%{lib_uuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -253,6 +279,16 @@ The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
+%package -n	uclibc-%{lib_mount}
+Summary:	Universal mount library (uClibc linked)
+Group:		System/Libraries
+License:	LGPL2+
+
+%description -n	uclibc-%{lib_mount}
+The libmount library is used to parse /etc/fstab,
+/etc/mtab and /proc/self/mountinfo files,
+manage the mtab file, evaluate mount options, etc.
+
 %package -n %{lib_mount_devel}
 Summary:	Universally unique ID library
 Group:		Development/C
@@ -293,6 +329,7 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch111 -p1 -b .mkfsman
 %patch115 -p1 -b .fix-ioctl
 %patch116 -p1 -b .autodav
+%patch117 -p1 -b .libintl~
 
 #%patch1100 -p1 -b .loopAES
 #%patch1101 -p0 -b .swapon-encrypted
@@ -307,7 +344,7 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch1219 -p0
 
 # rebuild build system for loop-AES patch
-#./autogen.sh
+./autogen.sh
 
 %build
 %serverbuild_hardened
@@ -323,13 +360,17 @@ mkdir -p uclibc
 pushd uclibc
 %configure2_5x	CC="%{uclibc_cc}" \
 		CFLAGS="%{uclibc_cflags} %{make_cflags}" \
-		--enable-shared=no \
-		--enable-static=yes \
+		--prefix=%{uclibc_root} \
+		--exec-prefix=%{uclibc_root} \
+		--libdir=%{uclibc_root}/%{_lib} \
+		--enable-rpath=no \
+		--enable-shared=yes \
+		--enable-static=no \
 		--enable-new-mount \
 		--enable-chfn-chsh \
 		--without-ncurses
+%make libblkid.la libmount.la libuuid.la
 
-%make -C libblkid
 popd
 %endif
 
@@ -378,13 +419,16 @@ mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,security/console.apps,blkid}
 
 %if %{with uclibc}
-for lib in `find uclibc -name libblkid.a -o -name libuuid.a`; do
-	install -m644 $lib -D %{buildroot}%{uclibc_root}%{_libdir}/$(basename $lib)
+make -C uclibc install-usrlib_execLTLIBRARIES DESTDIR="%{buildroot}"
+mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
+for l in lib{blkid,mount,uuid}.so; do
+	rm -f %{buildroot}%{uclibc_root}/%{_lib}/$l
+	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
 %endif
 
 # install util-linux
-%makeinstall_std -C system install DESTDIR=%{buildroot} MANDIR=%{buildroot}/%{_mandir} INFODIR=%{buildroot}/%{_infodir}
+%makeinstall_std -C system install DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
 
 # install nologin
 install -m 755 nologin %{buildroot}/sbin
@@ -793,10 +837,15 @@ ln -sf /proc/mounts /etc/mtab
 %dir /etc/blkid
 /%{_lib}/libblkid.so.%{lib_blkid_major}*
 
+%if %{with uclibc}
+%files -n uclibc-%{lib_blkid}
+%{uclibc_root}/%{_lib}/libblkid.so.%{lib_blkid_major}*
+%endif
+
 %files -n %{lib_blkid_devel}
 %{_libdir}/libblkid.a
 %if %{with uclibc}
-%{uclibc_root}%{_libdir}/libblkid.a
+%{uclibc_root}%{_libdir}/libblkid.so
 %endif
 %{_libdir}/libblkid.so
 %{_includedir}/blkid
@@ -806,10 +855,13 @@ ln -sf /proc/mounts /etc/mtab
 %files -n %{lib_uuid}
 /%{_lib}/libuuid.so.%{lib_uuid_major}*
 
+%files -n uclibc-%{lib_uuid}
+%{uclibc_root}/%{_lib}/libuuid.so.%{lib_uuid_major}*
+
 %files -n %{lib_uuid_devel}
 %{_libdir}/libuuid.a
 %if %{with uclibc}
-%{uclibc_root}%{_libdir}/libuuid.a
+%{uclibc_root}%{_libdir}/libuuid.so
 %endif
 %{_libdir}/libuuid.so
 %{_includedir}/uuid
@@ -829,8 +881,14 @@ ln -sf /proc/mounts /etc/mtab
 %files -n %{lib_mount}
 /%{_lib}/libmount.so.%{lib_mount_major}*
 
+%if %{with uclibc}
+%files -n uclibc-%{lib_mount}
+%{uclibc_root}/%{_lib}/libmount.so.%{lib_mount_major}*
+%endif
+
 %files -n %{lib_mount_devel}
 %{_includedir}/libmount/libmount.h
+%{uclibc_root}%{_libdir}/libmount.so
 %{_libdir}/libmount.so
 %{_libdir}/libmount.*a
 %{_libdir}/pkgconfig/mount.pc
