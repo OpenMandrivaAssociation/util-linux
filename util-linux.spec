@@ -384,7 +384,7 @@ pushd uclibc
 		--enable-static=no \
 		--enable-chfn-chsh \
 		--without-ncurses
-%make libblkid.la libmount.la libuuid.la
+%make libblkid.la libmount.la libuuid.la blkid
 
 popd
 %endif
