@@ -366,16 +366,13 @@ cp %{SOURCE8} %{SOURCE9} .
 %serverbuild_hardened
 unset LINGUAS || :
 
-# CFLAGS
-%define make_cflags -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -fno-strict-aliasing
-
 export CONFIGURE_TOP="`pwd`"
 
 %if %{with uclibc}
 mkdir -p uclibc
 pushd uclibc
 %configure2_5x	CC="%{uclibc_cc}" \
-		CFLAGS="%{uclibc_cflags} %{make_cflags}" \
+		CFLAGS="%{uclibc_cflags}" \
 		--prefix=%{uclibc_root} \
 		--exec-prefix=%{uclibc_root} \
 		--libdir=%{uclibc_root}/%{_lib} \
@@ -391,8 +388,8 @@ popd
 
 mkdir -p system
 pushd  system
-export CFLAGS="%{make_cflags} %{optflags} -Os"
 %configure2_5x \
+	CFLAGS="%{optflags} -Os" \
 	--bindir=/bin \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
