@@ -177,6 +177,13 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
+%package -n	uclibc-blkid
+Summary:	uClibc build of blkid
+Group:		System/Base
+
+%description -n	uclibc-blkid
+uClibc linked version of 'blkid' from util-linux package.
+
 %package -n %{lib_blkid}
 Summary:	Block device ID library
 Group:		System/Libraries
@@ -200,6 +207,9 @@ Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{lib_blkid} = %{version}-%{release}
+%if %{with uclibc}
+Requires:	uclibc-%{lib_blkid} = %{version}-%{release}
+%endif
 Conflicts:	%{lib_ext2fs_devel} < 1.41.6-2mnb2
 Provides:	libblkid-devel = %{version}-%{release}
 
@@ -245,6 +255,9 @@ Group:		Development/C
 License:	BSD
 Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
 Requires:	%{lib_uuid} = %{version}
+%if %{with uclibc}
+Requires:	uclibc-%{lib_uuid} = %{version}-%{release}
+%endif
 Provides:	libuuid-devel = %{version}-%{release}
 
 %description -n %{lib_uuid_devel}
@@ -294,6 +307,9 @@ Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPL2+
 Requires:	%{lib_mount} = %{version}-%{release}
+%if %{with uclibc}
+Requires:	uclibc-%{lib_mount} = %{version}-%{release}
+%endif
 Provides:	libmount-devel = %{version}-%{release}
 
 %description -n	%{lib_mount_devel}
@@ -366,7 +382,6 @@ pushd uclibc
 		--enable-rpath=no \
 		--enable-shared=yes \
 		--enable-static=no \
-		--enable-new-mount \
 		--enable-chfn-chsh \
 		--without-ncurses
 %make libblkid.la libmount.la libuuid.la
@@ -425,6 +440,7 @@ for l in lib{blkid,mount,uuid}.so; do
 	rm -f %{buildroot}%{uclibc_root}/%{_lib}/$l
 	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
+install -m755 uclibc/.libs/blkid -D %{buildroot}%{uclibc_root}/sbin/blkid
 %endif
 
 # install util-linux
@@ -824,6 +840,11 @@ ln -sf /proc/mounts /etc/mtab
 %lang(ru)	%{_mandir}/ru/man1/ddate.1*
 /sbin/losetup
 /sbin/wipefs
+
+%if %{with uclibc}
+%files -n uclibc-blkid
+%{uclibc_root}/sbin/blkid
+%endif
 
 %files -n uuidd
 %{_initrddir}/uuidd
