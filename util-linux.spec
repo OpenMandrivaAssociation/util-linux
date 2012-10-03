@@ -59,7 +59,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	libaudit-devel
 BuildRequires:	pkgconfig(systemd)
 %if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-9
+BuildRequires:	uClibc-devel >= 0.9.33.2-11
 %endif
 BuildRequires:	libtool
 
