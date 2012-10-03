@@ -28,7 +28,7 @@ Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.22
 %if "%beta" == ""
-Release:	2
+Release:	3
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 %else
 Release:	0.%beta.2
@@ -53,7 +53,7 @@ BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	ncurses-devel
 BuildRequires:	ncursesw-devel
-BuildRequires:	termcap-devel
+#BuildRequires:	termcap-devel
 BuildRequires:	slang-devel
 BuildRequires:	zlib-devel
 BuildRequires:	libaudit-devel
@@ -177,12 +177,15 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%package -n	uclibc-blkid
-Summary:	uClibc build of blkid
+%package -n	uclibc-%{name}
+Summary:	uClibc build of util-linux
 Group:		System/Base
 
-%description -n	uclibc-blkid
-uClibc linked version of 'blkid' from util-linux package.
+%description -n	uclibc-%{name}
+The util-linux package contains a large variety of low-level system
+utilities that are necessary for a Linux system to function.  Among
+others, Util-linux-ng contains the fdisk configuration tool and the login
+program.
 
 %package -n %{lib_blkid}
 Summary:	Block device ID library
@@ -366,22 +369,50 @@ cp %{SOURCE8} %{SOURCE9} .
 %serverbuild_hardened
 unset LINGUAS || :
 
-export CONFIGURE_TOP="`pwd`"
+export CONFIGURE_TOP="$PWD"
 
 %if %{with uclibc}
 mkdir -p uclibc
 pushd uclibc
 %configure2_5x	CC="%{uclibc_cc}" \
 		CFLAGS="%{uclibc_cflags}" \
+		--bindir=%{uclibc_root}/bin \
+		--sbindir=%{uclibc_root}/sbin \
 		--prefix=%{uclibc_root} \
 		--exec-prefix=%{uclibc_root} \
 		--libdir=%{uclibc_root}/%{_lib} \
 		--enable-rpath=no \
 		--enable-shared=yes \
 		--enable-static=no \
-		--enable-chfn-chsh \
-		--without-ncurses
-%make libblkid.la libmount.la libuuid.la blkid
+		--disable-chfn-chsh \
+		--enable-libuuid \
+		--enable-libblkid \
+		--enable-libmount \
+		--disable-mount \
+		--disable-losetup \
+		--disable-fsck \
+		--disable-partx \
+		--disable-uuidd \
+		--disable-mountpoint \
+		--disable-fallocate \
+		--disable-unshare \
+		--disable-eject \
+		--disable-agetty \
+		--disable-cramfs \
+		--disable-switch_root \
+		--disable-pivot_root \
+		--disable-kill \
+		--disable-utmpdump \
+		--disable-rename \
+		--disable-login \
+		--disable-sulogin \
+		--disable-su \
+		--disable-schedutils \
+		--disable-wall \
+		--disable-makeinstall-chown \
+		--disable-fsck \
+		--disable-raw
+%make
 
 popd
 %endif
@@ -431,13 +462,18 @@ mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,security/console.apps,blkid}
 
 %if %{with uclibc}
-make -C uclibc install-usrlib_execLTLIBRARIES DESTDIR="%{buildroot}"
+make -C uclibc install-sbinPROGRAMS install-usrlib_execLTLIBRARIES DESTDIR="%{buildroot}"
+install -m755 uclibc/setterm -D %{buildroot}%{uclibc_root}%{_bindir}/setterm
+
 mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
 for l in lib{blkid,mount,uuid}.so; do
 	rm -f %{buildroot}%{uclibc_root}/%{_lib}/$l
 	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
-install -m755 uclibc/.libs/blkid -D %{buildroot}%{uclibc_root}/sbin/blkid
+for bin in blockdev cfdisk chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
+	hwclock mkfs mkfs.bfs mkfs.minix swapoff swapon wipefs; do
+	rm -f %{buildroot}%{uclibc_root}/sbin/$bin
+done
 %endif
 
 # install util-linux
@@ -839,8 +875,12 @@ ln -sf /proc/mounts /etc/mtab
 /sbin/wipefs
 
 %if %{with uclibc}
-%files -n uclibc-blkid
+%files -n uclibc-%{name}
 %{uclibc_root}/sbin/blkid
+%{uclibc_root}/sbin/mkswap
+%{uclibc_root}/sbin/sfdisk
+%{uclibc_root}/sbin/swaplabel
+%{uclibc_root}%{_bindir}/setterm
 %endif
 
 %files -n uuidd
