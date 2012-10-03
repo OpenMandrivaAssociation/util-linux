@@ -51,8 +51,7 @@ BuildRequires:	ext2fs-devel
 %endif
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
-BuildRequires:	ncurses-devel
-BuildRequires:	ncursesw-devel
+BuildRequires:	ncurses-devel >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
 BuildRequires:	slang-devel
 BuildRequires:	zlib-devel
