@@ -28,7 +28,7 @@ Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.22
 %if "%beta" == ""
-Release:	4
+Release:	5
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 %else
 Release:	0.%beta.2
@@ -112,6 +112,8 @@ Requires(pre):	diffutils
 Requires(pre):	coreutils
 # (tpg) add conflicts on older version dues to move su
 Conflicts:	coreutils < 8.19-2
+# (proyvind): handle sulogin being moved
+Conflicts:	sysvinit-tools < 2.87-13
 Provides:	/bin/su
 Requires:	pam >= 0.66-4
 Requires:	shadow-utils >= 4.0.3
