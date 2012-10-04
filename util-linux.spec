@@ -61,6 +61,7 @@ BuildRequires:	pkgconfig(systemd)
 BuildRequires:	uClibc-devel >= 0.9.33.2-11
 %endif
 BuildRequires:	libtool
+BuildRequires:	rpm-build >= 1:5.4.10-5
 
 ### Sources
 # based on Fedora pam files, with pam_selinux stripped out
