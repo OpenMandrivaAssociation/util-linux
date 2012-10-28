@@ -374,8 +374,7 @@ export CONFIGURE_TOP="$PWD"
 %if %{with uclibc}
 mkdir -p uclibc
 pushd uclibc
-%configure2_5x	CC="%{uclibc_cc}" \
-		CFLAGS="%{uclibc_cflags}" \
+%uclibc_configure \
 		--bindir=%{uclibc_root}/bin \
 		--sbindir=%{uclibc_root}/sbin \
 		--prefix=%{uclibc_root} \
