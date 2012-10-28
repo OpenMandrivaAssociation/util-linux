@@ -58,7 +58,7 @@ BuildRequires:	zlib-devel
 BuildRequires:	libaudit-devel
 BuildRequires:	pkgconfig(systemd)
 %if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-11
+BuildRequires:	uClibc-devel >= 0.9.33.2-16
 %endif
 BuildRequires:	libtool
 BuildRequires:	rpm-build >= 1:5.4.10-5
@@ -146,7 +146,6 @@ Patch111:	util-linux-2.11t-mkfsman.patch
 Patch115:	util-linux-2.22-fix-ioctl.patch
 # Autodetect davfs mount attempts
 Patch116:	util-linux-2.22-autodav.patch
-Patch117:	util-linux-2.22-fix-libblkid-linking-against-libintl.patch
 
 # crypto patches
 # loop-AES patch
@@ -350,7 +349,6 @@ cp %{SOURCE8} %{SOURCE9} .
 %patch111 -p1 -b .mkfsman
 %patch115 -p1 -b .fix-ioctl
 %patch116 -p1 -b .autodav
-%patch117 -p1 -b .libintl~
 
 #%patch1100 -p1 -b .loopAES
 #%patch1101 -p0 -b .swapon-encrypted
