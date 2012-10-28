@@ -188,7 +188,7 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%package -n %{lib_blkid}
+%package -n	%{lib_blkid}
 Summary:	Block device ID library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -203,10 +203,10 @@ Group:		System/Libraries
 License:	LGPLv2+
 Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
 
-%description -n uclibc-%{lib_blkid}
+%description -n	uclibc-%{lib_blkid}
 This is block device identification library, part of util-linux.
 
-%package -n %{lib_blkid_devel}
+%package -n	%{lib_blkid_devel}
 Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
@@ -221,13 +221,13 @@ Provides:	libblkid-devel = %{version}-%{release}
 This is the block device identification development library and headers,
 part of util-linux.
 
-%package -n %{lib_uuid}
+%package -n	%{lib_uuid}
 Summary:	Universally unique ID library
 Group:		System/Libraries
 License:	BSD
 Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
 
-%description -n %{lib_uuid}
+%description -n	%{lib_uuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -243,7 +243,7 @@ Group:		System/Libraries
 License:	BSD
 Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
 
-%description -n uclibc-%{lib_uuid}
+%description -n	uclibc-%{lib_uuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -253,7 +253,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n %{lib_uuid_devel}
+%package -n	%{lib_uuid_devel}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	BSD
@@ -264,7 +264,7 @@ Requires:	uclibc-%{lib_uuid} = %{version}-%{release}
 %endif
 Provides:	libuuid-devel = %{version}-%{release}
 
-%description -n %{lib_uuid_devel}
+%description -n	%{lib_uuid_devel}
 This is the universally unique ID development library and headers,
 part of e2fsprogs.
 
@@ -275,7 +275,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n uuidd
+%package -n	uuidd
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
@@ -286,7 +286,7 @@ The uuidd package contains a userspace daemon (uuidd) which guarantees
 uniqueness of time-based UUID generation even at very high rates on
 SMP systems.
 
-%package -n %{lib_mount}
+%package -n	%{lib_mount}
 Summary:	Universal mount library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -306,7 +306,7 @@ The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
-%package -n %{lib_mount_devel}
+%package -n	%{lib_mount_devel}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
