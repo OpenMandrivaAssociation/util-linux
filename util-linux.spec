@@ -289,7 +289,7 @@ SMP systems.
 %package -n %{lib_mount}
 Summary:	Universal mount library
 Group:		System/Libraries
-License:	LGPL2+
+License:	LGPLv2+
 
 %description -n	%{lib_mount}
 The libmount library is used to parse /etc/fstab,
@@ -299,7 +299,7 @@ manage the mtab file, evaluate mount options, etc.
 %package -n	uclibc-%{lib_mount}
 Summary:	Universal mount library (uClibc linked)
 Group:		System/Libraries
-License:	LGPL2+
+License:	LGPLv2+
 
 %description -n	uclibc-%{lib_mount}
 The libmount library is used to parse /etc/fstab,
@@ -309,7 +309,7 @@ manage the mtab file, evaluate mount options, etc.
 %package -n %{lib_mount_devel}
 Summary:	Universally unique ID library
 Group:		Development/C
-License:	LGPL2+
+License:	LGPLv2+
 Requires:	%{lib_mount} = %{version}-%{release}
 %if %{with uclibc}
 Requires:	uclibc-%{lib_mount} = %{version}-%{release}
