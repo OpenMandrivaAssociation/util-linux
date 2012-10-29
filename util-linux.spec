@@ -28,7 +28,8 @@ Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.22
 %if "%beta" == ""
-Release:	6
+Release:	6.1
+ExclusiveArch:	%{ix86}
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 %else
 Release:	0.%beta.2
