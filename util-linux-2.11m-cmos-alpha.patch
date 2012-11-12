@@ -1,0 +1,17 @@
+diff -ur util-linux-2.11m.orig/hwclock/cmos.c util-linux-2.11m/hwclock/cmos.c
+--- util-linux-2.11m.orig/hwclock/cmos.c	Wed Feb 14 16:42:32 2001
++++ util-linux-2.11m/hwclock/cmos.c	Fri Dec  7 07:36:35 2001
+@@ -31,6 +31,11 @@
+  * it may go from 0x19 to 0x20, but in some buggy cases 0x1a is produced.
+  */
+ 
++typedef unsigned char u8;
++typedef unsigned short u16;
++typedef unsigned int u32;
++typedef unsigned long u64;
++
+ /*
+  * A struct tm has int fields
+  *   tm_sec (0-59, 60 or 61 only for leap seconds)
+Only in util-linux-2.11m/hwclock: hwclock.o
+Only in util-linux-2.11m/hwclock: shhopt.o

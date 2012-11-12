@@ -1,0 +1,11 @@
+--- util-linux-2.21/login-utils/login.c.lastlog	2012-02-10 15:16:07.000000000 +0100
++++ util-linux-2.21/login-utils/login.c	2012-02-26 02:56:13.776757244 +0100
+@@ -503,7 +503,7 @@ static void log_lastlog(struct login_con
+ 	if (!cxt->pwd)
+ 		return;
+ 
+-	fd = open(_PATH_LASTLOG, O_RDWR, 0);
++	fd = open(_PATH_LASTLOG, O_RDWR|O_CREAT, 0);
+ 	if (fd < 0)
+ 		return;
+ 

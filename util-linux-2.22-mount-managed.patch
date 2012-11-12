@@ -1,0 +1,11 @@
+--- util-linux-2.22-rc2/libmount/src/optmap.c.bero	2012-08-20 14:00:10.630018001 +0200
++++ util-linux-2.22-rc2/libmount/src/optmap.c	2012-08-20 14:01:38.329015387 +0200
+@@ -112,6 +112,8 @@ static const struct libmnt_optmap linux_
+    { "strictatime", MS_STRICTATIME },         /* Strict atime semantics */
+    { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
+ #endif
++   { "kudzu", MNT_MS_COMMENT },
++   { "managed", MNT_MS_COMMENT },
+    { NULL, 0, 0 }
+ };
+ 
