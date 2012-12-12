@@ -1,11 +1,2 @@
 sources:
-  "nologin.8:"	b2522bd7277aba8cde34041b3465d6d3f9c2129f
-  "nologin.c:"	59153ef083472b9c0c051e92973b4bed86d76bc8
-  "su-l.pamd:"	4847d6a186c2054aac587fe73fff59aaab57f0a7
-  "su.pamd:"	1d7c5575e3024b90054eb1ed46979b06c38923ea
   "util-linux-2.22.tar.xz:"	a1b3cbbbf4384b8e136abd446cd424c7c25d238c
-  "util-linux-ng-60-raw.rules:"	7f2cf5a785288a0678a6d095f64edf04d90e9012
-  "util-linux-ng-chsh-chfn.pamd:"	ac5c3c1ec8dde52a86d2c8a386679728f5503fe0
-  "util-linux-ng-login.pamd:"	0018bf3e08abc20d76c5b896292ef65fc582a0ed
-  "util-linux-ng-remote.pamd:"	e39d3c0c96fb16ee48f2b702c63437a426cc7391
-  "uuidd.init:"	91b981023421b683b0a0d0e5d8c328b768eb2770
