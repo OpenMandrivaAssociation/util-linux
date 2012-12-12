@@ -28,7 +28,7 @@ Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.22
 %if "%beta" == ""
-Release:	6.2
+Release:	7
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 %else
 Release:	0.%beta.2
@@ -951,6 +951,9 @@ ln -sf /proc/mounts /etc/mtab
 %{_libdir}/pkgconfig/mount.pc
 
 %changelog
+* Wed Dec 12 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-7
+- rebuild on ABF
+
 * Sun Oct 28 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-6
 + Revision: 820149
 - fix license
