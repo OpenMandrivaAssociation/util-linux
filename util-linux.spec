@@ -16,8 +16,6 @@
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
-# Define to %nil for release builds, e.g. rc2 for rc builds
-%define beta %nil
 
 %if !%{build_bootstrap}
 %bcond_without	uclibc
@@ -26,14 +24,9 @@
 ### Header
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.22
-%if "%beta" == ""
-Release:	7
+Version:	2.22.2
+Release:	1
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
-%else
-Release:	0.%beta.2
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}-%beta.tar.xz
-%endif
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -320,11 +313,7 @@ Provides:	libmount-devel = %{version}-%{release}
 Development files and headers for libmount library.
 
 %prep
-%if "%beta" == ""
 %setup -q
-%else
-%setup -q -n %name-%version-%beta
-%endif
 cp %{SOURCE8} %{SOURCE9} .
 
 %patch1 -p1 -b .options
@@ -784,7 +773,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_sbindir}/resizepart
 %{_mandir}/man1/arch.1*
 %{_mandir}/man1/cal.1*
-%_mandir/man8/chcpu.8*
+%{_mandir}/man8/chcpu.8*
 %{_mandir}/man1/chfn.1*
 %{_mandir}/man1/chsh.1*
 %{_mandir}/man1/col.1*
@@ -804,7 +793,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man1/mcookie.1*
 %{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
-%_mandir/man1/prlimit.1*
+%{_mandir}/man1/prlimit.1*
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/rev.1*
 %{_mandir}/man1/script.1*
@@ -826,6 +815,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man1/dmesg.1*
 %{_mandir}/man1/ipcmk.1*
 %{_mandir}/man1/lscpu.1*
+%{_mandir}/man1/su.1*
 %{_mandir}/man3/uuid_generate_time_safe.3*
 %{_mandir}/man8/blockdev.8*
 %{_mandir}/man8/blkid.8*
@@ -951,6 +941,9 @@ ln -sf /proc/mounts /etc/mtab
 %{_libdir}/pkgconfig/mount.pc
 
 %changelog
+* Wed Dec 13 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22.2-1
+- new version
+
 * Wed Dec 12 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-7
 - rebuild on ABF
 
