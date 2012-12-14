@@ -902,8 +902,10 @@ ln -sf /proc/mounts /etc/mtab
 %files -n %{lib_uuid}
 /%{_lib}/libuuid.so.%{lib_uuid_major}*
 
+%if %{with uclibc}
 %files -n uclibc-%{lib_uuid}
 %{uclibc_root}/%{_lib}/libuuid.so.%{lib_uuid_major}*
+%endif
 
 %files -n %{lib_uuid_devel}
 %{_libdir}/libuuid.a
@@ -935,7 +937,9 @@ ln -sf /proc/mounts /etc/mtab
 
 %files -n %{lib_mount_devel}
 %{_includedir}/libmount/libmount.h
+%if %{with uclibc}
 %{uclibc_root}%{_libdir}/libmount.so
+%endif
 %{_libdir}/libmount.so
 %{_libdir}/libmount.*a
 %{_libdir}/pkgconfig/mount.pc
