@@ -1,62 +1,38 @@
-%define lib_blkid_major 1
-%define lib_blkid %mklibname blkid %{lib_blkid_major}
-%define lib_blkid_devel %mklibname blkid -d
+%define blkid_major 1
+%define libblkid %mklibname blkid %{blkid_major}
+%define devblkid %mklibname blkid -d
 
-%define lib_uuid_major 1
-%define lib_uuid %mklibname uuid %{lib_uuid_major}
-%define lib_uuid_devel %mklibname uuid -d
+%define uuid_major 1
+%define libuuid %mklibname uuid %{uuid_major}
+%define devuuid %mklibname uuid -d
 
-%define lib_ext2fs %mklibname ext2fs 2
-%define lib_ext2fs_devel %mklibname ext2fs -d
+%define libext2fs %mklibname ext2fs 2
+%define devext2fs %mklibname ext2fs -d
 
-%define lib_mount_major 1
-%define lib_mount %mklibname mount %{lib_mount_major}
-%define lib_mount_devel %mklibname mount -d
+%define mount_major 1
+%define libmount %mklibname mount %{mount_major}
+%define devmount %mklibname mount -d
 
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
-
-%if !%{build_bootstrap}
-%bcond_without	uclibc
-%endif
-
-### Header
-Summary:	A collection of basic system utilities
-Name:		util-linux
-Version:	2.22.2
-Release:	1
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
-License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
-Group:		System/Base
-URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
-
 ### Features
 %define include_raw 1
 ### Macros
 %define no_hwclock_archs s390 s390x
 
-### Dependences
-BuildRequires:	gcc
-BuildRequires:	sed
 %if !%{build_bootstrap}
-BuildRequires:	ext2fs-devel
+%bcond_without	uclibc
 %endif
-BuildRequires:	gettext-devel
-BuildRequires:	pam-devel
-BuildRequires:	ncursesw-devel >= 5.9-6.20120922.3
-#BuildRequires:	termcap-devel
-BuildRequires:	slang-devel
-BuildRequires:	zlib-devel
-BuildRequires:	libaudit-devel
-BuildRequires:	pkgconfig(systemd)
-%if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-16
-%endif
-BuildRequires:	libtool
-BuildRequires:	rpm-build >= 1:5.4.10-5
 
-### Sources
+Summary:	A collection of basic system utilities
+Name:		util-linux
+Version:	2.22.2
+Release:	2
+License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
+Group:		System/Base
+URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
+Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-ng-login.pamd
 Source2:	util-linux-ng-remote.pamd
@@ -67,57 +43,6 @@ Source6:	su-l.pamd
 Source8:	nologin.c
 Source9:	nologin.8
 Source10:	uuidd.init
-
-### Obsoletes & Conflicts & Provides
-# old versions of util-linux have been splited to more sub-packages
-%rename		mount
-%rename		losetup
-Obsoletes:	util-linux-ng < 2.19
-Obsoletes:	util-linux <= 2.13-0.pre7.6mdv2008.0
-Provides:	util-linux = %{version}-%{release}
-Provides:	util-linux-ng = %{version}-%{release}
-# old versions of e2fsprogs provides blkid / uuidd
-Conflicts:	e2fsprogs < 1.41.8-2mnb2
-Conflicts:	setup < 2.7.18-6
-# old version of sysvinit-tools provides sulogin and utmpdump
-Conflicts:	sysvinit < 2.87-11
-# eject used to be a separate package. 2.1.5 was the last released version,
-# eject was merged into util-linux 2.22, so our %version is guaranteed to
-# be bigger than the last eject's
-Obsoletes:	eject
-Provides:	eject = %{version}-%{release}
-
-%rename		fdisk
-%rename		tunelp
-%rename		schedutils
-%ifarch alpha %{sparc} ppc
-Obsoletes:	clock < %{version}-%{release}
-%endif
-
-# setarch merge in util-linux-ng-2.13
-%rename		sparc32
-%rename		linux32
-%rename		setarch
-Requires(pre):	mktemp
-# for /bin/awk
-Requires(pre):	gawk
-# for /usr/bin/cmp
-Requires(pre):	diffutils
-Requires(pre):	coreutils
-# (tpg) add conflicts on older version dues to move su
-Conflicts:	coreutils < 8.19-2
-# (proyvind): handle sulogin being moved
-Conflicts:	sysvinit-tools < 2.87-13
-Provides:	/bin/su
-Requires:	pam >= 0.66-4
-Requires:	shadow-utils >= 4.0.3
-Requires:	%{lib_blkid} = %{version}-%{release}
-Requires:	%{lib_mount} = %{version}-%{release}
-Requires:	%{lib_uuid} = %{version}-%{release}
-%if %{include_raw}
-Requires:	udev
-%endif
-
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.22-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
@@ -128,7 +53,6 @@ Patch5:		util-linux-ng-2.13-login-lastlog.patch
 Patch8:		util-linux-ng-2.20-ipcs-32bit.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
-
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -165,6 +89,65 @@ Patch1219:	util-linux-ng-enable_fsck_cramfs.diff
 # Mandrivamove patches
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
 
+BuildRequires:	gcc
+BuildRequires:	libtool
+BuildRequires:	sed
+BuildRequires:	rpm-build >= 1:5.4.10-5
+BuildRequires:	audit-devel
+BuildRequires:	gettext-devel
+BuildRequires:	pam-devel
+%if %{with uclibc}
+BuildRequires:	uClibc-devel >= 0.9.33.2-16
+%endif
+%if !%{build_bootstrap}
+BuildRequires:	pkgconfig(ext2fs)
+%endif
+BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
+#BuildRequires:	termcap-devel
+BuildRequires:	pkgconfig(slang)
+BuildRequires:	pkgconfig(systemd)
+BuildRequires:	pkgconfig(zlib)
+
+Provides:	/bin/su
+%rename		eject
+%rename		fdisk
+%rename		linux32
+%rename		losetup
+%rename		mount
+%rename		tunelp
+%rename		sparc32
+%rename		schedutils
+%rename		setarch
+%rename		util-linux-ng
+%ifarch alpha %{sparc} ppc
+Obsoletes:	clock < %{version}-%{release}
+%endif
+# old versions of e2fsprogs provides blkid / uuidd
+Conflicts:	e2fsprogs < 1.41.8-2mnb2
+Conflicts:	setup < 2.7.18-6
+# old version of sysvinit-tools provides sulogin and utmpdump
+Conflicts:	sysvinit < 2.87-11
+# (tpg) add conflicts on older version dues to move su
+Conflicts:	coreutils < 8.19-2
+# (proyvind): handle sulogin being moved
+Conflicts:	sysvinit-tools < 2.87-13
+
+# setarch merge in util-linux-ng-2.13
+Requires(pre):	mktemp
+# for /bin/awk
+Requires(pre):	gawk
+# for /usr/bin/cmp
+Requires(pre):	diffutils
+Requires(pre):	coreutils
+Requires:	pam >= 0.66-4
+Requires:	shadow-utils >= 4.0.3
+Requires:	%{libblkid} = %{version}-%{release}
+Requires:	%{libmount} = %{version}-%{release}
+Requires:	%{libuuid} = %{version}-%{release}
+%if %{include_raw}
+Requires:	udev
+%endif
+
 %description
 The util-linux package contains a large variety of low-level system
 utilities that are necessary for a Linux system to function.  Among
@@ -181,46 +164,48 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%package -n	%{lib_blkid}
+%package -n	%{libblkid}
 Summary:	Block device ID library
 Group:		System/Libraries
 License:	LGPLv2+
-Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
+Conflicts:	%{libext2fs} < 1.41.6-2mnb2
+# MD this is because of the cmd rm and ln in the post config
+Requires(post):	coreutils
 
-%description -n %{lib_blkid}
+%description -n %{libblkid}
 This is block device identification library, part of util-linux.
 
-%package -n	uclibc-%{lib_blkid}
+%package -n	uclibc-%{libblkid}
 Summary:	Block device ID library (uClibc linked)
 Group:		System/Libraries
 License:	LGPLv2+
-Conflicts:	%{lib_ext2fs} < 1.41.6-2mnb2
+Conflicts:	%{libext2fs} < 1.41.6-2mnb2
 
-%description -n	uclibc-%{lib_blkid}
+%description -n	uclibc-%{libblkid}
 This is block device identification library, part of util-linux.
 
-%package -n	%{lib_blkid_devel}
+%package -n	%{devblkid}
 Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
-Requires:	%{lib_blkid} = %{version}-%{release}
+Requires:	%{libblkid} = %{version}-%{release}
 %if %{with uclibc}
-Requires:	uclibc-%{lib_blkid} = %{version}-%{release}
+Requires:	uclibc-%{libblkid} = %{version}-%{release}
 %endif
-Conflicts:	%{lib_ext2fs_devel} < 1.41.6-2mnb2
+Conflicts:	%{devext2fs} < 1.41.6-2mnb2
 Provides:	libblkid-devel = %{version}-%{release}
 
-%description -n	%{lib_blkid_devel}
+%description -n	%{devblkid}
 This is the block device identification development library and headers,
 part of util-linux.
 
-%package -n	%{lib_uuid}
+%package -n	%{libuuid}
 Summary:	Universally unique ID library
 Group:		System/Libraries
 License:	BSD
-Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
+Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 
-%description -n	%{lib_uuid}
+%description -n	%{libuuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -230,13 +215,13 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n	uclibc-%{lib_uuid}
+%package -n	uclibc-%{libuuid}
 Summary:	Universally unique ID library (uClibc linked)
 Group:		System/Libraries
 License:	BSD
-Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
+Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 
-%description -n	uclibc-%{lib_uuid}
+%description -n	uclibc-%{libuuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -246,18 +231,18 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n	%{lib_uuid_devel}
+%package -n	%{devuuid}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	BSD
-Conflicts:	%{lib_ext2fs} < 1.41.8-2mnb2
-Requires:	%{lib_uuid} = %{version}
+Conflicts:	%{libext2fs} < 1.41.8-2mnb2
+Requires:	%{libuuid} = %{version}
 %if %{with uclibc}
-Requires:	uclibc-%{lib_uuid} = %{version}-%{release}
+Requires:	uclibc-%{libuuid} = %{version}-%{release}
 %endif
 Provides:	libuuid-devel = %{version}-%{release}
 
-%description -n	%{lib_uuid_devel}
+%description -n	%{devuuid}
 This is the universally unique ID development library and headers,
 part of e2fsprogs.
 
@@ -279,37 +264,37 @@ The uuidd package contains a userspace daemon (uuidd) which guarantees
 uniqueness of time-based UUID generation even at very high rates on
 SMP systems.
 
-%package -n	%{lib_mount}
+%package -n	%{libmount}
 Summary:	Universal mount library
 Group:		System/Libraries
 License:	LGPLv2+
 
-%description -n	%{lib_mount}
+%description -n	%{libmount}
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
-%package -n	uclibc-%{lib_mount}
+%package -n	uclibc-%{libmount}
 Summary:	Universal mount library (uClibc linked)
 Group:		System/Libraries
 License:	LGPLv2+
 
-%description -n	uclibc-%{lib_mount}
+%description -n	uclibc-%{libmount}
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
-%package -n	%{lib_mount_devel}
+%package -n	%{devmount}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
-Requires:	%{lib_mount} = %{version}-%{release}
+Requires:	%{libmount} = %{version}-%{release}
 %if %{with uclibc}
-Requires:	uclibc-%{lib_mount} = %{version}-%{release}
+Requires:	uclibc-%{libmount} = %{version}-%{release}
 %endif
 Provides:	libmount-devel = %{version}-%{release}
 
-%description -n	%{lib_mount_devel}
+%description -n	%{devmount}
 Development files and headers for libmount library.
 
 %prep
@@ -621,7 +606,7 @@ if [ -z "$ISCHRP" ]; then
 fi
 %endif
 
-%post -n %{lib_blkid}
+%post -n %{libblkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
 [ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
 rm -f /etc/mtab
@@ -880,16 +865,16 @@ ln -sf /proc/mounts /etc/mtab
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 %dir %attr(2775, uuidd, uuidd) /var/run/uuidd
 
-%files -n %{lib_blkid}
+%files -n %{libblkid}
 %dir /etc/blkid
-/%{_lib}/libblkid.so.%{lib_blkid_major}*
+/%{_lib}/libblkid.so.%{blkid_major}*
 
 %if %{with uclibc}
-%files -n uclibc-%{lib_blkid}
-%{uclibc_root}/%{_lib}/libblkid.so.%{lib_blkid_major}*
+%files -n uclibc-%{libblkid}
+%{uclibc_root}/%{_lib}/libblkid.so.%{blkid_major}*
 %endif
 
-%files -n %{lib_blkid_devel}
+%files -n %{devblkid}
 %{_libdir}/libblkid.a
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libblkid.so
@@ -899,15 +884,15 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man3/libblkid.3*
 %{_libdir}/pkgconfig/blkid.pc
 
-%files -n %{lib_uuid}
-/%{_lib}/libuuid.so.%{lib_uuid_major}*
+%files -n %{libuuid}
+/%{_lib}/libuuid.so.%{uuid_major}*
 
 %if %{with uclibc}
-%files -n uclibc-%{lib_uuid}
-%{uclibc_root}/%{_lib}/libuuid.so.%{lib_uuid_major}*
+%files -n uclibc-%{libuuid}
+%{uclibc_root}/%{_lib}/libuuid.so.%{uuid_major}*
 %endif
 
-%files -n %{lib_uuid_devel}
+%files -n %{devuuid}
 %{_libdir}/libuuid.a
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libuuid.so
@@ -927,15 +912,15 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man3/uuid_unparse.3*
 %{_libdir}/pkgconfig/uuid.pc
 
-%files -n %{lib_mount}
-/%{_lib}/libmount.so.%{lib_mount_major}*
+%files -n %{libmount}
+/%{_lib}/libmount.so.%{mount_major}*
 
 %if %{with uclibc}
-%files -n uclibc-%{lib_mount}
-%{uclibc_root}/%{_lib}/libmount.so.%{lib_mount_major}*
+%files -n uclibc-%{libmount}
+%{uclibc_root}/%{_lib}/libmount.so.%{mount_major}*
 %endif
 
-%files -n %{lib_mount_devel}
+%files -n %{devmount}
 %{_includedir}/libmount/libmount.h
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libmount.so
