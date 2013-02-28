@@ -340,14 +340,15 @@ cp %{SOURCE8} %{SOURCE9} .
 ./autogen.sh
 
 %build
+%ifarch %{ix86}
+%global ldflags %{ldflags} -fuse-ld=bfd
+%endif
+
 %serverbuild_hardened
 unset LINGUAS || :
 
 export CONFIGURE_TOP="$PWD"
 
-%ifarch %{ix86}
-%global ldflags %{ldflags} -fuse-ld=bfd
-%endif
 %if %{with uclibc}
 mkdir -p uclibc
 pushd uclibc
