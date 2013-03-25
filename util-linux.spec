@@ -668,7 +668,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_mandir}/man8/fstrim.8*
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/swaplabel.8*
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm
+%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
 /sbin/sfdisk
 %{_mandir}/man8/sfdisk.8*
 %{_sbindir}/cfdisk
@@ -703,7 +703,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
-%ifarch %ix86 alpha ppc ppc64 %{sparcx} x86_64 %mips %arm
+%ifarch %ix86 alpha ppc ppc64 %{sparcx} x86_64 %mips %arm aarch64
 %{_bindir}/cytune
 %{_mandir}/man8/cytune.8*
 %endif
@@ -726,7 +726,7 @@ ln -sf /proc/mounts /etc/mtab
 %{_bindir}/lslocks
 %{_bindir}/mcookie
 %{_bindir}/utmpdump
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm
+%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
 %endif
