@@ -257,7 +257,12 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
+Requires(post):   systemd
 Requires(pre):	shadow-utils
+Requires(pre):	rpm-helper
+Requires(post):	rpm-helper
+Requires(preun):	rpm-helper
+Requires(postun):	rpm-helper
 
 %description -n	uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
@@ -560,7 +565,7 @@ chmod 644 misc-utils/getopt-*.{bash,tcsh}
 rm -f %{buildroot}%{_datadir}/getopt/*
 rmdir %{buildroot}%{_datadir}/getopt
 
-# link mtab 
+# link mtab
 ln -sf /proc/mounts %{buildroot}/etc/mtab
 
 # /usr/sbin -> /sbin
@@ -619,9 +624,15 @@ ln -sf /proc/mounts /etc/mtab
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
 %_pre_groupadd uuidd uuidd
 
-%preun -n uuidd
+%post -n uuidd
 systemd-tmpfiles --create uuidd.conf
+%_post_service uuidd
+
+%preun -n uuidd
 %_preun_service uuidd
+
+%postun -n uuidd
+%_postun_userdel uuidd
 
 %files -f %{name}.files
 %doc NEWS AUTHORS
