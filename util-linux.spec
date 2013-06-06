@@ -393,7 +393,8 @@ pushd uclibc
 		--disable-wall \
 		--disable-makeinstall-chown \
 		--disable-fsck \
-		--disable-raw
+		--disable-raw \
+		--enable-socket-activation
 %make
 
 popd
@@ -421,7 +422,8 @@ pushd  system
 	--disable-rpath \
 	--with-audit \
 	--enable-new-mount \
-	--enable-chfn-chsh
+	--enable-chfn-chsh \
+	--enable-socket-activation
 
 # build util-linux
 %make
