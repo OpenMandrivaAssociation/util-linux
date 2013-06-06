@@ -129,8 +129,8 @@ Conflicts:	setup < 2.7.18-6
 Conflicts:	sysvinit < 2.87-11
 # (tpg) add conflicts on older version dues to move su
 Conflicts:	coreutils < 8.19-2
-# (proyvind): handle sulogin being moved
-Conflicts:	sysvinit-tools < 2.87-13
+# (proyvind): handle sulogin, wall, mountpoint being moved
+Conflicts:	sysvinit-tools < 2.87-18
 
 # setarch merge in util-linux-ng-2.13
 Requires(pre):	mktemp
@@ -407,14 +407,14 @@ pushd  system
 	--bindir=/bin \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
-	--disable-wall \
+	--enable-wall \
 	--enable-partx \
 	--enable-login-utils \
 	--enable-kill \
 	--enable-write \
 	--enable-arch \
 	--enable-ddate \
-	--disable-mountpoint \
+	--enable-mountpoint \
 %if %{include_raw}
 	--enable-raw \
 %endif
@@ -648,7 +648,9 @@ systemd-tmpfiles --create uuidd.conf
 /bin/taskset
 /bin/ionice
 /bin/findmnt
+%{_bindir}/mountpoint
 /bin/su
+%attr(2555,root,tty) %{_bindir}/wall
 /bin/wdctl
 %if %{include_raw}
 /bin/raw
@@ -681,6 +683,8 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man8/fstrim.8*
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/swaplabel.8*
+%{_mandir}/man1/mountpoint.1*
+%{_mandir}/man1/wall.1*
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
 /sbin/sfdisk
 %{_mandir}/man8/sfdisk.8*
