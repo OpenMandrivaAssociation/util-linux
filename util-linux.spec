@@ -107,6 +107,7 @@ BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(zlib)
+BuildRequires:	pkgconfig(libcap-ng)
 
 Provides:	/bin/su
 %rename		eject
