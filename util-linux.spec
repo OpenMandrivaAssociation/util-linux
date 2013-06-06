@@ -412,8 +412,6 @@ pushd  system
 	--enable-login-utils \
 	--enable-kill \
 	--enable-write \
-	--enable-arch \
-	--enable-ddate \
 	--enable-mountpoint \
 %if %{include_raw}
 	--enable-raw \
@@ -423,7 +421,8 @@ pushd  system
 	--with-audit \
 	--enable-new-mount \
 	--enable-chfn-chsh \
-	--enable-socket-activation
+	--enable-socket-activation \
+	--enable-tunelp
 
 # build util-linux
 %make
@@ -639,7 +638,6 @@ systemd-tmpfiles --create uuidd.conf
 %files -f %{name}.files
 %doc NEWS AUTHORS
 %doc misc-utils/getopt-*.{bash,tcsh}
-/bin/arch
 /bin/dmesg
 %attr(755,root,root)	/bin/login
 /bin/lsblk
@@ -648,7 +646,9 @@ systemd-tmpfiles --create uuidd.conf
 /bin/taskset
 /bin/ionice
 /bin/findmnt
-%{_bindir}/mountpoint
+/bin/mountpoint
+/bin/nsenter
+/bin/setpriv
 /bin/su
 %attr(2555,root,tty) %{_bindir}/wall
 /bin/wdctl
@@ -666,6 +666,7 @@ systemd-tmpfiles --create uuidd.conf
 /sbin/agetty
 %{_mandir}/man8/agetty.8*
 /sbin/blkid
+/sbin/blkdiscard
 /sbin/blockdev
 /sbin/fstrim
 /sbin/pivot_root
@@ -675,6 +676,7 @@ systemd-tmpfiles --create uuidd.conf
 /sbin/partx
 /sbin/fsfreeze
 /sbin/swaplabel
+/sbin/runuser
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/addpart.8*
 %{_mandir}/man8/delpart.8*
@@ -684,6 +686,8 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/swaplabel.8*
 %{_mandir}/man1/mountpoint.1*
+%{_mandir}/man1/nsenter.1*
+     %{_mandir}/man1/setpriv.1*
 %{_mandir}/man1/wall.1*
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
 /sbin/sfdisk
@@ -724,7 +728,6 @@ systemd-tmpfiles --create uuidd.conf
 %{_bindir}/cytune
 %{_mandir}/man8/cytune.8*
 %endif
-%{_bindir}/ddate
 %{_bindir}/eject
 %ifnarch s390 s390x
 %{_sbindir}/fdformat
@@ -825,15 +828,18 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man3/uuid_generate_time_safe.3*
 %{_mandir}/man8/blockdev.8*
 %{_mandir}/man8/blkid.8*
+%{_mandir}/man8/blkdiscard.8*
 %{_mandir}/man8/ctrlaltdel.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/fdformat.8*
 %endif
 %{_mandir}/man8/findfs.8*
 %{_mandir}/man8/fsck.8*
+%{_mandir}/man8/fsck.cramfs.8*
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/lslocks.8*
 %{_mandir}/man8/mkfs.8*
+%{_mandir}/man8/mkfs.cramfs.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/pivot_root.8*
 %if %{include_raw}
@@ -863,6 +869,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man8/swapoff.8*
 %{_mandir}/man8/swapon.8*
 %{_mandir}/man8/switch_root.8*
+%{_mandir}/man1/runuser.1*
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/losetup.8*
 %lang(ru)	%{_mandir}/ru/man1/ddate.1*
@@ -884,6 +891,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_sysconfdir}/tmpfiles.d/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
+%{_datadir}/bash-completion/completions/uuidd
 
 %files -n %{libblkid}
 %dir /etc/blkid
