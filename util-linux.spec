@@ -27,8 +27,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.22.2
-Release:	3
+Version:	2.23.1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -42,7 +42,7 @@ Source5:	su.pamd
 Source6:	su-l.pamd
 Source8:	nologin.c
 Source9:	nologin.8
-Source10:	uuidd.init
+Source10:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.22-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
@@ -515,10 +515,9 @@ ln -sf ../../sbin/hwclock %{buildroot}/usr/sbin/hwclock
 ln -sf ../../sbin/clock %{buildroot}/usr/sbin/clock
 ln -sf hwclock %{buildroot}/sbin/clock
 
-# Our own initscript for uuidd
-install -D -m 755 %{SOURCE10} %{buildroot}/etc/rc.d/init.d/uuidd
+install -D -p -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
+
 # And a dirs uuidd needs that the makefiles don't create
-install -d %{buildroot}/var/run/uuidd
 install -d %{buildroot}/var/lib/libuuid
 
 # move flock in /bin, required for udev
@@ -621,6 +620,7 @@ ln -sf /proc/mounts /etc/mtab
 %_pre_groupadd uuidd uuidd
 
 %preun -n uuidd
+systemd-tmpfiles --create uuidd.conf
 %_preun_service uuidd
 
 %files -f %{name}.files
@@ -862,12 +862,11 @@ ln -sf /proc/mounts /etc/mtab
 %endif
 
 %files -n uuidd
-%{_initrddir}/uuidd
 %{_mandir}/man8/uuidd.8*
-/lib/systemd/system/uuidd.*
+%{_unitdir}/uuidd.*
+%{_sysconfdir}/tmpfiles.d/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
-%dir %attr(2775, uuidd, uuidd) /var/run/uuidd
 
 %files -n %{libblkid}
 %dir /etc/blkid
