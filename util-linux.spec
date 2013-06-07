@@ -327,7 +327,7 @@ cp %{SOURCE9} %{SOURCE10} .
 
 %patch111 -p1 -b .mkfsman
 %patch115 -p1 -b .fix-ioctl
-%patch116 -p1 -b .autodav
+#patch116 -p1 -b .autodav
 
 #%patch1100 -p1 -b .loopAES
 #%patch1101 -p0 -b .swapon-encrypted
