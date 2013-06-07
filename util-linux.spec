@@ -9,9 +9,9 @@
 %define libext2fs %mklibname ext2fs 2
 %define devext2fs %mklibname ext2fs -d
 
-%define mount_major 1
-%define libmount %mklibname mount %{mount_major}
-%define devmount %mklibname mount -d
+%define	mount_major 1
+%define	libmount %mklibname mount %{mount_major}
+%define	devmount %mklibname mount -d
 
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
@@ -22,35 +22,35 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_without	uclibc
+%bcond_without uclibc
 %endif
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.23.1
-Release:	2
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
 Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
-Source1:	util-linux-ng-login.pamd
-Source2:	util-linux-ng-remote.pamd
-Source3:	util-linux-ng-chsh-chfn.pamd
-Source4:	util-linux-ng-60-raw.rules
-Source5:	su.pamd
-Source6:	su-l.pamd
-Source8:	nologin.c
-Source9:	nologin.8
-Source10:	uuidd-tmpfiles.conf
+Source1:	util-linux-login.pamd
+Source2:	util-linux-remote.pamd
+Source3:	util-linux-chsh-chfn.pamd
+Source4:	util-linux-60-raw.rules
+Source5:	util-linux-su.pamd
+Source6:	util-linux-su-l.pamd
+Source7:	util-linux-runuser.pamd
+Source8:	util-linux-runuser-l.pamd
+Source9:	nologin.c
+Source10:	nologin.8
+Source11:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
-Patch1:		util-linux-2.22-mount-managed.patch
+Patch1:		util-linux-2.23.1-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
 Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-ng-2.13-login-lastlog.patch
-# 231192 - ipcs is not printing correct values on pLinux
-Patch8:		util-linux-ng-2.20-ipcs-32bit.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 ### Upstream patches
@@ -258,7 +258,7 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
-Requires(post):   systemd
+Requires(post):	systemd
 Requires(pre):	shadow-utils
 Requires(pre):	rpm-helper
 Requires(post):	rpm-helper
@@ -305,12 +305,11 @@ Development files and headers for libmount library.
 
 %prep
 %setup -q
-cp %{SOURCE8} %{SOURCE9} .
+cp %{SOURCE9} %{SOURCE10} .
 
 %patch1 -p1 -b .options
 %patch3 -p1 -b .atapifloppy
 %patch5 -p1 -b .lastlog
-%patch8 -p1 -b .p8
 
 # Mandriva
 %ifarch ppc
@@ -507,6 +506,8 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE3} ./chfn
   install -m 644 %{SOURCE5} ./su
   install -m 644 %{SOURCE6} ./su-l
+  install -m 644 %{SOURCE7} ./runuser
+  install -m 644 %{SOURCE8} ./runuser-l
   popd
 }
 
@@ -522,7 +523,7 @@ ln -sf ../../sbin/hwclock %{buildroot}/usr/sbin/hwclock
 ln -sf ../../sbin/clock %{buildroot}/usr/sbin/clock
 ln -sf hwclock %{buildroot}/sbin/clock
 
-install -D -p -m 644 %{SOURCE10} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
+install -D -p -m 644 %{SOURCE11} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
 
 # And a dirs uuidd needs that the makefiles don't create
 install -d %{buildroot}/var/lib/libuuid
@@ -663,6 +664,8 @@ systemd-tmpfiles --create uuidd.conf
 %config(noreplace) %{_sysconfdir}/pam.d/remote
 %config(noreplace) %{_sysconfdir}/pam.d/su
 %config(noreplace) %{_sysconfdir}/pam.d/su-l
+%config(noreplace) %{_sysconfdir}/pam.d/runuser
+%config(noreplace) %{_sysconfdir}/pam.d/runuser-l
 %ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
 /sbin/agetty
 %{_mandir}/man8/agetty.8*

@@ -1,0 +1,11 @@
+--- util-linux-2.23.1/libmount/src/optmap.c.bero	2012-08-20 14:00:10.630018001 +0200
++++ util-linux-2.23.1/libmount/src/optmap.c	2012-08-20 14:01:38.329015387 +0200
+@@ -112,6 +112,8 @@ static const struct libmnt_optmap linux_
+    { "shared",      MS_SHARED,              MNT_NOHLPS | MNT_NOMTAB }, /* Shared */
+    { "rshared",     MS_SHARED | MS_REC,     MNT_NOHLPS | MNT_NOMTAB },
+ #endif
++   { "kudzu", MNT_MS_COMMENT },
++   { "managed", MNT_MS_COMMENT },
+    { NULL, 0, 0 }
+ };
+ 
