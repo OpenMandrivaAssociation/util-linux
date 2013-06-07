@@ -649,8 +649,8 @@ systemd-tmpfiles --create uuidd.conf
 /bin/ionice
 /bin/findmnt
 /bin/mountpoint
-/bin/nsenter
-/bin/setpriv
+%{_bindir}/nsenter
+%{_bindir}/setpriv
 /bin/su
 %attr(2555,root,tty) %{_bindir}/wall
 /bin/wdctl
@@ -784,7 +784,6 @@ systemd-tmpfiles --create uuidd.conf
 %{_sbindir}/rtcwake
 %{_sbindir}/ldattach
 %{_sbindir}/resizepart
-%{_mandir}/man1/arch.1*
 %{_mandir}/man1/cal.1*
 %{_mandir}/man8/chcpu.8*
 %{_mandir}/man1/chfn.1*
@@ -793,7 +792,6 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man1/colcrt.1*
 %{_mandir}/man1/colrm.1*
 %{_mandir}/man1/column.1*
-%{_mandir}/man1/ddate.1*
 %{_mandir}/man1/eject.1*
 %{_mandir}/man1/flock.1*
 %{_mandir}/man1/fallocate.1*
@@ -876,9 +874,9 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man1/runuser.1*
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/losetup.8*
-%lang(ru)	%{_mandir}/ru/man1/ddate.1*
 /sbin/losetup
 /sbin/wipefs
+%{_datadir}/bash-completion/completions/*
 
 %if %{with uclibc}
 %files -n uclibc-%{name}
@@ -895,7 +893,6 @@ systemd-tmpfiles --create uuidd.conf
 %{_sysconfdir}/tmpfiles.d/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
-%{_datadir}/bash-completion/completions/uuidd
 
 %files -n %{libblkid}
 %dir /etc/blkid
