@@ -1,0 +1,24 @@
+--- mount/mount.c	2009-01-13 18:08:47.000000000 +0100
++++ mount/mount.c.oden	2009-01-13 18:08:56.000000000 +0100
+@@ -1129,6 +1129,7 @@ try_mount_one (const char *spec0, const 
+   /*
+    * Call mount.TYPE for types that require a separate mount program.
+    * For the moment these types are ncpfs and smbfs. Maybe also vxfs.
++   * For the moment these types are ncpfs and smbfs and davfs. Maybe also vxfs.
+    * All such special things must occur isolated in the types string.
+    */
+   if (check_special_mountprog(spec, node, types, flags, extra_opts, &status)) {
+@@ -1457,7 +1458,12 @@ mount_one (const char *spec, const char 
+ 	opts = append_opt(opts, cmdlineopts, NULL);
+ 
+ 	if (types == NULL && !mounttype && !is_existing_file(spec)) {
+-		if (strchr (spec, ':') != NULL) {
++		if((!strncmp(spec, "http://", 7))||(!strncmp(spec, "https://", 8))) {
++			types = "davfs";
++			if (verbose)
++				printf(_("mount: no type was given - "
++					"I'll assume dav because of the http[s]:// prefix\n"));
++		} else if (strchr (spec, ':') != NULL) {
+ 			types = "nfs";
+ 			if (verbose)
+ 				printf(_("mount: no type was given - "

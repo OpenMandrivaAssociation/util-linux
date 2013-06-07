@@ -62,7 +62,7 @@ Patch111:	util-linux-2.11t-mkfsman.patch
 # sparc build fix
 Patch115:	util-linux-2.22-fix-ioctl.patch
 # Autodetect davfs mount attempts
-Patch116:	util-linux-2.22-autodav.patch
+Patch116:	util-linux-2.12q-autodav.patch
 
 # crypto patches
 # loop-AES patch
