@@ -22,7 +22,7 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_without uclibc
+%bcond_with uclibc
 %endif
 
 Summary:	A collection of basic system utilities
