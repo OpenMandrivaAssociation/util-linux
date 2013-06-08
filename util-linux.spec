@@ -362,7 +362,7 @@ pushd uclibc
 		--prefix=%{uclibc_root} \
 		--exec-prefix=%{uclibc_root} \
 		--libdir=%{uclibc_root}/%{_lib} \
-        --host=%{_host} \
+		--host=%{_host} \
 		--enable-rpath=no \
 		--enable-shared=yes \
 		--enable-static=no \
@@ -430,10 +430,12 @@ pushd  system
 popd
 
 # build nologin
-gcc %{optflags} %{ldflags} -o nologin nologin.c
+# TPG plz do not use gcc, we have special macro for define compiler 
+# it named %{__cc} /usr/bin/gcc produce wrong binaries when crosscompiling
+%{__cc} %{optflags} %{ldflags} -o nologin nologin.c
 
 %ifarch ppc
-gcc clock-ppc.c %{ldflags} -o clock-ppc
+%{__cc} clock-ppc.c %{ldflags} -o clock-ppc
 %endif
 
 %install
