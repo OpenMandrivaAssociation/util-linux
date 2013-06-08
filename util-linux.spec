@@ -132,9 +132,8 @@ Conflicts:	sysvinit < 2.87-11
 Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-17
+Conflicts:	bash-completion < 2.1-1
 
-# setarch merge in util-linux-ng-2.13
-Requires(pre):	mktemp
 # for /bin/awk
 Requires(pre):	gawk
 # for /usr/bin/cmp
