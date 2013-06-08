@@ -362,6 +362,7 @@ pushd uclibc
 		--prefix=%{uclibc_root} \
 		--exec-prefix=%{uclibc_root} \
 		--libdir=%{uclibc_root}/%{_lib} \
+        --host=%{_host} \
 		--enable-rpath=no \
 		--enable-shared=yes \
 		--enable-static=no \
