@@ -884,6 +884,8 @@ systemd-tmpfiles --create uuidd.conf
 
 %if %{with uclibc}
 %files -n uclibc-%{name}
+%{uclibc_root}/sbin/blkdiscard
+%{uclibc_root}/sbin/runuser
 %{uclibc_root}/sbin/blkid
 %{uclibc_root}/sbin/mkswap
 %{uclibc_root}/sbin/sfdisk
