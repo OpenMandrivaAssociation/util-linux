@@ -28,7 +28,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.23.1
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -53,6 +53,7 @@ Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 Patch5:		util-linux-ng-2.13-login-lastlog.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
+Patch12:	util-linux-2.23.1-mkstemp.patch
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -309,6 +310,7 @@ cp %{SOURCE9} %{SOURCE10} .
 %patch1 -p1 -b .options
 %patch3 -p1 -b .atapifloppy
 %patch5 -p1 -b .lastlog
+%patch12 -p1 -b .mkstemp
 
 # Mandriva
 %ifarch ppc
@@ -430,8 +432,8 @@ pushd  system
 popd
 
 # build nologin
-# TPG plz do not use gcc, we have special macro for define compiler 
-# it named %{__cc} /usr/bin/gcc produce wrong binaries when crosscompiling
+# plz do not use gcc, we have special macro to define compiler 
+# it named %%{__cc} /usr/bin/gcc produce wrong binaries when crosscompiling
 %{__cc} %{optflags} %{ldflags} -o nologin nologin.c
 
 %ifarch ppc
