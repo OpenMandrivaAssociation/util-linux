@@ -346,7 +346,7 @@ cp %{SOURCE9} %{SOURCE10} .
 ./autogen.sh
 
 %build
-export CFLAGS="%{optflags} -Os"
+%global optflags %{optflags} -Os
 
 %ifarch %{ix86}
 %global ldflags %{ldflags} -fuse-ld=bfd
