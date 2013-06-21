@@ -28,7 +28,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.23.1
-Release:	5
+Release:	6
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -54,6 +54,8 @@ Patch5:		util-linux-ng-2.13-login-lastlog.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 Patch12:	util-linux-2.23.1-mkstemp.patch
+### Backport from v2.24 + #972457
+Patch13:	util-linux-2.23-agetty-clocal.patch
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -311,6 +313,7 @@ cp %{SOURCE9} %{SOURCE10} .
 %patch3 -p1 -b .atapifloppy
 %patch5 -p1 -b .lastlog
 %patch12 -p1 -b .mkstemp
+%patch13 -p1 -b .agetty~
 
 # Mandriva
 %ifarch ppc
