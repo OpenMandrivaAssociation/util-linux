@@ -194,6 +194,7 @@ Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libblkid} = %{version}-%{release}
+Requires:	%{devuuid} = %{version}-%{release}
 %if %{with uclibc}
 Requires:	uclibc-%{libblkid} = %{version}-%{release}
 %endif
