@@ -28,7 +28,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.23.2
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -155,6 +155,7 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
+%if %{with uclibc}
 %package -n	uclibc-%{name}
 Summary:	uClibc build of util-linux
 Group:		System/Base
@@ -164,6 +165,7 @@ The util-linux package contains a large variety of low-level system
 utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
+%endif
 
 %package -n	%{libblkid}
 Summary:	Block device ID library
@@ -176,6 +178,7 @@ Requires(post):	coreutils
 %description -n %{libblkid}
 This is block device identification library, part of util-linux.
 
+%if %{with uclibc}
 %package -n	uclibc-%{libblkid}
 Summary:	Block device ID library (uClibc linked)
 Group:		System/Libraries
@@ -184,6 +187,7 @@ Conflicts:	%{libext2fs} < 1.41.6-2mnb2
 
 %description -n	uclibc-%{libblkid}
 This is block device identification library, part of util-linux.
+%endif
 
 %package -n	%{devblkid}
 Summary:	Block device ID library
@@ -216,6 +220,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
+%if %{with uclibc}
 %package -n	uclibc-%{libuuid}
 Summary:	Universally unique ID library (uClibc linked)
 Group:		System/Libraries
@@ -231,6 +236,7 @@ space and time, with respect to the space of all UUIDs.  A UUID can
 be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
+%endif
 
 %package -n	%{devuuid}
 Summary:	Universally unique ID library
@@ -280,6 +286,7 @@ The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
+%if %{with uclibc}
 %package -n	uclibc-%{libmount}
 Summary:	Universal mount library (uClibc linked)
 Group:		System/Libraries
@@ -289,6 +296,7 @@ License:	LGPLv2+
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
+%endif
 
 %package -n	%{devmount}
 Summary:	Universally unique ID library
@@ -697,7 +705,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man8/swaplabel.8*
 %{_mandir}/man1/mountpoint.1*
 %{_mandir}/man1/nsenter.1*
-     %{_mandir}/man1/setpriv.1*
+%{_mandir}/man1/setpriv.1*
 %{_mandir}/man1/wall.1*
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
 /sbin/sfdisk
