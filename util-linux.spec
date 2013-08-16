@@ -55,9 +55,7 @@ Patch5:		util-linux-ng-2.13-login-lastlog.patch
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 Patch12:	util-linux-2.23.1-mkstemp.patch
 ### Backport from v2.24 + #972457
-Patch13:	util-linux-2.23-agetty-clocal.patch
-### 962145 - in.telnetd immediately closes connection
-Patch14:	util-linux-2.23-login-TCSANOW.patch
+Patch13:	util-linux-2.23.2-agetty-clocal.patch
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -325,7 +323,6 @@ cp %{SOURCE9} %{SOURCE10} .
 %patch5 -p1 -b .lastlog
 %patch12 -p1 -b .mkstemp
 %patch13 -p1 -b .agetty~
-%patch14 -p1 -b .telnetd~
 
 # Mandriva
 %ifarch ppc
