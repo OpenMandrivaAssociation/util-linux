@@ -319,7 +319,7 @@ cp %{SOURCE9} %{SOURCE10} .
 %patch1 -p1 -b .options
 %patch3 -p1 -b .atapifloppy
 %patch5 -p1 -b .lastlog
-%patch12 -p1 -b .mkstemp
+#patch12 -p1 -b .mkstemp
 
 # Mandriva
 %ifarch ppc
