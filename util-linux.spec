@@ -27,8 +27,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.23.2
-Release:	2.1
+Version:	2.24
+Release:	1.1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -53,9 +53,6 @@ Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 Patch5:		util-linux-ng-2.13-login-lastlog.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
-Patch12:	util-linux-2.23.1-mkstemp.patch
-### Backport from v2.24 + #972457
-Patch13:	util-linux-2.23.2-agetty-clocal.patch
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -321,8 +318,6 @@ cp %{SOURCE9} %{SOURCE10} .
 %patch1 -p1 -b .options
 %patch3 -p1 -b .atapifloppy
 %patch5 -p1 -b .lastlog
-%patch12 -p1 -b .mkstemp
-%patch13 -p1 -b .agetty~
 
 # Mandriva
 %ifarch ppc
@@ -977,208 +972,3 @@ systemd-tmpfiles --create uuidd.conf
 %{_libdir}/libmount.so
 %{_libdir}/libmount.*a
 %{_libdir}/pkgconfig/mount.pc
-
-%changelog
-* Wed Dec 13 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22.2-1
-- new version
-
-* Wed Dec 12 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-7
-- rebuild on ABF
-
-* Sun Oct 28 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-6
-+ Revision: 820149
-- fix license
-- use %%uclibc_configure macro
-- drop patch for pulling in libintl, it's now rather done by latest uClibc
-- reupload again due to package going missing in repos..
-
-* Thu Oct 04 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-5
-+ Revision: 818412
-- make sure that we pull in latest rpm to get proper uclibc() deps
-- add conflicts on older sysvinit-tools to handle sulogin being moved
-
-* Thu Oct 04 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-4
-+ Revision: 818396
-- rebuild with fixed rpm for uclibc() deps
-
-* Thu Oct 04 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-3
-+ Revision: 818357
-- make ncurses dependency versioned so that we're sure to pull in latest
-- bump versioned uClibc-devel buildrequires
-- build more uclibc linkd binaries
-
-* Mon Sep 24 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.22-2
-+ Revision: 817423
-- don't bother passing '-fno-strict-aliasing'
-- SILENCE: actually do the build of blkid as well
-- package uClibc linked blkid
-- add missing dependencies on uclibc libs for library packages
-- be sure to build against latest uClibc with locale enabled
-- fix and change to dynamic build against uclibc
-- do uClibc build of libmount also
-
-* Thu Sep 06 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.22-1
-+ Revision: 816422
-- Update to 2.22 final
-
-  + Tomasz Pawel Gajc <tpg@mandriva.org>
-    - spec file clean
-
-* Sat Aug 25 2012 Tomasz Pawel Gajc <tpg@mandriva.org> 2.22-0.rc2.2
-+ Revision: 815746
-- move su.pamd and su-l.pamd from coreutils (needed for working su auth)
-- add conflicts on coreutils older than 8.19-2
-- add provides on /bin/su
-
-* Mon Aug 20 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.22-0.rc2.1
-+ Revision: 815458
-- BuildRequires pkgconfig(systemd) for uuidd startup files
-- Update to 2.22-rc2
-
-* Tue Jun 19 2012 Tomasz Pawel Gajc <tpg@mandriva.org> 2.21.2-4
-+ Revision: 806266
-- use %%serverbuild_hardened macro
-- enable --enable-new-mount (finally mount can handle x-* fstab options, like x-gvfs-show)
-
-* Mon Jun 04 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.21.2-3
-+ Revision: 802398
-- add conflicts on util-linux 2.7.18-6 to avoid file conflicts with /etc/mtab
-
-* Tue May 29 2012 Guilherme Moro <guilherme@mandriva.com> 2.21.2-2
-+ Revision: 801040
-- Own mtab now
-  fix unused BR
-
-* Sat May 26 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.21.2-1
-+ Revision: 800780
-- Update to 2.21.2
-
-* Fri Mar 30 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.21.1-1
-+ Revision: 788387
-- Update to 2.21.1
-
-  + Per Øyvind Karlsen <peroyvind@mandriva.org>
-    - s/util-linux-ng/util-linux/
-
-* Wed Mar 07 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.21-3
-+ Revision: 782727
-- s/sunsparc/sparcx/
-- rebuild with internal dependency generator
-
-* Tue Mar 06 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.21-2
-+ Revision: 782473
-- Fix login.defs parser in /bin/login, bug #65355
-
-* Sun Feb 26 2012 Bernhard Rosenkraenzer <bero@bero.eu> 2.21-1
-+ Revision: 780810
-- Update to 2.21
-
-* Sun Feb 19 2012 Tomasz Pawel Gajc <tpg@mandriva.org> 2.20.1-1
-+ Revision: 777496
-- update to new version 2.20.1
-- fix find_lang macro
-
-* Fri Feb 10 2012 Oden Eriksson <oeriksson@mandriva.com> 2.20-2
-+ Revision: 772468
-- fix deps
-
-  + Per Øyvind Karlsen <peroyvind@mandriva.org>
-    - drop uclibc build for now as it segfaults
-    - rebuild without libtool .la files
-
-* Sun Sep 04 2011 Tomasz Pawel Gajc <tpg@mandriva.org> 2.20-1
-+ Revision: 698245
-- update to new version 2.20
-- rediff patches 3, 8, 115. 1202, 1212
-- enable ddate
-- disable mountpoint (already in systemd)
-
-* Sat Jul 16 2011 Eugeni Dodonov <eugeni@mandriva.com> 2.19.1-1
-+ Revision: 690114
-- New version 2.19.1.
-
-* Tue May 10 2011 Per Øyvind Karlsen <peroyvind@mandriva.org> 2.19-3
-+ Revision: 673175
-- link stuff with %%ldflags..
-- enable uClibc build
-- cleanups
-- cleanups
-
-* Tue Apr 05 2011 Funda Wang <fwang@mandriva.org> 2.19-2
-+ Revision: 650758
-- rebuild to obosletes old packages
-
-* Wed Mar 30 2011 Eugeni Dodonov <eugeni@mandriva.com> 2.19-1
-+ Revision: 649155
-- Add libtool to BR
-- Update to util-linux 2.19.
-  Drop P20 and P21 (upstream)
-  Rediff P116, P1207 and P1218.
-- Util-linux-ng was renamed back to util-linux with 2.19 version.
-
-* Sat Jan 01 2011 Funda Wang <fwang@mandriva.org> 2.18-3mdv2011.0
-+ Revision: 627160
-- add conflicts on ossp_uuid
-
-* Mon Nov 29 2010 Andrey Borzenkov <arvidjaar@mandriva.org> 2.18-2mdv2011.0
-+ Revision: 603118
-- P20: agetty -s/-c support with fixes (GIT)
-  P21: fsck -l support with whole disk locking fix (GIT)
-
-* Sun Sep 05 2010 Tomasz Pawel Gajc <tpg@mandriva.org> 2.18-1mdv2011.0
-+ Revision: 576013
-- update to new version 2.18
-- drop patches 15, 20 and 1220 as they were fixed by upstream
-- update patch 1100
-- rediff patch 1300
-- package libmount
-- protect majors everywhere
-- compile with Os flag
-- spec file clean
-
-* Wed Jun 09 2010 Herton Ronaldo Krzesinski <herton@mandriva.com.br> 2.17.1-5mdv2010.1
-+ Revision: 547295
-- Apply "libblkid: fix infinite loop when probe chain bails out early"
-  from upstream git, fixes mkinitrd hangs in nash for some users
-  (#58697).
-
-* Wed Mar 31 2010 Frederic Crozat <fcrozat@mandriva.com> 2.17.1-4mdv2010.1
-+ Revision: 530431
-- Replace file-dependencies with package dependencies
-
-* Mon Mar 22 2010 Eugeni Dodonov <eugeni@mandriva.com> 2.17.1-3mdv2010.1
-+ Revision: 526669
-- Requiring both ncurses-devel and ncursesw-devel.
-- cfdisk requires libncursesw to work properly in utf-8 environments (#58277)
-
-* Mon Mar 15 2010 Herton Ronaldo Krzesinski <herton@mandriva.com.br> 2.17.1-2mdv2010.1
-+ Revision: 519122
-- libblkid: reset BLKID_TINY_DEV flag in blkid_probe_set_device
-  (from Pascal Terjan). For example, fixes devices not detected
-  anymore by nash-resolveDevice on some systems.
-
-* Wed Feb 24 2010 Thomas Backlund <tmb@mandriva.org> 2.17.1-1mdv2010.1
-+ Revision: 510759
-- update to 2.17.1
-- drop P12 (drbd crash fix, merged upstream)
-- rediff P1100 (loop-AES support)
-
-* Thu Feb 11 2010 Pascal Terjan <pterjan@mandriva.org> 2.17-2mdv2010.1
-+ Revision: 504375
-- Upstream patch fixing a crash in libblkid (#57325)
-
-* Mon Jan 25 2010 Eugeni Dodonov <eugeni@mandriva.com> 2.17-1mdv2010.1
-+ Revision: 496133
-- Update to 2.17.
-  Drop P10 (no longer used and dropped upstream).
-
-  + Per Øyvind Karlsen <peroyvind@mandriva.org>
-    - add uclibc static library to %%files conditionally
-    - build uclibc linked static libraries
-
-* Tue Dec 01 2009 Eugeni Dodonov <eugeni@mandriva.com> 2.16.2-1mdv2010.1
-+ Revision: 472224
-- Updated to 2.16.2.
-  Rediff loopAES patch.
-  Drop P12,P13,P14,P15 (merged upstream).
-
