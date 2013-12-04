@@ -28,7 +28,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.24
-Release:	1.1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -50,9 +50,14 @@ Patch1:		util-linux-2.23.1-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
 Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
-Patch5:		util-linux-ng-2.13-login-lastlog.patch
+Patch5:		2.23-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
+# backport from v2.25: 1022217 - fdisk mishandles GPT corruption
+Patch21:	2.25-libfdisk-gpt-recovery.patch
+# backport from v2.25 (or v2.24.1) #1031262 - lsblk -D segfault
+Patch22:	2.25-lsblk-D-segfault.patch
+
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -315,9 +320,11 @@ Development files and headers for libmount library.
 %setup -q
 cp %{SOURCE9} %{SOURCE10} .
 
-%patch1 -p1 -b .options
-%patch3 -p1 -b .atapifloppy
-%patch5 -p1 -b .lastlog
+%patch1 -p1 -b .options~
+%patch3 -p1 -b .atapifloppy~
+%patch5 -p1 -b .lastlog~
+%patch21 -p1 -b .gpt~
+%patch22 -p1 -b .lsblk~
 
 # Mandriva
 %ifarch ppc
