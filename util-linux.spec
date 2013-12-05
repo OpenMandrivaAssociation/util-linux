@@ -411,7 +411,8 @@ pushd uclibc
 		--disable-raw \
 		--disable-runuser \
 		--disable-nologin \
-		--enable-socket-activation
+		--enable-socket-activation \
+		--with-systemdsystemunitdir=%{_unitdir}
 %make
 
 popd
@@ -439,7 +440,8 @@ pushd  system
 	--enable-chfn-chsh \
 	--enable-socket-activation \
 	--enable-tunelp \
-	--enable-nologin
+	--enable-nologin \
+	--with-systemdsystemunitdir=%{_unitdir}
 
 # build util-linux
 %make
