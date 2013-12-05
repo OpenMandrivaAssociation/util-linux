@@ -137,7 +137,7 @@ Conflicts:	sysvinit < 2.87-11
 # (tpg) add conflicts on older version dues to move su
 Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
-Conflicts:	sysvinit-tools < 2.87-17
+Conflicts:	sysvinit-tools < 2.87-18
 Conflicts:	bash-completion < 2.1-1
 
 # for /bin/awk
