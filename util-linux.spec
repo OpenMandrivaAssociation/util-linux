@@ -428,7 +428,6 @@ pushd  system
 	--libdir=/%{_lib} \
 	--enable-wall \
 	--enable-partx \
-	--enable-login-utils \
 	--enable-kill \
 	--enable-write \
 	--enable-mountpoint \
@@ -438,7 +437,6 @@ pushd  system
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
-	--enable-new-mount \
 	--enable-chfn-chsh \
 	--enable-socket-activation \
 	--enable-tunelp
