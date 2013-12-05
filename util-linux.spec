@@ -42,8 +42,6 @@ Source5:	util-linux-su.pamd
 Source6:	util-linux-su-l.pamd
 Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
-Source9:	nologin.c
-Source10:	nologin.8
 Source11:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.23.1-mount-managed.patch
@@ -318,7 +316,6 @@ Development files and headers for libmount library.
 
 %prep
 %setup -q
-cp %{SOURCE9} %{SOURCE10} .
 
 %patch1 -p1 -b .options~
 %patch3 -p1 -b .atapifloppy~
@@ -333,15 +330,15 @@ cp %{SOURCE9} %{SOURCE10} .
 %endif
 
 #LSB (sb)
-%patch1202 -p1 -b .chfnlsb
+%patch1202 -p1 -b .chfnlsb~
 
 #fix build on alpha with newer kernel-headers
 %ifarch alpha
 %patch1203 -p1
 %endif
 
-%patch111 -p1 -b .mkfsman
-%patch115 -p1 -b .fix-ioctl
+%patch111 -p1 -b .mkfsman~
+%patch115 -p1 -b .fix-ioctl~
 #patch116 -p1 -b .autodav
 
 #%patch1100 -p1 -b .loopAES
@@ -413,6 +410,7 @@ pushd uclibc
 		--disable-fsck \
 		--disable-raw \
 		--disable-runuser \
+		--disable-nologin \
 		--enable-socket-activation
 %make
 
@@ -426,6 +424,7 @@ pushd  system
 	--bindir=/bin \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
+	--enable-static=yes \
 	--enable-wall \
 	--enable-partx \
 	--enable-kill \
@@ -439,17 +438,13 @@ pushd  system
 	--with-audit \
 	--enable-chfn-chsh \
 	--enable-socket-activation \
-	--enable-tunelp
+	--enable-tunelp \
+	--enable-nologin
 
 # build util-linux
 %make
 
 popd
-
-# build nologin
-# plz do not use gcc, we have special macro to define compiler 
-# it named %%{__cc} /usr/bin/gcc produce wrong binaries when crosscompiling
-%{__cc} %{optflags} %{ldflags} -o nologin nologin.c
 
 %ifarch ppc
 %{__cc} clock-ppc.c %{ldflags} -o clock-ppc
@@ -469,21 +464,17 @@ install -m755 uclibc/setterm -D %{buildroot}%{uclibc_root}%{_bindir}/setterm
 
 mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
 for l in lib{blkid,mount,uuid}.so; do
-	rm -f %{buildroot}%{uclibc_root}/%{_lib}/$l
+	rm %{buildroot}%{uclibc_root}/%{_lib}/$l
 	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
 for bin in blockdev cfdisk chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
 	hwclock mkfs mkfs.bfs mkfs.minix swapoff swapon wipefs; do
-	rm -f %{buildroot}%{uclibc_root}/sbin/$bin
+	rm %{buildroot}%{uclibc_root}/sbin/$bin
 done
 %endif
 
 # install util-linux
-%makeinstall_std -C system install DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
-
-# install nologin
-install -m 755 nologin %{buildroot}/sbin
-install -m 644 nologin.8 %{buildroot}%{_mandir}/man8
+%makeinstall_std -C system DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
 
 %if %{include_raw}
 echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
@@ -500,7 +491,7 @@ echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
 perl -pi -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
 
 %ifarch %{sparcx}
-rm -rf %{buildroot}%{_bindir}/sunhostid
+rm %{buildroot}%{_bindir}/sunhostid
 cat << E-O-F > %{buildroot}%{_bindir}/sunhostid
 #!/bin/sh
 # this should be %{_bindir}/sunhostid or somesuch.
@@ -555,37 +546,27 @@ for p in flock logger ionice; do
 	ln -sf ../../bin/$p %{buildroot}%{_bindir}/$p
 done
 
-# remove stuff we don't want
-rm -f %{buildroot}%{_mandir}/man1/{line,newgrp,pg}.1*
-rm -f %{buildroot}%{_bindir}/{line,newgrp,pg}
-
 # Final cleanup
 %ifarch %no_hwclock_archs
-rm -f %{buildroot}/sbin/{hwclock,clock} %{buildroot}%{_mandir}/man8/hwclock.8* %{buildroot}/usr/sbin/{hwclock,clock}
+rm %{buildroot}/sbin/{hwclock,clock} %{buildroot}%{_mandir}/man8/hwclock.8* %{buildroot}/usr/sbin/{hwclock,clock}
 %endif
 %ifarch s390 s390x
-rm -f %{buildroot}/usr/{bin,sbin}/{fdformat,tunelp,floppy} %{buildroot}%{_mandir}/man8/{fdformat,tunelp,floppy}.8*
+rm %{buildroot}/usr/{bin,sbin}/{fdformat,tunelp,floppy} %{buildroot}%{_mandir}/man8/{fdformat,tunelp,floppy}.8*
 %endif
 
 # deprecated commands
-for I in /sbin/mkfs.bfs \
-	/usr/bin/chkdupexe \
-	%{_bindir}/scriptreplay
-	do
-	rm -f %{buildroot}$I
+for I in /sbin/mkfs.bfs %{_bindir}/scriptreplay; do
+	rm %{buildroot}$I
 done
 
 # deprecated man pages
-for I in man1/chkdupexe.1 \
-	man8/mkfs.bfs.8 man1/scriptreplay.1; do
-	rm -rf %{buildroot}%{_mandir}/${I}*
+for I in man8/mkfs.bfs.8 man1/scriptreplay.1; do
+	rm %{buildroot}%{_mandir}/${I}*
 done
 
 # we install getopt/getopt-*.{bash,tcsh} as doc files
 # note: versions <=2.12 use path "%{_datadir}/misc/getopt/*"
 chmod 644 misc-utils/getopt-*.{bash,tcsh}
-rm -f %{buildroot}%{_datadir}/getopt/*
-rmdir %{buildroot}%{_datadir}/getopt
 
 # link mtab
 ln -sf /proc/mounts %{buildroot}/etc/mtab
@@ -610,9 +591,6 @@ for I in raw; do
 		mv %{buildroot}/sbin/$I %{buildroot}/bin/$I
 	fi
 done
-
-# remove vipw and vigr, they belong in shadow-utils
-rm -f %{buildroot}%{_sbindir}/{vipw,vigr} %{buildroot}%{_mandir}/man8/{vigr,vipw}.*
 
 %find_lang %{name} %{name}.lang
 
@@ -763,13 +741,16 @@ systemd-tmpfiles --create uuidd.conf
 %{_bindir}/ipcrm
 %{_bindir}/ipcs
 %{_bindir}/isosize
+%{_bindir}/last
+%{_bindir}/lastb
 /bin/logger
 %{_bindir}/logger
 %{_bindir}/look
 %{_bindir}/lslocks
 %{_bindir}/mcookie
+%{_bindir}/mesg
 %{_bindir}/utmpdump
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
+%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
 %endif
@@ -777,7 +758,8 @@ systemd-tmpfiles --create uuidd.conf
 /sbin/mkfs.minix
 /sbin/chcpu
 %{_bindir}/namei
-%_bindir/prlimit
+%{_bindir}/pg
+%{_bindir}/prlimit
 %{_bindir}/rename
 %{_bindir}/renice
 %{_bindir}/rev
@@ -817,12 +799,16 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man1/getopt.1*
 %{_mandir}/man1/hexdump.1*
 %{_mandir}/man1/kill.1*
+%{_mandir}/man1/last.1*
+%{_mandir}/man1/lastb.1*
 %{_mandir}/man1/logger.1*
 %{_mandir}/man1/login.1*
 %{_mandir}/man1/look.1*
 %{_mandir}/man1/mcookie.1*
+%{_mandir}/man1/mesg.1*
 %{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
+%{_mandir}/man1/pg.1*
 %{_mandir}/man1/prlimit.1*
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/rev.1*
