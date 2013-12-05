@@ -22,7 +22,8 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_without uclibc
+%bcond_without	uclibc
+%bcond_without	python
 %endif
 
 Summary:	A collection of basic system utilities
@@ -315,6 +316,20 @@ Provides:	libmount-devel = %{version}-%{release}
 %description -n	%{devmount}
 Development files and headers for libmount library.
 
+%if %{with python}
+%package -n	python-libmount
+Summary:	Python bindings for the libmount library
+Group:		Development/Python
+Requires:	%{libmount} = %{EVRD}
+BuildRequires:	pkgconfig(python2)
+
+%description -n python-libmount
+The libmount-python package contains a module that permits applications
+written in the Python programming language to use the interface
+supplied by the libmount library to work with mount tables (fstab,
+mountinfo, etc) and mount filesystems.
+%endif
+
 %prep
 %setup -q
 
@@ -443,6 +458,7 @@ pushd  system
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
+	--with-python=2 \
 	--without-selinux \
 	--with-udev \
 	--with-utempter \
@@ -972,5 +988,12 @@ systemd-tmpfiles --create uuidd.conf
 %{uclibc_root}%{_libdir}/libmount.so
 %endif
 %{_libdir}/libmount.so
-%{_libdir}/libmount.*a
+%{_libdir}/libmount.a
 %{_libdir}/pkgconfig/mount.pc
+
+%if %{with python}
+%files -n python-libmount
+%dir %{python_sitearch}/libmount
+%{python_sitearch}/libmount/__init__.py
+%{python_sitearch}/libmount/pylibmount.so
+%endif
