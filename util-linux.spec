@@ -414,7 +414,11 @@ pushd uclibc
 		--disable-nologin \
 		--enable-socket-activation \
 		--with-systemdsystemunitdir=%{_unitdir} \
-		--with-utempter
+		--without-audit \
+		--without-python \
+		--without-selinux \
+		--with-udev \
+		--with-utempter 
 %make
 
 popd
@@ -439,12 +443,14 @@ pushd  system
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
+	--without-selinux \
+	--with-udev \
+	--with-utempter \
 	--enable-chfn-chsh \
 	--enable-socket-activation \
 	--enable-tunelp \
 	--enable-nologin \
 	--with-systemdsystemunitdir=%{_unitdir} \
-	--with-utempter
 
 # build util-linux
 %make
