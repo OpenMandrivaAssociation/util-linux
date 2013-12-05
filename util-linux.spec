@@ -99,6 +99,7 @@ BuildRequires:	rpm-build >= 1:5.4.10-5
 BuildRequires:	audit-devel
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
+BuildRequires:	utempter-devel
 %if %{with uclibc}
 BuildRequires:	uClibc-devel >= 0.9.33.2-16
 %endif
@@ -412,7 +413,8 @@ pushd uclibc
 		--disable-runuser \
 		--disable-nologin \
 		--enable-socket-activation \
-		--with-systemdsystemunitdir=%{_unitdir}
+		--with-systemdsystemunitdir=%{_unitdir} \
+		--with-utempter
 %make
 
 popd
@@ -441,7 +443,8 @@ pushd  system
 	--enable-socket-activation \
 	--enable-tunelp \
 	--enable-nologin \
-	--with-systemdsystemunitdir=%{_unitdir}
+	--with-systemdsystemunitdir=%{_unitdir} \
+	--with-utempter
 
 # build util-linux
 %make
