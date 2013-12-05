@@ -107,12 +107,13 @@ BuildRequires:	uClibc-devel >= 0.9.33.2-16
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
 %endif
+BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
+BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
-BuildRequires:	pkgconfig(libcap-ng)
 
 Provides:	/bin/su
 %rename		eject
