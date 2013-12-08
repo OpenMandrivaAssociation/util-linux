@@ -1,0 +1,36 @@
+diff -Naur util-linux-2.24/lib/fileutils.c util-linux-2.24.tpg/lib/fileutils.c
+--- util-linux-2.24/lib/fileutils.c	2013-09-18 13:50:12.000000000 +0000
++++ util-linux-2.24.tpg/lib/fileutils.c	2013-12-08 10:49:58.208429307 +0000
+@@ -37,7 +37,7 @@
+ 		xasprintf(&localtmp, "%s/%s.XXXXXX", _PATH_TMP,
+ 			  program_invocation_short_name);
+ 	old_mode = umask(077);
+-	fd = mkostemp(localtmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
++	fd = mkstemp(localtmp);
+ 	umask(old_mode);
+ 	if (fd == -1) {
+ 		free(localtmp);
+diff -Naur util-linux-2.24/libblkid/src/save.c util-linux-2.24.tpg/libblkid/src/save.c
+--- util-linux-2.24/libblkid/src/save.c	2013-10-09 08:48:26.000000000 +0000
++++ util-linux-2.24.tpg/libblkid/src/save.c	2013-12-08 10:50:30.880313228 +0000
+@@ -113,7 +113,7 @@
+ 		tmp = malloc(strlen(filename) + 8);
+ 		if (tmp) {
+ 			sprintf(tmp, "%s-XXXXXX", filename);
+-			fd = mkostemp(tmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
++			fd = mkstemp(tmp);
+ 			if (fd >= 0) {
+ 				if (fchmod(fd, 0644) != 0)
+ 					DBG(SAVE, blkid_debug("%s: fchmod failed", filename));
+diff -Naur util-linux-2.24/libmount/src/utils.c util-linux-2.24.tpg/libmount/src/utils.c
+--- util-linux-2.24/libmount/src/utils.c	2013-10-10 10:44:17.000000000 +0000
++++ util-linux-2.24.tpg/libmount/src/utils.c	2013-12-08 10:50:54.308947461 +0000
+@@ -848,7 +848,7 @@
+ 	 */
+ 	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP|
+ 			S_IROTH|S_IWOTH|S_IXOTH);
+-	fd = mkostemp(n, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
++	fd = mkstemp(n);
+ 	if (fd < 0)
+ 		fd = -errno;
+ 	umask(oldmode);

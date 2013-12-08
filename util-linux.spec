@@ -53,7 +53,7 @@ Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 Patch5:		util-linux-ng-2.13-login-lastlog.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
-Patch12:	util-linux-2.23.1-mkstemp.patch
+Patch12:	util-linux-2.24-mkstemp.patch
 ### Upstream patches
 
 ### Mandriva Specific patches
@@ -319,7 +319,7 @@ cp %{SOURCE9} %{SOURCE10} .
 %patch1 -p1 -b .options
 %patch3 -p1 -b .atapifloppy
 %patch5 -p1 -b .lastlog
-#patch12 -p1 -b .mkstemp
+%patch12 -p1 -b .mkstemp
 
 # Mandriva
 %ifarch ppc
