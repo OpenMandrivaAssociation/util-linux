@@ -581,7 +581,6 @@ done
 # note: versions <=2.12 use path "%{_datadir}/misc/getopt/*"
 chmod 644 misc-utils/getopt-*.{bash,tcsh}
 rm -f %{buildroot}%{_datadir}/getopt/*
-rmdir %{buildroot}%{_datadir}/getopt
 
 # link mtab
 ln -sf /proc/mounts %{buildroot}/etc/mtab
