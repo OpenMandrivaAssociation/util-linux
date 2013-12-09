@@ -759,6 +759,9 @@ systemd-tmpfiles --create uuidd.conf
 %{_bindir}/ipcs
 %{_bindir}/isosize
 /bin/logger
+%{_bindir}/last
+%{_bindir}/lastb
+%{_bindir}/mesg
 %{_bindir}/logger
 %{_bindir}/look
 %{_bindir}/lslocks
@@ -812,9 +815,12 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man1/getopt.1*
 %{_mandir}/man1/hexdump.1*
 %{_mandir}/man1/kill.1*
+%{_mandir}/man1/last.1.*
+%{_mandir}/man1/lastb.1.*
 %{_mandir}/man1/logger.1*
 %{_mandir}/man1/login.1*
 %{_mandir}/man1/look.1*
+%{_mandir}/man1/mesg.1.*
 %{_mandir}/man1/mcookie.1*
 %{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
@@ -897,6 +903,7 @@ systemd-tmpfiles --create uuidd.conf
 %{uclibc_root}/sbin/blkdiscard
 %{uclibc_root}/sbin/runuser
 %{uclibc_root}/sbin/blkid
+%{uclibc_root}/sbin/nologin
 %{uclibc_root}/sbin/mkswap
 %{uclibc_root}/sbin/sfdisk
 %{uclibc_root}/sbin/swaplabel
