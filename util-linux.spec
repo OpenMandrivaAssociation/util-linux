@@ -435,6 +435,7 @@ pushd  system
 	--enable-new-mount \
 	--enable-chfn-chsh \
 	--enable-socket-activation \
+	--enable-static \
 	--enable-tunelp
 
 # build util-linux
