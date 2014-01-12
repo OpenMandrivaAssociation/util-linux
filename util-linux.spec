@@ -42,8 +42,6 @@ Source5:	util-linux-su.pamd
 Source6:	util-linux-su-l.pamd
 Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
-Source9:	nologin.c
-Source10:	nologin.8
 Source11:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.23.1-mount-managed.patch
@@ -314,7 +312,6 @@ Development files and headers for libmount library.
 
 %prep
 %setup -q
-cp %{SOURCE9} %{SOURCE10} .
 
 %patch1 -p1 -b .options
 %patch3 -p1 -b .atapifloppy
@@ -436,17 +433,13 @@ pushd  system
 	--enable-chfn-chsh \
 	--enable-socket-activation \
 	--enable-static \
+    --enable-socket-activation \
 	--enable-tunelp
 
 # build util-linux
 %make
 
 popd
-
-# build nologin
-# plz do not use gcc, we have special macro to define compiler 
-# it named %%{__cc} /usr/bin/gcc produce wrong binaries when crosscompiling
-%{__cc} %{optflags} %{ldflags} -o nologin nologin.c
 
 %ifarch ppc
 %{__cc} clock-ppc.c %{ldflags} -o clock-ppc
@@ -478,9 +471,6 @@ done
 # install util-linux
 %makeinstall_std -C system install DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
 
-# install nologin
-install -m 755 nologin %{buildroot}/sbin
-install -m 644 nologin.8 %{buildroot}%{_mandir}/man8
 
 %if %{include_raw}
 echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
