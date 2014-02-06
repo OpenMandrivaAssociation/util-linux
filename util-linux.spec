@@ -28,7 +28,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.23.2
-Release:	6
+Release:	7
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -636,8 +636,10 @@ fi
 %post -n %{libblkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
 [ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
-rm -f /etc/mtab
-ln -sf /proc/mounts /etc/mtab
+if [ -e /etc/mtab ]; then 
+	rm -f /etc/mtab
+	ln -sf /proc/mounts /etc/mtab
+fi
 
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
