@@ -625,8 +625,10 @@ fi
 %post -n %{libblkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
 [ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
-rm -f /etc/mtab
-ln -sf /proc/mounts /etc/mtab
+if [ -e /etc/mtab ]; then
+	rm -f /etc/mtab
+	ln -sf /proc/mounts /etc/mtab
+fi
 
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
