@@ -28,8 +28,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.24
-Release:	2
+Version:	2.24.1
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -52,10 +52,7 @@ Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
 Patch5:		2.23-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
-# backport from v2.25: 1022217 - fdisk mishandles GPT corruption
-Patch21:	2.25-libfdisk-gpt-recovery.patch
-# backport from v2.25 (or v2.24.1) #1031262 - lsblk -D segfault
-Patch22:	2.25-lsblk-D-segfault.patch
+Patch12:	util-linux-2.24-mkstemp.patch
 
 ### Upstream patches
 
@@ -337,8 +334,7 @@ mountinfo, etc) and mount filesystems.
 %patch1 -p1 -b .options~
 %patch3 -p1 -b .atapifloppy~
 %patch5 -p1 -b .lastlog~
-%patch21 -p1 -b .gpt~
-%patch22 -p1 -b .lsblk~
+%patch12 -p1 -b .mkstemp
 
 # Mandriva
 %ifarch ppc
@@ -645,8 +641,10 @@ fi
 %post -n %{libblkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
 [ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
-rm -f /etc/mtab
-ln -sf /proc/mounts /etc/mtab
+if [ -e /etc/mtab ]; then
+	rm -f /etc/mtab
+	ln -sf /proc/mounts /etc/mtab
+fi
 
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
@@ -769,9 +767,9 @@ systemd-tmpfiles --create uuidd.conf
 %{_bindir}/ipcrm
 %{_bindir}/ipcs
 %{_bindir}/isosize
+/bin/logger
 %{_bindir}/last
 %{_bindir}/lastb
-/bin/logger
 %{_bindir}/logger
 %{_bindir}/look
 %{_bindir}/lslocks
@@ -828,7 +826,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_mandir}/man1/hexdump.1*
 %{_mandir}/man1/kill.1*
 %{_mandir}/man1/last.1*
-%{_mandir}/man1/lastb.1*
+%{_mandir}/man1/lastb.1.*
 %{_mandir}/man1/logger.1*
 %{_mandir}/man1/login.1*
 %{_mandir}/man1/look.1*

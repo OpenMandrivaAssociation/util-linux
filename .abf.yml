@@ -1,6 +1,2 @@
----
-removed_sources:
-  util-linux-2.23.1.tar.xz: 1535e073418244d14c670858cc9d273d6442d9c3
-  util-linux-2.23.2.tar.xz: 1c3023304dd66663fd314bee424d7cc829fff538
 sources:
-  util-linux-2.24.tar.xz: 258bc5b6c82f0d997ff464ccf2eb16f2d32d7e79
+  util-linux-2.24.1.tar.xz: ecf75bbb77bba874fc11fc27423aa67b395b7ae5
