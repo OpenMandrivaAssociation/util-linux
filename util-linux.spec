@@ -29,7 +29,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.24.1
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -393,7 +393,7 @@ pushd uclibc
 		--host=%{_host} \
 		--enable-rpath=no \
 		--enable-shared=yes \
-		--enable-static=no \
+		--enable-static=yes \
 		--disable-chfn-chsh \
 		--enable-libuuid \
 		--enable-libblkid \
@@ -490,6 +490,9 @@ mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
 for l in lib{blkid,mount,uuid}.so; do
 	rm %{buildroot}%{uclibc_root}/%{_lib}/$l
 	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
+done
+for l in lib{blkid,mount,uuid}.a; do
+	mv %{buildroot}%{uclibc_root}/%{_lib}/$l %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
 for bin in blockdev cfdisk chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
 	hwclock mkfs mkfs.bfs mkfs.minix swapoff swapon wipefs; do
@@ -939,6 +942,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_libdir}/libblkid.a
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libblkid.so
+%{uclibc_root}%{_libdir}/libblkid.a
 %endif
 %{_libdir}/libblkid.so
 %{_includedir}/blkid
@@ -957,6 +961,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_libdir}/libuuid.a
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libuuid.so
+%{uclibc_root}%{_libdir}/libuuid.a
 %endif
 %{_libdir}/libuuid.so
 %{_includedir}/uuid
@@ -985,6 +990,7 @@ systemd-tmpfiles --create uuidd.conf
 %{_includedir}/libmount/libmount.h
 %if %{with uclibc}
 %{uclibc_root}%{_libdir}/libmount.so
+%{uclibc_root}%{_libdir}/libmount.a
 %endif
 %{_libdir}/libmount.so
 %{_libdir}/libmount.a
