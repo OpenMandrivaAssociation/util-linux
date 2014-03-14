@@ -29,7 +29,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.24.1
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -372,10 +372,6 @@ mountinfo, etc) and mount filesystems.
 %build
 %global optflags %{optflags} -Os
 
-%ifarch %{ix86}
-%global ldflags %{ldflags} -fuse-ld=bfd
-%endif
-
 %serverbuild_hardened
 unset LINGUAS || :
 
@@ -439,7 +435,6 @@ popd
 mkdir -p system
 pushd  system
 %configure2_5x \
-	CFLAGS="%{optflags} -Os" \
 	--bindir=/bin \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
