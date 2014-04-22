@@ -29,7 +29,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.24.1
-Release:	4
+Release:	5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -639,10 +639,15 @@ fi
 %post -n %{libblkid}
 [ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
 [ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
-if [ -e /etc/mtab ]; then
-	rm -f /etc/mtab
-	ln -sf /proc/mounts /etc/mtab
-fi
+
+%pre -p <lua>
+if arg[2] >= 2 then
+    st = posix.stat("/etc/mtab")
+    if st and st.type ~= "link" then
+	posix.unlink("/etc/mtab")
+	posix.link("/proc/mounts", "/etc/mtab", true)
+    end
+end
 
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
@@ -687,7 +692,7 @@ systemd-tmpfiles --create uuidd.conf
 %config(noreplace) %{_sysconfdir}/pam.d/su-l
 %config(noreplace) %{_sysconfdir}/pam.d/runuser
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
-%ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
+/etc/mtab
 /sbin/agetty
 %{_mandir}/man8/agetty.8*
 /sbin/blkid
