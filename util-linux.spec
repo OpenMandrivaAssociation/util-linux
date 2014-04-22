@@ -636,16 +636,22 @@ if [ -z "$ISCHRP" ]; then
 fi
 %endif
 
-%post -n %{libblkid}
-[ -e /etc/blkid.tab ] && mv /etc/blkid.tab /etc/blkid/blkid.tab || :
-[ -e /etc/blkid.tab.old ] && mv /etc/blkid.tab.old /etc/blkid/blkid.tab.old || :
-
 %pre -p <lua>
 if arg[2] >= 2 then
     st = posix.stat("/etc/mtab")
     if st and st.type ~= "link" then
 	posix.unlink("/etc/mtab")
 	posix.link("/proc/mounts", "/etc/mtab", true)
+    end
+end
+
+%post -p <lua>
+if arg[2] >= 2 then
+    if posix.stat("/etc/blkid.tab") then
+   	os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
+    end
+    if posix.stat("/etc/blkid.tab.old") then
+   	os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
     end
 end
 
