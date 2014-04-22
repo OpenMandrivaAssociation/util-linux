@@ -682,6 +682,7 @@ systemd-tmpfiles --create uuidd.conf
 /bin/wdctl
 %if %{include_raw}
 /bin/raw
+%dir /etc/blkid
 %config %{_sysconfdir}/udev/rules.d/60-raw.rules
 %endif
 %config(noreplace) %{_sysconfdir}/pam.d/chfn
@@ -930,7 +931,6 @@ systemd-tmpfiles --create uuidd.conf
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 
 %files -n %{libblkid}
-%dir /etc/blkid
 /%{_lib}/libblkid.so.%{blkid_major}*
 
 %if %{with uclibc}
