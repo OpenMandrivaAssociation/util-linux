@@ -1,0 +1,22 @@
+diff -p -up ./mount-deprecated/mount.8.tv ./mount-deprecated/mount.8
+--- ./mount-deprecated/mount.8.tv	2012-09-01 23:13:47.523499133 +0200
++++ ./mount-deprecated/mount.8	2012-09-01 23:14:27.319526959 +0200
+@@ -2003,6 +2003,7 @@ hard links instead of being suppressed.
+ Set the file permission on the filesystem.
+ The umask value is given in octal.
+ By default, the files are owned by root and not readable by somebody else.
++The umask value is given in octal.
+ 
+ .SH "Mount options for proc"
+ .TP
+diff -p -up ./sys-utils/mount.8.tv ./sys-utils/mount.8
+--- ./sys-utils/mount.8.tv	2012-09-01 23:13:47.509498052 +0200
++++ ./sys-utils/mount.8	2012-09-01 23:14:19.810955040 +0200
+@@ -2070,6 +2070,7 @@ hard links instead of being suppressed.
+ Set the file permission on the filesystem.
+ The umask value is given in octal.
+ By default, the files are owned by root and not readable by somebody else.
++The umask value is given in octal.
+ 
+ .SH "Mount options for proc"
+ .TP

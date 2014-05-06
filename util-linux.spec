@@ -28,8 +28,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.24.1
-Release:	5
+Version:	2.24.2
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -47,7 +47,7 @@ Source11:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.23.1-mount-managed.patch
 # add note about ATAPI IDE floppy to fdformat.8
-Patch3:		util-linux-ng-2.20-fdformat-man-ide.patch
+Patch3:		util-linux-ng-2.20.1-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
 Patch5:		2.23-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
@@ -60,6 +60,8 @@ Patch12:	util-linux-2.24-mkstemp.patch
 
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
+# (tv) useless???:
+Patch114:	util-linux-2.22-dumboctal.patch
 # sparc build fix
 Patch115:	util-linux-2.22-fix-ioctl.patch
 # Autodetect davfs mount attempts
@@ -351,6 +353,7 @@ mountinfo, etc) and mount filesystems.
 %endif
 
 %patch111 -p1 -b .mkfsman~
+%patch114 -p0 -b .dumboctal
 %patch115 -p1 -b .fix-ioctl~
 #patch116 -p1 -b .autodav
 

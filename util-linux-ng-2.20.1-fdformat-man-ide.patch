@@ -12,7 +12,7 @@ diff -up util-linux-2.20-rc1/disk-utils/fdformat.8.orig util-linux-2.20-rc1/disk
 +
  .SH OPTIONS
  .TP
- \fB\-n\fR, \fB\-\-no\-verify\fR
+ \fB\-n\fR, \fB\-\-no-verify\fR
 @@ -58,7 +63,8 @@ Display help and exit.
  .BR fd (4),
  .BR setfdprm (8),
@@ -23,3 +23,4 @@ diff -up util-linux-2.20-rc1/disk-utils/fdformat.8.orig util-linux-2.20-rc1/disk
  .SH AUTHOR
  Werner Almesberger (almesber@nessie.cs.id.ethz.ch)
  .SH AVAILABILITY
+
