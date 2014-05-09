@@ -29,7 +29,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.24.2
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -136,7 +136,7 @@ Conflicts:	sysvinit < 2.87-11
 # (tpg) add conflicts on older version dues to move su
 Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
-Conflicts:	sysvinit-tools < 2.87-18
+Conflicts:	sysvinit-tools <= 2.87-22
 Conflicts:	bash-completion < 2.1-1
 
 # for /bin/awk
