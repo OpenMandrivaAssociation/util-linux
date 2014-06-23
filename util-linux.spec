@@ -453,7 +453,7 @@ pushd  system
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
-	--with-python=2 \
+	--with-python=3 \
 	--without-selinux \
 	--with-udev \
 	--with-utempter \
