@@ -1008,6 +1008,6 @@ systemd-tmpfiles --create uuidd.conf
 %if %{with python}
 %files -n python-libmount
 %dir %{python_sitearch}/libmount
-%{python_sitearch}/libmount/__init__.py
-%{python_sitearch}/libmount/pylibmount.so
+%{py_platsitedir}/libmount/__init__.py
+%{py_platsitedir}/libmount/pylibmount.so
 %endif
