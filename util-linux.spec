@@ -321,7 +321,7 @@ Development files and headers for libmount library.
 Summary:	Python bindings for the libmount library
 Group:		Development/Python
 Requires:	%{libmount} = %{EVRD}
-BuildRequires:	pkgconfig(python2)
+BuildRequires:	pkgconfig(python3)
 
 %description -n python-libmount
 The libmount-python package contains a module that permits applications
