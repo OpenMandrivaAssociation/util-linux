@@ -321,7 +321,7 @@ Development files and headers for libmount library.
 Summary:	Python bindings for the libmount library
 Group:		Development/Python
 Requires:	%{libmount} = %{EVRD}
-BuildRequires:	pkgconfig(python2)
+BuildRequires:	pkgconfig(python3)
 
 %description -n python-libmount
 The libmount-python package contains a module that permits applications
@@ -456,7 +456,7 @@ pushd  system
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
-	--with-python=2 \
+	--with-python=3 \
 	--without-selinux \
 	--with-udev \
 	--with-utempter \
@@ -1011,6 +1011,6 @@ systemd-tmpfiles --create uuidd.conf
 %if %{with python}
 %files -n python-libmount
 %dir %{python_sitearch}/libmount
-%{python_sitearch}/libmount/__init__.py
-%{python_sitearch}/libmount/pylibmount.so
+%{py_platsitedir}/libmount/__init__.py
+%{py_platsitedir}/libmount/pylibmount.so
 %endif
