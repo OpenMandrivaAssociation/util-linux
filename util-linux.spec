@@ -29,7 +29,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.24.2
-Release:	4
+Release:	5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -137,13 +137,14 @@ Conflicts:	sysvinit < 2.87-11
 Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
-Conflicts:	bash-completion < 2.1-1
+Conflicts:	bash-completion < 2:2.1-9
 
 # for /bin/awk
 Requires(pre):	gawk
 # for /usr/bin/cmp
 Requires(pre):	diffutils
 Requires(pre):	coreutils
+Requires(pre):	bash-completion >= 2:2.1-10
 Requires:	pam >= 0.66-4
 Requires:	shadow-utils >= 4.0.3
 Requires:	%{libblkid} = %{version}-%{release}
