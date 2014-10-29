@@ -374,8 +374,6 @@ mountinfo, etc) and mount filesystems.
 ./autogen.sh
 
 %build
-%global optflags %{optflags} -Os
-
 %serverbuild_hardened
 unset LINGUAS || :
 
