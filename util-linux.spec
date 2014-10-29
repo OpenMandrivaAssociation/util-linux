@@ -426,6 +426,7 @@ pushd uclibc
 		--disable-runuser \
 		--disable-nologin \
 		--enable-socket-activation \
+        --with-systemd \
 		--with-systemdsystemunitdir=%{_unitdir} \
 		--without-audit \
 		--without-python \
@@ -463,6 +464,7 @@ pushd  system
 	--enable-socket-activation \
 	--enable-tunelp \
 	--enable-nologin \
+    --with-systemd \
 	--with-systemdsystemunitdir=%{_unitdir} \
 
 # build util-linux
@@ -665,7 +667,7 @@ end
 %_pre_groupadd uuidd uuidd
 
 %post -n uuidd
-systemd-tmpfiles --create uuidd.conf
+%tmpfiles_create uuidd.conf
 %systemd_post uuidd.service
 
 %preun -n uuidd
