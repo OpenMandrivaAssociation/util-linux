@@ -13,6 +13,10 @@
 %define	libmount %mklibname mount %{mount_major}
 %define	devmount %mklibname mount -d
 
+%define smartcols_major 1
+%define libsmartcols %mklibname smartcols %{smartcols_major}
+%define devsmartcols %mklibname smartcols -d
+
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
@@ -146,10 +150,11 @@ Requires(pre):	diffutils
 Requires(pre):	coreutils
 Requires(pre):	bash-completion >= 2:2.1-10
 Requires:	pam >= 0.66-4
-Requires:	shadow-utils >= 4.0.3
-Requires:	%{libblkid} = %{version}-%{release}
-Requires:	%{libmount} = %{version}-%{release}
-Requires:	%{libuuid} = %{version}-%{release}
+Requires:	shadow-utils >= 4.2.1-7
+Requires:	%{libblkid} = %{EVRD}
+Requires:	%{libmount} = %{EVRD}
+Requires:	%{libuuid} = %{EVRD}
+Requires:	%{libsmartcols} = %{EVRD}
 %if %{include_raw}
 Requires:	udev
 %endif
@@ -271,11 +276,8 @@ Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
 Requires(post):	systemd
-Requires(pre):	shadow-utils
-Requires(pre):	rpm-helper
-Requires(post):	rpm-helper
-Requires(preun):	rpm-helper
-Requires(postun):	rpm-helper
+Requires(pre):	shadow-utils >= 4.2.1-7
+Requires(pre,post,preun,postun):	rpm-helper >= 0.24.12-11
 
 %description -n	uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
@@ -308,7 +310,7 @@ manage the mtab file, evaluate mount options, etc.
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
-Requires:	%{libmount} = %{version}-%{release}
+Requires:	%{libmount} = %{EVRD}
 %if %{with uclibc}
 Requires:	uclibc-%{libmount} = %{version}-%{release}
 %endif
@@ -316,6 +318,26 @@ Provides:	libmount-devel = %{version}-%{release}
 
 %description -n	%{devmount}
 Development files and headers for libmount library.
+
+%package -n     %{libsmartcols}
+Summary:        Formatting library for ls-like programs
+Group:          System/Libraries
+License:        LGPL2+
+Requires(pre):  filesystem >= 3.0-9
+
+%description -n %{libsmartcols}
+The libsmartcols library is used to format output,
+for ls-like terminal programs.
+
+%package -n     %{devsmartcols}
+Summary:        Formatting library for ls-like programs
+Group:          Development/C
+License:        LGPL2+
+Requires:       %{libsmartcols} = %{EVRD}
+Provides:       libsmartcols-devel = %{version}-%{release}
+
+%description -n %{devsmartcols}
+Development files and headers for libsmartcols library.
 
 %if %{with python}
 %package -n	python-libmount
@@ -426,7 +448,7 @@ pushd uclibc
 		--disable-runuser \
 		--disable-nologin \
 		--enable-socket-activation \
-        --with-systemd \
+		--with-systemd \
 		--with-systemdsystemunitdir=%{_unitdir} \
 		--without-audit \
 		--without-python \
@@ -464,7 +486,7 @@ pushd  system
 	--enable-socket-activation \
 	--enable-tunelp \
 	--enable-nologin \
-    --with-systemd \
+	--with-systemd \
 	--with-systemdsystemunitdir=%{_unitdir} \
 
 # build util-linux
@@ -791,6 +813,7 @@ end
 %{_bindir}/logger
 %{_bindir}/look
 %{_bindir}/lslocks
+%{_bindir}/lslogins
 %{_bindir}/mcookie
 %{_bindir}/mesg
 %{_bindir}/utmpdump
@@ -875,6 +898,7 @@ end
 %{_mandir}/man1/dmesg.1*
 %{_mandir}/man1/ipcmk.1*
 %{_mandir}/man1/lscpu.1*
+%{_mandir}/man1/lslogins.1*
 %{_mandir}/man1/su.1*
 %{_mandir}/man3/uuid_generate_time_safe.3*
 %{_mandir}/man8/blockdev.8*
@@ -916,6 +940,7 @@ end
 /sbin/swapoff
 /sbin/switch_root
 %{_mandir}/man5/fstab.5*
+%{_mandir}/man5/terminal-colors.d.5*
 %{_mandir}/man8/mount.8*
 %{_mandir}/man8/swapoff.8*
 %{_mandir}/man8/swapon.8*
@@ -925,6 +950,7 @@ end
 %{_mandir}/man8/losetup.8*
 /sbin/losetup
 /sbin/wipefs
+%{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
 
 %if %{with uclibc}
@@ -1016,3 +1042,12 @@ end
 %{py_platsitedir}/libmount/__init__.py
 %{py_platsitedir}/libmount/pylibmount.so
 %endif
+
+%files -n %{libsmartcols}
+%{_libdir}/libsmartcols.so.%{smartcols_major}*
+
+%files -n %{devsmartcols}
+%{_includedir}/libsmartcols
+%{_libdir}/libsmartcols.so
+%{_libdir}/libsmartcols.la
+%{_libdir}/pkgconfig/smartcols.pc
