@@ -114,6 +114,7 @@ BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
+BuildRequires:	pkgconfig(libsystemd-journal)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 
