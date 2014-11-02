@@ -92,11 +92,10 @@ Patch1203:	util-linux-2.11m-cmos-alpha.patch
 # remove mode= from udf mounts (architecture done so that more may come)
 Patch1218:	util-linux-ng-2.13-mount-remove-silly-options-in-auto.patch
 # (misc) enable option -x on fsck.cramfs , bug 48224
-Patch1219:	util-linux-ng-enable_fsck_cramfs.diff
+#Patch1219:	util-linux-ng-enable_fsck_cramfs.diff
 # Mandrivamove patches
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
 
-BuildRequires:	gcc
 BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	rpm-build >= 1:5.4.10-5
@@ -344,7 +343,7 @@ Development files and headers for libsmartcols library.
 Summary:	Python bindings for the libmount library
 Group:		Development/Python
 Requires:	%{libmount} = %{EVRD}
-BuildRequires:	pkgconfig(python3)
+#BuildRequires:	pkgconfig(python3)
 
 %description -n python-libmount
 The libmount-python package contains a module that permits applications
@@ -390,7 +389,7 @@ mountinfo, etc) and mount filesystems.
 
 # FIXME: double-check if this is really obsoleted by the mount rewrite
 #patch1218 -p1 -b .silly
-%patch1219 -p0
+#patch1219 -p0
 
 # rebuild build system for loop-AES patch
 ./autogen.sh
@@ -454,7 +453,7 @@ pushd uclibc
 		--without-python \
 		--without-selinux \
 		--with-udev \
-		--with-utempter 
+		--with-utempter
 %make
 
 popd
@@ -462,7 +461,7 @@ popd
 
 mkdir -p system
 pushd  system
-%configure2_5x \
+%configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
 	--libdir=/%{_lib} \
