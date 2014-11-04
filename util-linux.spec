@@ -422,6 +422,7 @@ pushd uclibc
 		--enable-libblkid \
 		--enable-libmount \
 		--disable-mount \
+		--disable-libsmartcols \
 		--disable-losetup \
 		--disable-fsck \
 		--disable-partx \
@@ -515,7 +516,7 @@ for l in lib{blkid,mount,uuid}.so; do
 	rm %{buildroot}%{uclibc_root}/%{_lib}/$l
 	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
-for l in lib{blkid,mount,uuid}.a; do
+for l in lib{blkid,mount,uuid,libsmartcols}.a; do
 	mv %{buildroot}%{uclibc_root}/%{_lib}/$l %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
 for bin in blockdev cfdisk chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
@@ -839,6 +840,7 @@ end
 %endif
 %{_bindir}/tailf
 %{_bindir}/ul
+%{_bindir}/uname26
 %{_bindir}/unshare
 %{_bindir}/uuidgen
 %{_bindir}/whereis
@@ -947,6 +949,7 @@ end
 %{_mandir}/man8/switch_root.8*
 %{_mandir}/man1/runuser.1*
 %{_mandir}/man8/umount.8*
+%{_mandir}/man8/uname26.8*
 %{_mandir}/man8/losetup.8*
 /sbin/losetup
 /sbin/wipefs
@@ -1048,6 +1051,6 @@ end
 
 %files -n %{devsmartcols}
 %{_includedir}/libsmartcols
-%{_libdir}/libsmartcols.so
-%{_libdir}/libsmartcols.la
+/%{_lib}/libsmartcols.so
+/%{_lib}/libsmartcols.la
 %{_libdir}/pkgconfig/smartcols.pc
