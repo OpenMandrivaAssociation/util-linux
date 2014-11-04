@@ -516,7 +516,7 @@ for l in lib{blkid,mount,uuid}.so; do
 	rm %{buildroot}%{uclibc_root}/%{_lib}/$l
 	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
-for l in lib{blkid,mount,uuid,libsmartcols}.a; do
+for l in lib{blkid,mount,uuid}.a; do
 	mv %{buildroot}%{uclibc_root}/%{_lib}/$l %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
 for bin in blockdev cfdisk chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
