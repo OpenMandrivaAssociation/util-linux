@@ -116,7 +116,7 @@ BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(libsystemd-journal)
 BuildRequires:	pkgconfig(udev)
-BuildRequires:	pkgconfig(zlib)7
+BuildRequires:	pkgconfig(zlib)
 
 Provides:	/bin/su
 %rename		eject
