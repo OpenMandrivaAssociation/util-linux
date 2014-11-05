@@ -792,7 +792,7 @@ end
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
-%ifarch alpha ppc ppc64 %{sparcx} %mips %arm aarch64
+%ifarch alpha ppc ppc64 %{sparcx} %mips
 %{_bindir}/cytune
 %{_mandir}/man8/cytune.8*
 %endif
