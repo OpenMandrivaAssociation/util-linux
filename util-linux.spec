@@ -519,7 +519,7 @@ done
 for l in lib{blkid,mount,uuid}.a; do
 	mv %{buildroot}%{uclibc_root}/%{_lib}/$l %{buildroot}%{uclibc_root}%{_libdir}/$l
 done
-for bin in blockdev cfdisk chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
+for bin in blockdev chcpu ctrlaltdel fdisk findfs fsck.minix fsfreeze fstrim \
 	hwclock mkfs mkfs.bfs mkfs.minix swapoff swapon wipefs; do
 	rm %{buildroot}%{uclibc_root}/sbin/$bin
 done
