@@ -792,7 +792,7 @@ end
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
-%ifarch %ix86 alpha ppc ppc64 %{sparcx} x86_64 %mips %arm aarch64
+%ifarch alpha ppc ppc64 %{sparcx} %mips %arm aarch64
 %{_bindir}/cytune
 %{_mandir}/man8/cytune.8*
 %endif
@@ -840,7 +840,6 @@ end
 %endif
 %{_bindir}/tailf
 %{_bindir}/ul
-%{_bindir}/uname26
 %{_bindir}/unshare
 %{_bindir}/uuidgen
 %{_bindir}/whereis
@@ -949,7 +948,6 @@ end
 %{_mandir}/man8/switch_root.8*
 %{_mandir}/man1/runuser.1*
 %{_mandir}/man8/umount.8*
-%{_mandir}/man8/uname26.8*
 %{_mandir}/man8/losetup.8*
 /sbin/losetup
 /sbin/wipefs
@@ -1046,7 +1044,7 @@ end
 %endif
 
 %files -n %{libsmartcols}
-%{_lib}/libsmartcols.so.%{smartcols_major}*
+/%{_lib}/libsmartcols.so.%{smartcols_major}*
 
 %files -n %{devsmartcols}
 %{_includedir}/libsmartcols
