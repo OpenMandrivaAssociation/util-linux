@@ -651,11 +651,11 @@ mv %{name}.lang %{name}.files
 
 # create list of setarch(8) symlinks
 find  %{buildroot}%{_bindir}/ -regextype posix-egrep -type l \
-	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64)$" \
+	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)$" \
 	-printf "%{_bindir}/%f\n" >> %{name}.files
 
 find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
-	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64)\.8.*" \
+	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)\.8.*" \
 	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
 %ifarch ppc
@@ -1042,15 +1042,14 @@ end
 %if %{with python}
 %files -n python-libmount
 %dir %{python_sitearch}/libmount
-%{py_platsitedir}/libmount/__init__.py
-%{py_platsitedir}/libmount/pylibmount.so
+%{py_platsitedir}/libmount/*
 %endif
 
 %files -n %{libsmartcols}
-%{_libdir}/libsmartcols.so.%{smartcols_major}*
+%{_lib}/libsmartcols.so.%{smartcols_major}*
 
 %files -n %{devsmartcols}
 %{_includedir}/libsmartcols
-/%{_lib}/libsmartcols.so
-/%{_lib}/libsmartcols.la
+/%{_libdir}/libsmartcols.so
+/%{_libdir}/libsmartcols.*a
 %{_libdir}/pkgconfig/smartcols.pc
