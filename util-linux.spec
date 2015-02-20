@@ -32,8 +32,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.25.2
-Release:	3
+Version:	2.26
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -688,17 +688,6 @@ end
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
 %_pre_groupadd uuidd uuidd
-
-%post -n uuidd
-%tmpfiles_create uuidd.conf
-%systemd_post uuidd.service
-
-%preun -n uuidd
-%systemd_preun uuidd.service
-
-%postun -n uuidd
-%_postun_userdel uuidd
-%systemd_postun_with_restart uuidd.service
 
 %files -f %{name}.files
 %doc NEWS AUTHORS
