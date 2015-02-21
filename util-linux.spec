@@ -50,10 +50,8 @@ Source8:	util-linux-runuser-l.pamd
 Source11:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.23.1-mount-managed.patch
-# add note about ATAPI IDE floppy to fdformat.8
-Patch3:		util-linux-ng-2.20.1-fdformat-man-ide.patch
 # 151635 - makeing /var/log/lastlog
-Patch5:		2.23-login-lastlog-create.patch
+Patch5:		util-linux-2.26-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 Patch12:	util-linux-2.24-mkstemp.patch
@@ -68,13 +66,11 @@ Patch111:	util-linux-2.11t-mkfsman.patch
 Patch114:	util-linux-2.22-dumboctal.patch
 # sparc build fix
 Patch115:	util-linux-2.22-fix-ioctl.patch
-# Autodetect davfs mount attempts
-Patch116:	util-linux-2.12q-autodav.patch
 
 # crypto patches
 # loop-AES patch
 # reworked from http://loop-aes.sourceforge.net/updates/util-linux-ng-2.17-20100120.diff.bz2
-Patch1100:	util-linux-ng-2.18-loopAES.patch
+Patch1100:	http://loop-aes.sourceforge.net/updates/util-linux-2.25.1-20140911.diff.bz2
 Patch1101:	util-linux-2.12q-swapon-skip-encrypted.patch
 Patch1102:	util-linux-2.12-lower-LOOP_PASSWORD_MIN_LENGTH-for-AES.patch
 # load cryptoloop and cypher modules when use cryptoapi
@@ -86,13 +82,9 @@ Patch1200:	util-linux-2.10r-clock-1.1-ppc.patch
 # leng options for clock-ppc
 Patch1201:	util-linux-2.10s-clock-syntax-ppc.patch
 # Added r & w options to chfn (lsb mandate)
-Patch1202:	util-linux-2.20-chfn-lsb-usergroups.patch
+Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
 # fix build on alpha with newer kernel-headers
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
-# remove mode= from udf mounts (architecture done so that more may come)
-Patch1218:	util-linux-ng-2.13-mount-remove-silly-options-in-auto.patch
-# (misc) enable option -x on fsck.cramfs , bug 48224
-#Patch1219:	util-linux-ng-enable_fsck_cramfs.diff
 # Mandrivamove patches
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
 
@@ -357,7 +349,6 @@ mountinfo, etc) and mount filesystems.
 %setup -q
 
 %patch1 -p1 -b .options~
-%patch3 -p1 -b .atapifloppy~
 %patch5 -p1 -b .lastlog~
 %patch12 -p1 -b .mkstemp
 
@@ -378,7 +369,6 @@ mountinfo, etc) and mount filesystems.
 %patch111 -p1 -b .mkfsman~
 %patch114 -p0 -b .dumboctal
 %patch115 -p1 -b .fix-ioctl~
-#patch116 -p1 -b .autodav
 
 #%patch1100 -p1 -b .loopAES
 #%patch1101 -p0 -b .swapon-encrypted
@@ -387,10 +377,6 @@ mountinfo, etc) and mount filesystems.
 #%patch1104 -p1 -b .set-as-encrypted
 
 #%patch1300 -p1 -b .CHANGE-FD
-
-# FIXME: double-check if this is really obsoleted by the mount rewrite
-#patch1218 -p1 -b .silly
-#patch1219 -p0
 
 # rebuild build system for loop-AES patch
 ./autogen.sh

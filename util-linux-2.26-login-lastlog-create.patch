@@ -1,0 +1,12 @@
+diff -Naur util-linux-2.26/login-utils/login.c util-linux-2.26.tpg/login-utils/login.c
+--- util-linux-2.26/login-utils/login.c	2015-02-10 09:49:46.000000000 +0000
++++ util-linux-2.26.tpg/login-utils/login.c	2015-02-21 00:36:50.692331885 +0000
+@@ -514,7 +514,7 @@
+ 	sa.sa_handler = SIG_IGN;
+ 	sigaction(SIGXFSZ, &sa, &oldsa_xfsz);
+ 
+-	fd = open(_PATH_LASTLOG, O_RDWR, 0);
++	fd = open(_PATH_LASTLOG, O_RDWR | O_CREAT, 0);
+ 	if (fd < 0)
+ 		goto done;
+ 
