@@ -1003,7 +1003,7 @@ end
 %{_libdir}/pkgconfig/blkid.pc
 
 %files -n %{libfdisk}
-/%{_lib}/libfdisk.so.1.%{fdisk_major}*
+/%{_lib}/libfdisk.so.%{fdisk_major}*
 
 %if %{with uclibc}
 %files -n uclibc-%{libfdisk}
@@ -1013,8 +1013,8 @@ end
 %files -n %{devfdisk}
 %{_libdir}/libfdisk.a
 %if %{with uclibc}
-%{uclibc_root}%{_libdir}/libfdisk.so
-%{uclibc_root}%{_libdir}/libfdisk.a
+%{uclibc_root}/%{_lib}/libfdisk.so
+%{uclibc_root}/%{_lib}/libfdisk.a
 %endif
 %{_libdir}/libfdisk.so
 %{_includedir}/libfdisk
