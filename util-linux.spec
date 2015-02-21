@@ -2,6 +2,10 @@
 %define libblkid %mklibname blkid %{blkid_major}
 %define devblkid %mklibname blkid -d
 
+%define fdisk_major 1
+%define libfdisk %mklibname fdisk %{fdisk_major}
+%define devfdisk %mklibname fdisk -d
+
 %define uuid_major 1
 %define libuuid %mklibname uuid %{uuid_major}
 %define devuuid %mklibname uuid -d
@@ -109,7 +113,7 @@ BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(libsystemd-journal)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
-
+BuildRequires:	pkgconfig(libuser)
 Provides:	/bin/su
 %rename		eject
 %rename		fdisk
@@ -144,6 +148,7 @@ Requires(pre):	bash-completion >= 2:2.1-10
 Requires:	pam >= 0.66-4
 Requires:	shadow-utils >= 4.2.1-7
 Requires:	%{libblkid} = %{EVRD}
+Requires:	%{libfdisk} = %{EVRD}
 Requires:	%{libmount} = %{EVRD}
 Requires:	%{libuuid} = %{EVRD}
 Requires:	%{libsmartcols} = %{EVRD}
@@ -205,6 +210,38 @@ Provides:	libblkid-devel = %{version}-%{release}
 
 %description -n	%{devblkid}
 This is the block device identification development library and headers,
+part of util-linux.
+
+%package -n	%{libfdisk}
+Summary:	Fdisk library
+Group:		System/Libraries
+License:	LGPLv2+
+
+%description -n %{libfdisk}
+This is fdisk library, part of util-linux.
+
+%if %{with uclibc}
+%package -n	uclibc-%{libfdisk}
+Summary:	Fdisk library (uClibc linked)
+Group:		System/Libraries
+License:	LGPLv2+
+
+%description -n	uclibc-%{libfdisk}
+This is fdisk library, part of util-linux.
+%endif
+
+%package -n	%{devfdisk}
+Summary:	Fdisk development library
+Group:		Development/C
+License:	LGPLv2+
+Requires:	%{libfdisk} = %{version}-%{release}
+%if %{with uclibc}
+Requires:	uclibc-%{libfdisk} = %{version}-%{release}
+%endif
+Provides:	libfdisk-devel = %{version}-%{release}
+
+%description -n	%{devfdisk}
+This is the fdisk development library and headers,
 part of util-linux.
 
 %package -n	%{libuuid}
@@ -434,12 +471,12 @@ pushd uclibc
 		--disable-raw \
 		--disable-runuser \
 		--disable-nologin \
-		--enable-socket-activation \
 		--with-systemd \
 		--with-systemdsystemunitdir=%{_unitdir} \
 		--without-audit \
 		--without-python \
 		--without-selinux \
+		--without-user \
 		--with-udev \
 		--with-utempter
 %make
@@ -470,7 +507,6 @@ pushd  system
 	--with-udev \
 	--with-utempter \
 	--enable-chfn-chsh \
-	--enable-socket-activation \
 	--enable-tunelp \
 	--enable-nologin \
 	--with-systemd \
@@ -757,6 +793,7 @@ end
 /sbin/mkswap
 /sbin/nologin
 /sbin/sulogin
+/sbin/zramctl
 %{_mandir}/man8/nologin.8*
 %{_bindir}/chrt
 %{_bindir}/ionice
@@ -924,6 +961,7 @@ end
 %{_mandir}/man1/runuser.1*
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/losetup.8*
+%{_mandir}/man8/zramctl.8.*
 /sbin/losetup
 /sbin/wipefs
 %{_unitdir}/fstrim.*
@@ -934,7 +972,6 @@ end
 %{uclibc_root}/sbin/blkdiscard
 %{uclibc_root}/sbin/blkid
 %{uclibc_root}/sbin/mkswap
-%{uclibc_root}/sbin/sfdisk
 %{uclibc_root}/sbin/swaplabel
 %{uclibc_root}%{_bindir}/setterm
 %endif
@@ -964,6 +1001,24 @@ end
 %{_includedir}/blkid
 %{_mandir}/man3/libblkid.3*
 %{_libdir}/pkgconfig/blkid.pc
+
+%files -n %{libfdisk}
+/%{_lib}/libfdisk.so.1.%{fdisk_major}*
+
+%if %{with uclibc}
+%files -n uclibc-%{libfdisk}
+%{uclibc_root}/%{_lib}/libfdisk.so.%{fdisk_major}*
+%endif
+
+%files -n %{devfdisk}
+%{_libdir}/libfdisk.a
+%if %{with uclibc}
+%{uclibc_root}%{_libdir}/libfdisk.so
+%{uclibc_root}%{_libdir}/libfdisk.a
+%endif
+%{_libdir}/libfdisk.so
+%{_includedir}/libfdisk
+%{_libdir}/pkgconfig/fdisk.pc
 
 %files -n %{libuuid}
 /%{_lib}/libuuid.so.%{uuid_major}*
