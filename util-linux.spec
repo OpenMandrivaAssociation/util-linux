@@ -444,6 +444,7 @@ pushd uclibc
 		--enable-libuuid \
 		--enable-libblkid \
 		--enable-libmount \
+        --enable-libmount-force-mountinfo \
 		--disable-mount \
 		--disable-libsmartcols \
 		--disable-losetup \
@@ -510,6 +511,7 @@ pushd  system
 	--enable-tunelp \
 	--enable-nologin \
 	--with-systemd \
+    --enable-libmount-force-mountinfo \
 	--with-systemdsystemunitdir=%{_unitdir} \
 
 # build util-linux
