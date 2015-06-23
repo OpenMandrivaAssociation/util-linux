@@ -202,9 +202,6 @@ Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libblkid} = %{version}-%{release}
 Requires:	%{devuuid} = %{version}-%{release}
-%if %{with uclibc}
-Requires:	uclibc-%{libblkid} = %{version}-%{release}
-%endif
 Conflicts:	%{devext2fs} < 1.41.6-2mnb2
 Provides:	libblkid-devel = %{version}-%{release}
 
@@ -235,9 +232,6 @@ Summary:	Fdisk development library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libfdisk} = %{version}-%{release}
-%if %{with uclibc}
-Requires:	uclibc-%{libfdisk} = %{version}-%{release}
-%endif
 Provides:	libfdisk-devel = %{version}-%{release}
 
 %description -n	%{devfdisk}
@@ -284,9 +278,6 @@ Group:		Development/C
 License:	BSD
 Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 Requires:	%{libuuid} = %{version}
-%if %{with uclibc}
-Requires:	uclibc-%{libuuid} = %{version}-%{release}
-%endif
 Provides:	libuuid-devel = %{version}-%{release}
 
 %description -n	%{devuuid}
@@ -340,9 +331,6 @@ Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libmount} = %{EVRD}
-%if %{with uclibc}
-Requires:	uclibc-%{libmount} = %{version}-%{release}
-%endif
 Provides:	libmount-devel = %{version}-%{release}
 
 %description -n	%{devmount}
