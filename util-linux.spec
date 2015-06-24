@@ -102,6 +102,8 @@ BuildRequires:	pam-devel
 BuildRequires:	utempter-devel
 %if %{with uclibc}
 BuildRequires:	uClibc-devel >= 0.9.33.2-16
+BuildRequires:	uclibc-gettext-devel
+BuildRequires:	uclibc-zlib-devel
 %endif
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
