@@ -37,7 +37,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.26.2
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
@@ -51,6 +51,7 @@ Source5:	util-linux-su.pamd
 Source6:	util-linux-su-l.pamd
 Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
+Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
 # RHEL/Fedora specific mount options
 Patch1:		util-linux-2.23.1-mount-managed.patch
@@ -138,13 +139,6 @@ Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.1-9
-
-# for /bin/awk
-Requires(pre):	gawk
-# for /usr/bin/cmp
-Requires(pre):	diffutils
-Requires(pre):	coreutils
-Requires(pre):	bash-completion >= 2:2.1-10
 Requires:	pam >= 0.66-4
 Requires:	shadow-utils >= 4.2.1-7
 Requires:	%{libblkid} = %{EVRD}
@@ -179,8 +173,6 @@ Summary:	Block device ID library
 Group:		System/Libraries
 License:	LGPLv2+
 Conflicts:	%{libext2fs} < 1.41.6-2mnb2
-# MD this is because of the cmd rm and ln in the post config
-Requires(post):	coreutils
 
 %description -n %{libblkid}
 This is block device identification library, part of util-linux.
@@ -194,6 +186,21 @@ Conflicts:	%{libext2fs} < 1.41.6-2mnb2
 
 %description -n	uclibc-%{libblkid}
 This is block device identification library, part of util-linux.
+
+%package -n	uclibc-%{devblkid}
+Summary:	Block device ID library
+Group:		Development/C
+License:	LGPLv2+
+Requires:	%{devblkid} = %{EVRD}
+Requires:	uclibc-%{libblkid} = %{EVRD}
+Requires:	uclibc-%{devuuid} = %{EVRD}
+Conflicts:	%{devext2fs} < 1.41.6-2mnb2
+Provides:	uclibc-libblkid-devel = %{EVRD}
+Conflicts:	%{devblkid} < 2.16.2-2
+
+%description -n	uclibc-%{devblkid}
+This is the block device identification development library and headers,
+part of util-linux.
 %endif
 
 %package -n	%{devblkid}
@@ -225,6 +232,19 @@ License:	LGPLv2+
 
 %description -n	uclibc-%{libfdisk}
 This is fdisk library, part of util-linux.
+
+%package -n	uclibc-%{devfdisk}
+Summary:	Fdisk development library
+Group:		Development/C
+License:	LGPLv2+
+Requires:	uclibc-%{libfdisk} = %{EVRD}
+Requires:	%{devfdisk} = %{EVRD}
+Provides:	uclibc-libfdisk-devel = %{EVRD}
+Conflicts:	%{devfdisk} < 2.16.2-2
+
+%description -n	uclibc-%{devfdisk}
+This is the fdisk development library and headers,
+part of util-linux.
 %endif
 
 %package -n	%{devfdisk}
@@ -270,6 +290,20 @@ space and time, with respect to the space of all UUIDs.  A UUID can
 be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
+
+%package -n	uclibc-%{devuuid}
+Summary:	Universally unique ID library
+Group:		Development/C
+License:	BSD
+Conflicts:	%{libext2fs} < 1.41.8-2mnb2
+Requires:	uclibc-%{libuuid} = %{EVRD}
+Requires:	%{devuuid} = %{EVRD}
+Provides:	uclibc-libuuid-devel = %{EVRD}
+Conflicts:	uclibc-%{devuuid} < 2.16.2-2
+
+%description -n	uclibc-%{devuuid}
+This is the universally unique ID development library and headers,
+part of e2fsprogs.
 %endif
 
 %package -n	%{devuuid}
@@ -324,6 +358,18 @@ License:	LGPLv2+
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
+
+%package -n	uclibc-%{devmount}
+Summary:	Universally unique ID library
+Group:		Development/C
+License:	LGPLv2+
+Requires:	uclibc-%{libmount} = %{EVRD}
+Requires:	%{devmount} = %{EVRD}
+Provides:	uclibc-libmount-devel = %{EVRD}
+Conflicts:	%{devmount} < 2.26.2-2
+
+%description -n	uclibc-%{devmount}
+Development files and headers for libmount library.
 %endif
 
 %package -n	%{devmount}
@@ -340,7 +386,7 @@ Development files and headers for libmount library.
 Summary:        Formatting library for ls-like programs
 Group:          System/Libraries
 License:        LGPL2+
-Requires(pre):  filesystem >= 3.0-9
+Requires:	filesystem >= 3.0-9
 
 %description -n %{libsmartcols}
 The libsmartcols library is used to format output,
@@ -432,7 +478,7 @@ pushd uclibc
 		--enable-libuuid \
 		--enable-libblkid \
 		--enable-libmount \
-        --enable-libmount-force-mountinfo \
+		--enable-libmount-force-mountinfo \
 		--disable-mount \
 		--disable-libsmartcols \
 		--disable-losetup \
@@ -979,14 +1025,14 @@ end
 %if %{with uclibc}
 %files -n uclibc-%{libblkid}
 %{uclibc_root}/%{_lib}/libblkid.so.%{blkid_major}*
+
+%files -n %{devblkid}
+%{uclibc_root}%{_libdir}/libblkid.so
+%{uclibc_root}%{_libdir}/libblkid.a
 %endif
 
 %files -n %{devblkid}
 %{_libdir}/libblkid.a
-%if %{with uclibc}
-%{uclibc_root}%{_libdir}/libblkid.so
-%{uclibc_root}%{_libdir}/libblkid.a
-%endif
 %{_libdir}/libblkid.so
 %{_includedir}/blkid
 %{_mandir}/man3/libblkid.3*
@@ -998,14 +1044,14 @@ end
 %if %{with uclibc}
 %files -n uclibc-%{libfdisk}
 %{uclibc_root}/%{_lib}/libfdisk.so.%{fdisk_major}*
+
+%files -n uclibc-%{devfdisk}
+%{uclibc_root}/%{_lib}/libfdisk.so
+%{uclibc_root}/%{_lib}/libfdisk.a
 %endif
 
 %files -n %{devfdisk}
 %{_libdir}/libfdisk.a
-%if %{with uclibc}
-%{uclibc_root}/%{_lib}/libfdisk.so
-%{uclibc_root}/%{_lib}/libfdisk.a
-%endif
 %{_libdir}/libfdisk.so
 %{_includedir}/libfdisk
 %{_libdir}/pkgconfig/fdisk.pc
@@ -1016,14 +1062,14 @@ end
 %if %{with uclibc}
 %files -n uclibc-%{libuuid}
 %{uclibc_root}/%{_lib}/libuuid.so.%{uuid_major}*
+
+%files -n uclibc-%{devuuid}
+%{uclibc_root}%{_libdir}/libuuid.so
+%{uclibc_root}%{_libdir}/libuuid.a
 %endif
 
 %files -n %{devuuid}
 %{_libdir}/libuuid.a
-%if %{with uclibc}
-%{uclibc_root}%{_libdir}/libuuid.so
-%{uclibc_root}%{_libdir}/libuuid.a
-%endif
 %{_libdir}/libuuid.so
 %{_includedir}/uuid
 %{_mandir}/man3/uuid.3*
@@ -1045,14 +1091,14 @@ end
 %if %{with uclibc}
 %files -n uclibc-%{libmount}
 %{uclibc_root}/%{_lib}/libmount.so.%{mount_major}*
+
+%files -n uclibc-%{devmount}
+%{uclibc_root}%{_libdir}/libmount.so
+%{uclibc_root}%{_libdir}/libmount.a
 %endif
 
 %files -n %{devmount}
 %{_includedir}/libmount/libmount.h
-%if %{with uclibc}
-%{uclibc_root}%{_libdir}/libmount.so
-%{uclibc_root}%{_libdir}/libmount.a
-%endif
 %{_libdir}/libmount.so
 %{_libdir}/libmount.a
 %{_libdir}/pkgconfig/mount.pc
