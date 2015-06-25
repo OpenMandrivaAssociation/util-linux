@@ -104,6 +104,7 @@ BuildRequires:	utempter-devel
 BuildRequires:	uClibc-devel >= 0.9.33.2-16
 BuildRequires:	uclibc-gettext-devel
 BuildRequires:	uclibc-zlib-devel
+BuildRequires:	uclibc-libutempter-devel
 %endif
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
