@@ -1029,7 +1029,7 @@ end
 %files -n uclibc-%{libblkid}
 %{uclibc_root}/%{_lib}/libblkid.so.%{blkid_major}*
 
-%files -n %{devblkid}
+%files -n uclibc-%{devblkid}
 %{uclibc_root}%{_libdir}/libblkid.so
 %{uclibc_root}%{_libdir}/libblkid.a
 %endif
