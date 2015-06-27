@@ -309,7 +309,7 @@ Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 Requires:	uclibc-%{libuuid} = %{EVRD}
 Requires:	%{devuuid} = %{EVRD}
 Provides:	uclibc-libuuid-devel = %{EVRD}
-Conflicts:	uclibc-%{devuuid} < 2.16.2-2
+Conflicts:	%{devuuid} < 2.16.2-2
 
 %description -n	uclibc-%{devuuid}
 This is the universally unique ID development library and headers,
