@@ -111,6 +111,7 @@ BuildRequires:	uclibc-slang-devel
 BuildRequires:	uclibc-ncurses-devel
 BuildRequires:	uclibc-libsystemd-daemon-devel
 BuildRequires:	uclibc-libsystemd-journal-devel
+BuildRequires:	uclibc-libsystemd-devel
 %endif
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
