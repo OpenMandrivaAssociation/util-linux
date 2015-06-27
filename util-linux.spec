@@ -105,6 +105,10 @@ BuildRequires:	uClibc-devel >= 0.9.33.2-16
 BuildRequires:	uclibc-gettext-devel
 BuildRequires:	uclibc-zlib-devel
 BuildRequires:	uclibc-libutempter-devel
+BuildRequires:	uclibc-udev-devel
+BuildRequires:	uclibc-libcap-devel
+BuildRequires:	uclibc-slang-devel
+BuildRequires:	uclibc-ncurses-devel
 %endif
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
