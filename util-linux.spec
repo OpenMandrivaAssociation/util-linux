@@ -122,6 +122,7 @@ BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(libsystemd-journal)
+BuildRequires:	pkgconfig(libsystemd-daemon)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
