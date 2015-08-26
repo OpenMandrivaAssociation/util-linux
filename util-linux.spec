@@ -30,14 +30,14 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_without	uclibc
+%bcond_with	uclibc
 %bcond_without	python
 %endif
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.26.2
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
