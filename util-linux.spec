@@ -126,6 +126,7 @@ BuildRequires:	pkgconfig(libsystemd-daemon)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
+BuildRequires:	readline-devel
 Provides:	/bin/su
 %rename		eject
 %rename		fdisk
@@ -556,7 +557,9 @@ pushd  system
 	--enable-tunelp \
 	--enable-nologin \
 	--with-systemd \
-    --enable-libmount-force-mountinfo \
+	--with-readline \
+	--enable-libmount-force-mountinfo \
+	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_unitdir} \
 
 # build util-linux
