@@ -877,6 +877,7 @@ end
 %{_bindir}/look
 %{_bindir}/lslocks
 %{_bindir}/lslogins
+%{_bindir}/lsipc
 %{_bindir}/mcookie
 %{_bindir}/mesg
 %{_bindir}/utmpdump
@@ -934,6 +935,7 @@ end
 %{_mandir}/man1/logger.1*
 %{_mandir}/man1/login.1*
 %{_mandir}/man1/look.1*
+%{_mandir}/man1/lsipc.1*
 %{_mandir}/man1/mcookie.1*
 %{_mandir}/man1/mesg.1*
 %{_mandir}/man1/more.1*
