@@ -36,8 +36,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.26.2
-Release:	4
+Version:	2.27
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
