@@ -43,8 +43,8 @@ Version:	2.27
 Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
-URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
-Source0:	ftp://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
+URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
+Source0:	http://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-login.pamd
 Source2:	util-linux-remote.pamd
