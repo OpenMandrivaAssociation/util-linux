@@ -1,3 +1,6 @@
+# seems to cause issues with blkid on x86_64
+%define _disable_lto 1
+
 %define blkid_major 1
 %define libblkid %mklibname blkid %{blkid_major}
 %define devblkid %mklibname blkid -d
@@ -37,7 +40,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.27
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		ftp://ftp.kernel.org/pub/linux/utils/util-linux
