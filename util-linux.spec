@@ -40,7 +40,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.27
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
@@ -719,6 +719,11 @@ for I in raw; do
 	fi
 done
 
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
+enable fstrim.timer
+EOF
+
 %find_lang %{name} %{name}.lang
 
 # the files section supports only one -f option...
@@ -1019,6 +1024,7 @@ end
 %{_mandir}/man8/zramctl.8.*
 /sbin/losetup
 /sbin/wipefs
+%{_presetdir}/86-fstrim.preset
 %{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
 
