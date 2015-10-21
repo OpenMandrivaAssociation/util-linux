@@ -1,9 +1,6 @@
 # seems to cause issues with blkid on x86_64
 %define _disable_lto 1
 
-%define unwanted chfn chsh
-# These now come from the shadow package
-
 %define blkid_major 1
 %define libblkid %mklibname blkid %{blkid_major}
 %define devblkid %mklibname blkid -d
@@ -43,7 +40,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.27
-Release:	4
+Release:	5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
@@ -865,6 +862,8 @@ end
 %{_bindir}/chrt
 %{_bindir}/ionice
 %{_bindir}/cal
+%attr(4711,root,root)  %{_bindir}/chfn
+%attr(4711,root,root)  %{_bindir}/chsh
 %{_bindir}/col
 %{_bindir}/colcrt
 %{_bindir}/colrm
@@ -932,6 +931,8 @@ end
 %{_sbindir}/ldattach
 %{_sbindir}/resizepart
 %{_mandir}/man1/cal.1*
+%{_mandir}/man1/chfn.1*
+%{_mandir}/man1/chsh.1*
 %{_mandir}/man8/chcpu.8*
 %{_mandir}/man1/col.1*
 %{_mandir}/man1/colcrt.1*
