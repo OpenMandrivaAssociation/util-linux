@@ -33,13 +33,12 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_with	uclibc
 %bcond_without	python
 %endif
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.27.1
+Version:	2.28
 Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -103,19 +102,6 @@ BuildRequires:	audit-devel
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	utempter-devel
-%if %{with uclibc}
-BuildRequires:	uClibc-devel >= 0.9.33.2-16
-BuildRequires:	uclibc-gettext-devel
-BuildRequires:	uclibc-zlib-devel
-BuildRequires:	uclibc-libutempter-devel
-BuildRequires:	uclibc-udev-devel
-BuildRequires:	uclibc-libcap-devel
-BuildRequires:	uclibc-slang-devel
-BuildRequires:	uclibc-ncurses-devel
-BuildRequires:	uclibc-libsystemd-daemon-devel
-BuildRequires:	uclibc-libsystemd-journal-devel
-BuildRequires:	uclibc-libsystemd-devel
-%endif
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
 %endif
@@ -171,18 +157,6 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%if %{with uclibc}
-%package -n	uclibc-%{name}
-Summary:	uClibc build of util-linux
-Group:		System/Base
-
-%description -n	uclibc-%{name}
-The util-linux package contains a large variety of low-level system
-utilities that are necessary for a Linux system to function.  Among
-others, Util-linux-ng contains the fdisk configuration tool and the login
-program.
-%endif
-
 %package -n	%{libblkid}
 Summary:	Block device ID library
 Group:		System/Libraries
@@ -191,32 +165,6 @@ Conflicts:	%{libext2fs} < 1.41.6-2mnb2
 
 %description -n %{libblkid}
 This is block device identification library, part of util-linux.
-
-%if %{with uclibc}
-%package -n	uclibc-%{libblkid}
-Summary:	Block device ID library (uClibc linked)
-Group:		System/Libraries
-License:	LGPLv2+
-Conflicts:	%{libext2fs} < 1.41.6-2mnb2
-
-%description -n	uclibc-%{libblkid}
-This is block device identification library, part of util-linux.
-
-%package -n	uclibc-%{devblkid}
-Summary:	Block device ID library
-Group:		Development/C
-License:	LGPLv2+
-Requires:	%{devblkid} = %{EVRD}
-Requires:	uclibc-%{libblkid} = %{EVRD}
-Requires:	uclibc-%{devuuid} = %{EVRD}
-Conflicts:	%{devext2fs} < 1.41.6-2mnb2
-Provides:	uclibc-libblkid-devel = %{EVRD}
-Conflicts:	%{devblkid} < 2.16.2-2
-
-%description -n	uclibc-%{devblkid}
-This is the block device identification development library and headers,
-part of util-linux.
-%endif
 
 %package -n	%{devblkid}
 Summary:	Block device ID library
@@ -238,29 +186,6 @@ License:	LGPLv2+
 
 %description -n %{libfdisk}
 This is fdisk library, part of util-linux.
-
-%if %{with uclibc}
-%package -n	uclibc-%{libfdisk}
-Summary:	Fdisk library (uClibc linked)
-Group:		System/Libraries
-License:	LGPLv2+
-
-%description -n	uclibc-%{libfdisk}
-This is fdisk library, part of util-linux.
-
-%package -n	uclibc-%{devfdisk}
-Summary:	Fdisk development library
-Group:		Development/C
-License:	LGPLv2+
-Requires:	uclibc-%{libfdisk} = %{EVRD}
-Requires:	%{devfdisk} = %{EVRD}
-Provides:	uclibc-libfdisk-devel = %{EVRD}
-Conflicts:	%{devfdisk} < 2.16.2-2
-
-%description -n	uclibc-%{devfdisk}
-This is the fdisk development library and headers,
-part of util-linux.
-%endif
 
 %package -n	%{devfdisk}
 Summary:	Fdisk development library
@@ -288,38 +213,6 @@ space and time, with respect to the space of all UUIDs.  A UUID can
 be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
-
-%if %{with uclibc}
-%package -n	uclibc-%{libuuid}
-Summary:	Universally unique ID library (uClibc linked)
-Group:		System/Libraries
-License:	BSD
-Conflicts:	%{libext2fs} < 1.41.8-2mnb2
-
-%description -n	uclibc-%{libuuid}
-This is the universally unique ID library, part of e2fsprogs.
-
-The libuuid library generates and parses 128-bit universally unique
-id's (UUID's).A UUID is an identifier that is unique across both
-space and time, with respect to the space of all UUIDs.  A UUID can
-be used for multiple purposes, from tagging objects with an extremely
-short lifetime, to reliably identifying very persistent objects
-across a network.
-
-%package -n	uclibc-%{devuuid}
-Summary:	Universally unique ID library
-Group:		Development/C
-License:	BSD
-Conflicts:	%{libext2fs} < 1.41.8-2mnb2
-Requires:	uclibc-%{libuuid} = %{EVRD}
-Requires:	%{devuuid} = %{EVRD}
-Provides:	uclibc-libuuid-devel = %{EVRD}
-Conflicts:	%{devuuid} < 2.16.2-2
-
-%description -n	uclibc-%{devuuid}
-This is the universally unique ID development library and headers,
-part of e2fsprogs.
-%endif
 
 %package -n	%{devuuid}
 Summary:	Universally unique ID library
@@ -362,30 +255,6 @@ License:	LGPLv2+
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
-
-%if %{with uclibc}
-%package -n	uclibc-%{libmount}
-Summary:	Universal mount library (uClibc linked)
-Group:		System/Libraries
-License:	LGPLv2+
-
-%description -n	uclibc-%{libmount}
-The libmount library is used to parse /etc/fstab,
-/etc/mtab and /proc/self/mountinfo files,
-manage the mtab file, evaluate mount options, etc.
-
-%package -n	uclibc-%{devmount}
-Summary:	Universally unique ID library
-Group:		Development/C
-License:	LGPLv2+
-Requires:	uclibc-%{libmount} = %{EVRD}
-Requires:	%{devmount} = %{EVRD}
-Provides:	uclibc-libmount-devel = %{EVRD}
-Conflicts:	%{devmount} < 2.26.2-2
-
-%description -n	uclibc-%{devmount}
-Development files and headers for libmount library.
-%endif
 
 %package -n	%{devmount}
 Summary:	Universally unique ID library
@@ -471,71 +340,6 @@ mountinfo, etc) and mount filesystems.
 %serverbuild_hardened
 unset LINGUAS || :
 
-export CONFIGURE_TOP="$PWD"
-
-%if %{with uclibc}
-%ifarch %{ix86}
-%global uclibc_cc %{uclibc_cc} -fuse-ld=bfd
-%endif
-mkdir -p uclibc
-pushd uclibc
-%uclibc_configure \
-		--bindir=%{uclibc_root}/bin \
-		--sbindir=%{uclibc_root}/sbin \
-		--prefix=%{uclibc_root} \
-		--exec-prefix=%{uclibc_root} \
-		--libdir=%{uclibc_root}/%{_lib} \
-		--host=%{_host} \
-		--enable-rpath=no \
-		--enable-shared=yes \
-		--enable-static=yes \
-		--disable-chfn-chsh \
-		--enable-libuuid \
-		--enable-libblkid \
-		--enable-libmount \
-		--enable-libmount-force-mountinfo \
-		--disable-mount \
-		--disable-libsmartcols \
-		--disable-losetup \
-		--disable-fsck \
-		--disable-partx \
-		--disable-uuidd \
-		--disable-mountpoint \
-		--disable-fallocate \
-		--disable-unshare \
-		--disable-eject \
-		--disable-agetty \
-		--disable-cramfs \
-		--disable-switch_root \
-		--disable-pivot_root \
-		--disable-kill \
-		--disable-utmpdump \
-		--disable-rename \
-		--disable-login \
-		--disable-sulogin \
-		--disable-su \
-		--disable-schedutils \
-		--disable-wall \
-		--disable-makeinstall-chown \
-		--disable-fsck \
-		--disable-raw \
-		--disable-runuser \
-		--disable-nologin \
-		--with-systemd \
-		--with-systemdsystemunitdir=%{_unitdir} \
-		--without-audit \
-		--without-python \
-		--without-selinux \
-		--without-user \
-		--with-udev \
-		--with-utempter
-%make
-
-popd
-%endif
-
-mkdir -p system
-pushd  system
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
@@ -568,11 +372,6 @@ pushd  system
 # build util-linux
 %make
 
-popd
-
-%ifarch ppc
-%{__cc} clock-ppc.c %{ldflags} -o clock-ppc
-%endif
 
 %install
 mkdir -p %{buildroot}/{bin,sbin}
@@ -581,24 +380,6 @@ mkdir -p %{buildroot}%{_infodir}
 mkdir -p %{buildroot}%{_mandir}/man{1,6,8,5}
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,security/console.apps,blkid}
-
-%if %{with uclibc}
-make -C uclibc install-sbinPROGRAMS install-usrlib_execLTLIBRARIES DESTDIR="%{buildroot}"
-install -m755 uclibc/setterm -D %{buildroot}%{uclibc_root}%{_bindir}/setterm
-
-mkdir -p %{buildroot}%{uclibc_root}%{_libdir}
-for l in lib{blkid,mount,uuid}.so; do
-	rm %{buildroot}%{uclibc_root}/%{_lib}/$l
-	ln -sr %{buildroot}%{uclibc_root}/%{_lib}/$l.*.* %{buildroot}%{uclibc_root}%{_libdir}/$l
-done
-for l in lib{blkid,mount,uuid}.a; do
-	mv %{buildroot}%{uclibc_root}/%{_lib}/$l %{buildroot}%{uclibc_root}%{_libdir}/$l
-done
-for bin in blockdev chcpu ctrlaltdel findfs fsck.minix fsfreeze fstrim \
-	hwclock mkfs mkfs.bfs mkfs.minix wipefs; do
-	rm %{buildroot}%{uclibc_root}/sbin/$bin
-done
-%endif
 
 # install util-linux
 %makeinstall_std -C system DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
@@ -1034,15 +815,6 @@ end
 %{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
 
-%if %{with uclibc}
-%files -n uclibc-%{name}
-%{uclibc_root}/sbin/blkdiscard
-%{uclibc_root}/sbin/blkid
-%{uclibc_root}/sbin/mkswap
-%{uclibc_root}/sbin/swaplabel
-%{uclibc_root}%{_bindir}/setterm
-%endif
-
 %files -n uuidd
 %{_mandir}/man8/uuidd.8*
 %{_unitdir}/uuidd.*
@@ -1052,15 +824,6 @@ end
 
 %files -n %{libblkid}
 /%{_lib}/libblkid.so.%{blkid_major}*
-
-%if %{with uclibc}
-%files -n uclibc-%{libblkid}
-%{uclibc_root}/%{_lib}/libblkid.so.%{blkid_major}*
-
-%files -n uclibc-%{devblkid}
-%{uclibc_root}%{_libdir}/libblkid.so
-%{uclibc_root}%{_libdir}/libblkid.a
-%endif
 
 %files -n %{devblkid}
 %{_libdir}/libblkid.a
@@ -1072,15 +835,6 @@ end
 %files -n %{libfdisk}
 /%{_lib}/libfdisk.so.%{fdisk_major}*
 
-%if %{with uclibc}
-%files -n uclibc-%{libfdisk}
-%{uclibc_root}/%{_lib}/libfdisk.so.%{fdisk_major}*
-
-%files -n uclibc-%{devfdisk}
-%{uclibc_root}/%{_lib}/libfdisk.so
-%{uclibc_root}/%{_lib}/libfdisk.a
-%endif
-
 %files -n %{devfdisk}
 %{_libdir}/libfdisk.a
 %{_libdir}/libfdisk.so
@@ -1089,15 +843,6 @@ end
 
 %files -n %{libuuid}
 /%{_lib}/libuuid.so.%{uuid_major}*
-
-%if %{with uclibc}
-%files -n uclibc-%{libuuid}
-%{uclibc_root}/%{_lib}/libuuid.so.%{uuid_major}*
-
-%files -n uclibc-%{devuuid}
-%{uclibc_root}%{_libdir}/libuuid.so
-%{uclibc_root}%{_libdir}/libuuid.a
-%endif
 
 %files -n %{devuuid}
 %{_libdir}/libuuid.a
@@ -1118,15 +863,6 @@ end
 
 %files -n %{libmount}
 /%{_lib}/libmount.so.%{mount_major}*
-
-%if %{with uclibc}
-%files -n uclibc-%{libmount}
-%{uclibc_root}/%{_lib}/libmount.so.%{mount_major}*
-
-%files -n uclibc-%{devmount}
-%{uclibc_root}%{_libdir}/libmount.so
-%{uclibc_root}%{_libdir}/libmount.a
-%endif
 
 %files -n %{devmount}
 %{_includedir}/libmount/libmount.h
