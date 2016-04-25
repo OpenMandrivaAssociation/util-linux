@@ -333,6 +333,12 @@ mountinfo, etc) and mount filesystems.
 #./autogen.sh
 
 %build
+%ifarch %{ix86}
+# (tpg) use GCC as clang coredumps on i586
+export CC=gcc
+export CXX=g++
+%endif
+
 %serverbuild_hardened
 unset LINGUAS || :
 
