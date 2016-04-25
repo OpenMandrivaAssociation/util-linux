@@ -68,8 +68,6 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
-# (tv) useless???:
-Patch114:	util-linux-2.22-dumboctal.patch
 # sparc build fix
 Patch115:	util-linux-2.22-fix-ioctl.patch
 
@@ -320,7 +318,6 @@ mountinfo, etc) and mount filesystems.
 %endif
 
 %patch111 -p1 -b .mkfsman~
-%patch114 -p0 -b .dumboctal
 %patch115 -p1 -b .fix-ioctl~
 
 #%patch1100 -p1 -b .loopAES
@@ -332,7 +329,7 @@ mountinfo, etc) and mount filesystems.
 #%patch1300 -p1 -b .CHANGE-FD
 
 # rebuild build system for loop-AES patch
-./autogen.sh
+#./autogen.sh
 
 %build
 %serverbuild_hardened
