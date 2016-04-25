@@ -61,7 +61,6 @@ Patch1:		util-linux-2.23.1-mount-managed.patch
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
 Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
-Patch12:	util-linux-2.24-mkstemp.patch
 
 ### Upstream patches
 
@@ -305,7 +304,6 @@ mountinfo, etc) and mount filesystems.
 
 %patch1 -p1 -b .options~
 %patch5 -p1 -b .lastlog~
-%patch12 -p1 -b .mkstemp
 
 # Mandriva
 %ifarch ppc
