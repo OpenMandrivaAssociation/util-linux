@@ -669,6 +669,7 @@ end
 %{_bindir}/lslocks
 %{_bindir}/lslogins
 %{_bindir}/lsipc
+%{_bindir}/lsns
 %{_bindir}/mcookie
 %{_bindir}/mesg
 %{_bindir}/utmpdump
@@ -769,6 +770,7 @@ end
 %{_mandir}/man8/fsck.cramfs.8*
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/lslocks.8*
+%{_mandir}/man8/lsns.8*
 %{_mandir}/man8/mkfs.8*
 %{_mandir}/man8/mkfs.cramfs.8*
 %{_mandir}/man8/mkswap.8*
@@ -877,6 +879,6 @@ end
 
 %files -n %{devsmartcols}
 %{_includedir}/libsmartcols
-/%{_libdir}/libsmartcols.so
-/%{_libdir}/libsmartcols.*a
+%{_libdir}/libsmartcols.so
+%{_libdir}/libsmartcols.*a
 %{_libdir}/pkgconfig/smartcols.pc
