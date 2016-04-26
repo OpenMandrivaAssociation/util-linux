@@ -39,7 +39,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.28
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
@@ -137,7 +137,7 @@ Conflicts:	sysvinit < 2.87-11
 Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
-Conflicts:	bash-completion < 2:2.1-9
+Conflicts:	bash-completion < 2:2.3-3
 Requires:	pam >= 0.66-4
 Requires:	shadow-utils >= 4.2.1-7
 Requires:	%{libblkid} = %{EVRD}
