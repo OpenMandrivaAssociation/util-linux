@@ -39,7 +39,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.28
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
@@ -107,8 +107,6 @@ BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
-BuildRequires:	pkgconfig(libsystemd-journal)
-BuildRequires:	pkgconfig(libsystemd-daemon)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
