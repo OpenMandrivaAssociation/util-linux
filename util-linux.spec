@@ -38,8 +38,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.28.2
-Release:	3
+Version:	2.29
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
@@ -685,7 +685,6 @@ end
 /sbin/mkfs.minix
 /sbin/chcpu
 %{_bindir}/namei
-%{_bindir}/pg
 %{_bindir}/prlimit
 %{_bindir}/rename
 %{_bindir}/renice
@@ -736,7 +735,6 @@ end
 %{_mandir}/man1/mesg.1*
 %{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
-%{_mandir}/man1/pg.1*
 %{_mandir}/man1/prlimit.1*
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/rev.1*
