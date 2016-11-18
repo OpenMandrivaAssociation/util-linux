@@ -38,7 +38,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.28.2
+Version:	2.29
 Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -136,8 +136,8 @@ Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.3-3
-Requires:	pam >= 0.66-4
-Requires:	shadow-utils >= 4.2.1-7
+Requires:	pam >= 1.3.0-1
+Requires:	shadow >= 4.2.1-24
 Requires:	%{libblkid} = %{EVRD}
 Requires:	%{libfdisk} = %{EVRD}
 Requires:	%{libmount} = %{EVRD}
@@ -685,7 +685,6 @@ end
 /sbin/mkfs.minix
 /sbin/chcpu
 %{_bindir}/namei
-%{_bindir}/pg
 %{_bindir}/prlimit
 %{_bindir}/rename
 %{_bindir}/renice
@@ -736,7 +735,6 @@ end
 %{_mandir}/man1/mesg.1*
 %{_mandir}/man1/more.1*
 %{_mandir}/man1/namei.1*
-%{_mandir}/man1/pg.1*
 %{_mandir}/man1/prlimit.1*
 %{_mandir}/man1/rename.1*
 %{_mandir}/man1/rev.1*
