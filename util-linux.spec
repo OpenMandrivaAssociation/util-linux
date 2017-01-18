@@ -39,7 +39,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.29
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
@@ -282,6 +282,14 @@ Provides:       libsmartcols-devel = %{version}-%{release}
 %description -n %{devsmartcols}
 Development files and headers for libsmartcols library.
 
+%package user
+Summary:	libuser based util-linux utilities
+Group:		System/Base
+Requires:	%{name} = %{EVRD}
+
+%description -n util-linux-user
+chfn and chsh utilities with dependence on libuser.
+
 %if %{with python}
 %package -n	python-libmount
 Summary:	Python bindings for the libmount library
@@ -367,7 +375,7 @@ unset LINGUAS || :
 	--with-readline \
 	--enable-libmount-force-mountinfo \
 	--enable-sulogin-emergency-mount \
-	--with-systemdsystemunitdir=%{_unitdir} \
+	--with-systemdsystemunitdir=%{_systemunitdir} \
 
 # build util-linux
 %make
@@ -456,8 +464,8 @@ install -d %{buildroot}/var/lib/libuuid
 # logger is useful in initscripts while /usr isn't mounted as well
 # ionice needed for readahead_early
 for p in flock logger ionice; do
-	mv %{buildroot}{%{_bindir},/bin}/$p
-	ln -sf ../../bin/$p %{buildroot}%{_bindir}/$p
+    mv %{buildroot}{%{_bindir},/bin}/$p
+    ln -sf ../../bin/$p %{buildroot}%{_bindir}/$p
 done
 
 # Final cleanup
@@ -470,12 +478,12 @@ rm %{buildroot}/usr/{bin,sbin}/{fdformat,tunelp,floppy} %{buildroot}%{_mandir}/m
 
 # deprecated commands
 for I in /sbin/mkfs.bfs %{_bindir}/scriptreplay; do
-	rm %{buildroot}$I
+    rm %{buildroot}$I
 done
 
 # deprecated man pages
 for I in man8/mkfs.bfs.8 man1/scriptreplay.1; do
-	rm %{buildroot}%{_mandir}/${I}*
+    rm %{buildroot}%{_mandir}/${I}*
 done
 
 # we install getopt/getopt-*.{bash,tcsh} as doc files
@@ -487,23 +495,23 @@ ln -sf /proc/mounts %{buildroot}/etc/mtab
 
 # /usr/sbin -> /sbin
 for I in addpart delpart partx; do
-	if [ -e %{buildroot}/usr/sbin/$I ]; then
-		mv %{buildroot}/usr/sbin/$I %{buildroot}/sbin/$I
-	fi
+    if [ -e %{buildroot}/usr/sbin/$I ]; then
+	mv %{buildroot}/usr/sbin/$I %{buildroot}/sbin/$I
+    fi
 done
 
 # /usr/bin -> /bin
 for I in taskset; do
-	if [ -e %{buildroot}/usr/bin/$I ]; then
-		mv %{buildroot}/usr/bin/$I %{buildroot}/bin/$I
-	fi
+    if [ -e %{buildroot}/usr/bin/$I ]; then
+	mv %{buildroot}/usr/bin/$I %{buildroot}/bin/$I
+    fi
 done
 
 # /sbin -> /bin
 for I in raw; do
-	if [ -e %{buildroot}/sbin/$I ]; then
-		mv %{buildroot}/sbin/$I %{buildroot}/bin/$I
-	fi
+    if [ -e %{buildroot}/sbin/$I ]; then
+	mv %{buildroot}/sbin/$I %{buildroot}/bin/$I
+    fi
 done
 
 install -d %{buildroot}%{_presetdir}
@@ -578,8 +586,6 @@ end
 %dir /etc/blkid
 %config %{_sysconfdir}/udev/rules.d/60-raw.rules
 %endif
-%config(noreplace) %{_sysconfdir}/pam.d/chfn
-%config(noreplace) %{_sysconfdir}/pam.d/chsh
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
 %config(noreplace) %{_sysconfdir}/pam.d/su
@@ -643,8 +649,6 @@ end
 %{_bindir}/chrt
 %{_bindir}/ionice
 %{_bindir}/cal
-%attr(4711,root,root)  %{_bindir}/chfn
-%attr(4711,root,root)  %{_bindir}/chsh
 %{_bindir}/col
 %{_bindir}/colcrt
 %{_bindir}/colrm
@@ -712,8 +716,6 @@ end
 %{_sbindir}/ldattach
 %{_sbindir}/resizepart
 %{_mandir}/man1/cal.1*
-%{_mandir}/man1/chfn.1*
-%{_mandir}/man1/chsh.1*
 %{_mandir}/man8/chcpu.8*
 %{_mandir}/man1/col.1*
 %{_mandir}/man1/colcrt.1*
@@ -812,8 +814,16 @@ end
 /sbin/losetup
 /sbin/wipefs
 %{_presetdir}/86-fstrim.preset
-%{_unitdir}/fstrim.*
+%{_systemunitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
+
+%files user
+%config(noreplace) %{_sysconfdir}/pam.d/chfn
+%config(noreplace) %{_sysconfdir}/pam.d/chsh
+%attr(4711,root,root) %{_bindir}/chfn
+%attr(4711,root,root) %{_bindir}/chsh
+%{_mandir}/man1/chfn.1*
+%{_mandir}/man1/chsh.1*
 
 %files -n uuidd
 %{_mandir}/man8/uuidd.8*
