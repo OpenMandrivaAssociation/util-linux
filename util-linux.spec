@@ -38,8 +38,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.29.1
-Release:	2
+Version:	2.29.2
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
