@@ -378,7 +378,7 @@ unset LINGUAS || :
 	--with-systemdsystemunitdir=%{_systemunitdir} \
 
 # build util-linux
-%make
+%make REALTIME_LIBS="-lrt -lpthread"
 
 
 %install
