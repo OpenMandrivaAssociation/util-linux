@@ -38,12 +38,12 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.29.2
-Release:	2
+Version:	2.30
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
-URL:		http://ftp.kernel.org/pub/linux/utils/util-linux
-Source0:	http://ftp.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
+URL:		http://www.kernel.org/pub/linux/utils/util-linux
+Source0:	http://www.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-login.pamd
 Source2:	util-linux-remote.pamd
@@ -576,6 +576,9 @@ end
 /bin/ionice
 /bin/findmnt
 /bin/mountpoint
+%{_bindir}/chmem
+%{_bindir}/fincore
+%{_bindir}/lsmem
 %{_bindir}/nsenter
 %{_bindir}/setpriv
 /bin/su
@@ -597,6 +600,7 @@ end
 %{_mandir}/man8/agetty.8*
 /sbin/blkid
 /sbin/blkdiscard
+/sbin/blkzone
 /sbin/blockdev
 /sbin/fstrim
 /sbin/pivot_root
@@ -609,12 +613,16 @@ end
 /sbin/runuser
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/addpart.8*
+%{_mandir}/man8/blkzone.8*
+%{_mandir}/man8/chmem.8*
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/findmnt.8*
 %{_mandir}/man8/fsfreeze.8*
 %{_mandir}/man8/fstrim.8*
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/swaplabel.8*
+%{_mandir}/man1/lsmem.1*
+%{_mandir}/man1/fincore.1*
 %{_mandir}/man1/mountpoint.1*
 %{_mandir}/man1/nsenter.1*
 %{_mandir}/man1/setpriv.1*
@@ -700,7 +708,6 @@ end
 %ifarch %{sparcx}
 %{_bindir}/sunhostid
 %endif
-%{_bindir}/tailf
 %{_bindir}/ul
 %{_bindir}/unshare
 %{_bindir}/uuidgen
@@ -742,7 +749,6 @@ end
 %{_mandir}/man1/rev.1*
 %{_mandir}/man1/script.1*
 %{_mandir}/man1/setterm.1*
-%{_mandir}/man1/tailf.1*
 %{_mandir}/man1/ul.1*
 %{_mandir}/man1/uuidgen.1*
 %{_mandir}/man1/unshare.1*
