@@ -1,8 +1,7 @@
-diff -Naur util-linux-2.26/login-utils/chfn.c util-linux-2.26.tpg/login-utils/chfn.c
---- util-linux-2.26/login-utils/chfn.c	2015-02-10 09:49:46.000000000 +0000
-+++ util-linux-2.26.tpg/login-utils/chfn.c	2015-02-21 00:40:12.950338813 +0000
-@@ -143,7 +143,7 @@
- 		{NULL, no_argument, 0, '0'},
+--- util-linux-2.30/login-utils/chfn.c.chfnlsb~	2017-05-19 11:43:34.780948977 +0200
++++ util-linux-2.30/login-utils/chfn.c	2017-06-03 21:42:33.733806522 +0200
+@@ -147,7 +147,7 @@ static void parse_argv(struct chfn_contr
+ 		{ NULL, 0, NULL, 0 },
  	};
  
 -	while ((c = getopt_long(argc, argv, "f:r:p:h:o:uv", long_options,
@@ -10,7 +9,7 @@ diff -Naur util-linux-2.26/login-utils/chfn.c util-linux-2.26.tpg/login-utils/ch
  				&index)) != -1) {
  		switch (c) {
  		case 'f':
-@@ -152,12 +152,14 @@
+@@ -156,12 +156,14 @@ static void parse_argv(struct chfn_contr
  			ctl->newf.full_name = optarg;
  			status += check_gecos_string(_("Name"), optarg);
  			break;
