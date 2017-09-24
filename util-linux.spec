@@ -38,7 +38,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.30.1
+Version:	2.30.2
 Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -491,7 +491,7 @@ done
 chmod 644 misc-utils/getopt-*.{bash,tcsh}
 
 # link mtab
-ln -sf /proc/mounts %{buildroot}/etc/mtab
+ln -sf ../proc/self/mounts %{buildroot}/etc/mtab
 
 # /usr/sbin -> /sbin
 for I in addpart delpart partx; do
