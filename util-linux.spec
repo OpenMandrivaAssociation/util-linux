@@ -55,8 +55,6 @@ Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
 Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
-# RHEL/Fedora specific mount options
-Patch1:		util-linux-2.23.1-mount-managed.patch
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
@@ -68,19 +66,10 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
+
+%ifarch alpha %{sparc} ppc
 # sparc build fix
 Patch115:	util-linux-2.22-fix-ioctl.patch
-
-# crypto patches
-# loop-AES patch
-# reworked from http://loop-aes.sourceforge.net/updates/util-linux-ng-2.17-20100120.diff.bz2
-Patch1100:	http://loop-aes.sourceforge.net/updates/util-linux-2.25.1-20140911.diff.bz2
-Patch1101:	util-linux-2.12q-swapon-skip-encrypted.patch
-Patch1102:	util-linux-2.12-lower-LOOP_PASSWORD_MIN_LENGTH-for-AES.patch
-# load cryptoloop and cypher modules when use cryptoapi
-Patch1103:	util-linux-2.12a-cryptoapi-load-module.patch
-Patch1104:	util-linux-ng-2.14.1-set-as-encrypted.patch
-
 # clock program for ppc
 Patch1200:	util-linux-2.10r-clock-1.1-ppc.patch
 # leng options for clock-ppc
@@ -89,8 +78,8 @@ Patch1201:	util-linux-2.10s-clock-syntax-ppc.patch
 Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
 # fix build on alpha with newer kernel-headers
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
-# Mandrivamove patches
-Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
+%endif
+
 # (tpg) usptream git
 Patch1400:	0001-losetup-fix-conflicting-types-for-loopcxt_set_blocks.patch
 
@@ -311,7 +300,6 @@ mountinfo, etc) and mount filesystems.
 %prep
 %setup -q
 
-%patch1 -p1 -b .options~
 %patch5 -p1 -b .lastlog~
 
 # Mandriva
@@ -329,15 +317,9 @@ mountinfo, etc) and mount filesystems.
 %endif
 
 %patch111 -p1 -b .mkfsman~
+%ifarch %{sparc}
 %patch115 -p1 -b .fix-ioctl~
-
-#%patch1100 -p1 -b .loopAES
-#%patch1101 -p0 -b .swapon-encrypted
-#%patch1102 -p0 -b .loopAES-password
-#%patch1103 -p0 -b .load-module
-#%patch1104 -p1 -b .set-as-encrypted
-
-#%patch1300 -p1 -b .CHANGE-FD
+%endif
 
 %patch1400 -p1
 
