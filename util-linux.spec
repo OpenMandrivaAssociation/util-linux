@@ -80,9 +80,6 @@ Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
 %endif
 
-# (tpg) usptream git
-Patch1400:	0001-losetup-fix-conflicting-types-for-loopcxt_set_blocks.patch
-
 BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	rpm-build >= 1:5.4.10-5
@@ -320,8 +317,6 @@ mountinfo, etc) and mount filesystems.
 %ifarch %{sparc}
 %patch115 -p1 -b .fix-ioctl~
 %endif
-
-%patch1400 -p1
 
 # rebuild build system for loop-AES patch
 #./autogen.sh
