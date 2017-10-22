@@ -776,7 +776,7 @@ end
 %endif
 %{_mandir}/man8/readprofile.8*
 %{_mandir}/man8/resizepart.8*
-{_mandir}/man8/rfkill.8*
+%{_mandir}/man8/rfkill.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
 %endif
