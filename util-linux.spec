@@ -38,7 +38,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.30.2
+Version:	2.31
 Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -91,6 +91,8 @@ Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
 # Mandrivamove patches
 Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
+# (tpg) usptream git
+Patch1400:	0001-losetup-fix-conflicting-types-for-loopcxt_set_blocks.patch
 
 BuildRequires:	libtool
 BuildRequires:	sed
@@ -123,6 +125,7 @@ Provides:	/bin/su
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
+%rename		rfkill
 %ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
@@ -136,6 +139,7 @@ Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.3-3
+Conflicts:	rfkill <= 0.6
 Requires:	pam >= 1.3.0-1
 Requires:	shadow >= 4.2.1-24
 Requires:	%{libblkid} = %{EVRD}
@@ -259,25 +263,25 @@ License:	LGPLv2+
 Requires:	%{libmount} = %{EVRD}
 Provides:	libmount-devel = %{version}-%{release}
 
-%description -n	%{devmount}
+%description -n %{devmount}
 Development files and headers for libmount library.
 
-%package -n     %{libsmartcols}
-Summary:        Formatting library for ls-like programs
-Group:          System/Libraries
-License:        LGPL2+
+%package -n %{libsmartcols}
+Summary:	Formatting library for ls-like programs
+Group:		System/Libraries
+License:	LGPL2+
 Requires:	filesystem >= 3.0-9
 
 %description -n %{libsmartcols}
 The libsmartcols library is used to format output,
 for ls-like terminal programs.
 
-%package -n     %{devsmartcols}
-Summary:        Formatting library for ls-like programs
-Group:          Development/C
-License:        LGPL2+
-Requires:       %{libsmartcols} = %{EVRD}
-Provides:       libsmartcols-devel = %{version}-%{release}
+%package -n %{devsmartcols}
+Summary:	Formatting library for ls-like programs
+Group:		Development/C
+License:	LGPL2+
+Requires:	%{libsmartcols} = %{EVRD}
+Provides:	libsmartcols-devel = %{version}-%{release}
 
 %description -n %{devsmartcols}
 Development files and headers for libsmartcols library.
@@ -335,6 +339,8 @@ mountinfo, etc) and mount filesystems.
 
 #%patch1300 -p1 -b .CHANGE-FD
 
+%patch1400 -p1
+
 # rebuild build system for loop-AES patch
 #./autogen.sh
 
@@ -379,7 +385,6 @@ unset LINGUAS || :
 
 # build util-linux
 %make REALTIME_LIBS="-lrt -lpthread"
-
 
 %install
 mkdir -p %{buildroot}/{bin,sbin}
@@ -701,6 +706,7 @@ end
 %{_bindir}/rename
 %{_bindir}/renice
 %{_bindir}/rev
+%{_bindir}/rfkill
 %{_bindir}/script
 %{_bindir}/setarch
 %{_bindir}/setsid
@@ -711,10 +717,11 @@ end
 %{_bindir}/ul
 %{_bindir}/unshare
 %{_bindir}/uuidgen
+%{_bindir}/uuidparse
 %{_bindir}/whereis
 %{_bindir}/ipcmk
 %{_bindir}/lscpu
-%attr(2755,root,tty)	%{_bindir}/write
+%attr(2755,root,tty) %{_bindir}/write
 %{_sbindir}/readprofile
 %ifnarch s390 s390x
 %{_sbindir}/tunelp
@@ -751,6 +758,7 @@ end
 %{_mandir}/man1/setterm.1*
 %{_mandir}/man1/ul.1*
 %{_mandir}/man1/uuidgen.1*
+%{_mandir}/man1/uuidparse.1*
 %{_mandir}/man1/unshare.1*
 %{_mandir}/man1/utmpdump.1*
 %{_mandir}/man1/whereis.1*
@@ -789,8 +797,9 @@ end
 %{_mandir}/man8/raw.8*
 %{_mandir}/man8/rawdevices.8*
 %endif
-%_mandir/man8/readprofile.8*
-%_mandir/man8/resizepart.8*
+%{_mandir}/man8/readprofile.8*
+%{_mandir}/man8/resizepart.8*
+{_mandir}/man8/rfkill.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
 %endif
@@ -802,8 +811,8 @@ end
 %{_mandir}/man8/wdctl.8*
 %{_mandir}/man8/fsck.minix.8*
 %{_mandir}/man8/mkfs.minix.8*
-%attr(4755,root,root)	/bin/mount
-%attr(4755,root,root)	/bin/umount
+%attr(4755,root,root) /bin/mount
+%attr(4755,root,root) /bin/umount
 /sbin/swapon
 /sbin/swapoff
 /sbin/switch_root
