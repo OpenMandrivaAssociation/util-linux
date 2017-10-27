@@ -1,6 +1,9 @@
 # seems to cause issues with blkid on x86_64
 %define _disable_lto 1
 
+# (tpg) optimize it a bit
+%global optflags %optflags -O3
+
 %define blkid_major 1
 %define libblkid %mklibname blkid %{blkid_major}
 %define devblkid %mklibname blkid -d
@@ -33,13 +36,13 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_without	python
+%bcond_without python
 %endif
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.31
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -79,6 +82,9 @@ Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
 # fix build on alpha with newer kernel-headers
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
 %endif
+
+# (tpg) ClearLinux patches
+Patch2000:	agetty.patch
 
 BuildRequires:	libtool
 BuildRequires:	sed
@@ -143,7 +149,7 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%package -n	%{libblkid}
+%package -n %{libblkid}
 Summary:	Block device ID library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -152,7 +158,7 @@ Conflicts:	%{libext2fs} < 1.41.6-2mnb2
 %description -n %{libblkid}
 This is block device identification library, part of util-linux.
 
-%package -n	%{devblkid}
+%package -n %{devblkid}
 Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
@@ -161,11 +167,11 @@ Requires:	%{devuuid} = %{version}-%{release}
 Conflicts:	%{devext2fs} < 1.41.6-2mnb2
 Provides:	libblkid-devel = %{version}-%{release}
 
-%description -n	%{devblkid}
+%description -n %{devblkid}
 This is the block device identification development library and headers,
 part of util-linux.
 
-%package -n	%{libfdisk}
+%package -n %{libfdisk}
 Summary:	Fdisk library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -173,24 +179,24 @@ License:	LGPLv2+
 %description -n %{libfdisk}
 This is fdisk library, part of util-linux.
 
-%package -n	%{devfdisk}
+%package -n %{devfdisk}
 Summary:	Fdisk development library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libfdisk} = %{version}-%{release}
 Provides:	libfdisk-devel = %{version}-%{release}
 
-%description -n	%{devfdisk}
+%description -n %{devfdisk}
 This is the fdisk development library and headers,
 part of util-linux.
 
-%package -n	%{libuuid}
+%package -n %{libuuid}
 Summary:	Universally unique ID library
 Group:		System/Libraries
 License:	BSD
 Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 
-%description -n	%{libuuid}
+%description -n %{libuuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -200,7 +206,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n	%{devuuid}
+%package -n %{devuuid}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	BSD
@@ -208,7 +214,7 @@ Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 Requires:	%{libuuid} = %{version}
 Provides:	libuuid-devel = %{version}-%{release}
 
-%description -n	%{devuuid}
+%description -n %{devuuid}
 This is the universally unique ID development library and headers,
 part of e2fsprogs.
 
@@ -219,7 +225,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n	uuidd
+%package -n uuidd
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
@@ -227,22 +233,22 @@ Requires(post):	systemd
 Requires(pre):	shadow-utils >= 4.2.1-7
 Requires(pre,post,preun,postun):	rpm-helper >= 0.24.12-11
 
-%description -n	uuidd
+%description -n uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
 uniqueness of time-based UUID generation even at very high rates on
 SMP systems.
 
-%package -n	%{libmount}
+%package -n %{libmount}
 Summary:	Universal mount library
 Group:		System/Libraries
 License:	LGPLv2+
 
-%description -n	%{libmount}
+%description -n %{libmount}
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
-%package -n	%{devmount}
+%package -n %{devmount}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
@@ -281,7 +287,7 @@ Requires:	%{name} = %{EVRD}
 chfn and chsh utilities with dependence on libuser.
 
 %if %{with python}
-%package -n	python-libmount
+%package -n python-libmount
 Summary:	Python bindings for the libmount library
 Group:		Development/Python
 Requires:	%{libmount} = %{EVRD}
@@ -318,8 +324,7 @@ mountinfo, etc) and mount filesystems.
 %patch115 -p1 -b .fix-ioctl~
 %endif
 
-# rebuild build system for loop-AES patch
-#./autogen.sh
+%patch2000 -p1
 
 %build
 %ifarch %{ix86}
