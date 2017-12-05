@@ -377,7 +377,6 @@ unset LINGUAS || :
 	--enable-nologin \
 	--with-systemd \
 	--with-readline \
-	--enable-libmount-force-mountinfo \
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_systemunitdir} \
 
