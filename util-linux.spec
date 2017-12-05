@@ -121,7 +121,7 @@ Provides:	/bin/su
 %rename		setarch
 %rename		util-linux-ng
 Obsoletes:	rfkill < 1:0.5-10
-Provides:	rfkill < 1:0.5-10
+Provides:	rfkill = 1:0.5-10
 %ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
@@ -135,7 +135,7 @@ Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.3-3
-Conflicts:	rfkill <= 0.6
+Conflicts:	rfkill < 0.5-10
 Requires:	pam >= 1.3.0-1
 Requires:	shadow >= 4.2.1-24
 Requires:	%{libblkid} = %{EVRD}
