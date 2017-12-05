@@ -42,7 +42,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.31
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -58,6 +58,9 @@ Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
 Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
+Source12:	rfkill.pam
+Source13:	rfkill.consoleapp
+
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
@@ -117,7 +120,8 @@ Provides:	/bin/su
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
-%rename		rfkill
+Obsoletes:	rfkill < 1:0.5-10
+Provides:	rfkill < 1:0.5-10
 %ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
@@ -427,8 +431,11 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE6} ./su-l
   install -m 644 %{SOURCE7} ./runuser
   install -m 644 %{SOURCE8} ./runuser-l
+  install -m 644 %{SOURCE12} ./rfkill
   popd
 }
+
+install -m 0644 %{SOURCE13} -D %{buildroot}%{_sysconfdir}/security/console.apps/rfkill
 
 # This has dependencies on stuff in /usr
 mv %{buildroot}{/sbin/,/usr/sbin}/cfdisk
@@ -582,6 +589,8 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/su-l
 %config(noreplace) %{_sysconfdir}/pam.d/runuser
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
+%config(noreplace) %{_sysconfdir}/pam.d/rfkill
+%config(noreplace) %{_sysconfdir}/security/console.apps/rfkill
 /etc/mtab
 /sbin/agetty
 %{_mandir}/man8/agetty.8*
