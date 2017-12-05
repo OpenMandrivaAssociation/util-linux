@@ -91,6 +91,8 @@ Patch2000:	agetty.patch
 
 BuildRequires:	libtool
 BuildRequires:	sed
+BuildRequires:	bison
+BuildRequires:	byacc
 BuildRequires:	rpm-build >= 1:5.4.10-5
 BuildRequires:	audit-devel
 BuildRequires:	gettext-devel
@@ -120,8 +122,6 @@ Provides:	/bin/su
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
-Obsoletes:	rfkill < 1:0.5-10
-Provides:	rfkill = 1:0.5-10
 %ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
@@ -303,6 +303,18 @@ written in the Python programming language to use the interface
 supplied by the libmount library to work with mount tables (fstab,
 mountinfo, etc) and mount filesystems.
 %endif
+
+%package -n rfkill
+Summary:	Simple /dev/rfkill userspace tool
+Group:		System/Base
+Obsoletes:	rfkill < 1:0.5-10
+Provides:	rfkill = 1:0.5-10
+Conflicts:	rfkill < 0.5-10
+
+%description -n rfkill
+Rfkill is a simple userspace tool to manipulate /dev/rfkill.
+It's needed to enable and disable wireless and bluetooth from 
+userspace beginning with 2.6.31 series kernels.
 
 %prep
 %setup -q
@@ -589,8 +601,6 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/su-l
 %config(noreplace) %{_sysconfdir}/pam.d/runuser
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
-%config(noreplace) %{_sysconfdir}/pam.d/rfkill
-%config(noreplace) %{_sysconfdir}/security/console.apps/rfkill
 /etc/mtab
 /sbin/agetty
 %{_mandir}/man8/agetty.8*
@@ -697,7 +707,6 @@ end
 %{_bindir}/rename
 %{_bindir}/renice
 %{_bindir}/rev
-%{_bindir}/rfkill
 %{_bindir}/script
 %{_bindir}/setarch
 %{_bindir}/setsid
@@ -790,7 +799,6 @@ end
 %endif
 %{_mandir}/man8/readprofile.8*
 %{_mandir}/man8/resizepart.8*
-%{_mandir}/man8/rfkill.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
 %endif
@@ -837,6 +845,12 @@ end
 %{_sysconfdir}/tmpfiles.d/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
+
+%files -n rfkill
+%config(noreplace) %{_sysconfdir}/pam.d/rfkill
+%config(noreplace) %{_sysconfdir}/security/console.apps/rfkill
+%{_bindir}/rfkill
+%{_mandir}/man8/rfkill.8*
 
 %files -n %{libblkid}
 /%{_lib}/libblkid.so.%{blkid_major}*
