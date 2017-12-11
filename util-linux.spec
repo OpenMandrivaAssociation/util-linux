@@ -1,6 +1,9 @@
 # seems to cause issues with blkid on x86_64
 %define _disable_lto 1
 
+# (tpg) optimize it a bit
+%global optflags %optflags -O3
+
 %define blkid_major 1
 %define libblkid %mklibname blkid %{blkid_major}
 %define devblkid %mklibname blkid -d
@@ -33,13 +36,13 @@
 %define no_hwclock_archs s390 s390x
 
 %if !%{build_bootstrap}
-%bcond_without	python
+%bcond_without python
 %endif
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.30.2
-Release:	1
+Version:	2.31
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -55,8 +58,9 @@ Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
 Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
-# RHEL/Fedora specific mount options
-Patch1:		util-linux-2.23.1-mount-managed.patch
+Source12:	rfkill.pam
+Source13:	rfkill.consoleapp
+
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # /etc/blkid.tab --> /etc/blkid/blkid.tab
@@ -68,19 +72,10 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
+
+%ifarch alpha %{sparc} ppc
 # sparc build fix
 Patch115:	util-linux-2.22-fix-ioctl.patch
-
-# crypto patches
-# loop-AES patch
-# reworked from http://loop-aes.sourceforge.net/updates/util-linux-ng-2.17-20100120.diff.bz2
-Patch1100:	http://loop-aes.sourceforge.net/updates/util-linux-2.25.1-20140911.diff.bz2
-Patch1101:	util-linux-2.12q-swapon-skip-encrypted.patch
-Patch1102:	util-linux-2.12-lower-LOOP_PASSWORD_MIN_LENGTH-for-AES.patch
-# load cryptoloop and cypher modules when use cryptoapi
-Patch1103:	util-linux-2.12a-cryptoapi-load-module.patch
-Patch1104:	util-linux-ng-2.14.1-set-as-encrypted.patch
-
 # clock program for ppc
 Patch1200:	util-linux-2.10r-clock-1.1-ppc.patch
 # leng options for clock-ppc
@@ -89,11 +84,15 @@ Patch1201:	util-linux-2.10s-clock-syntax-ppc.patch
 Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
 # fix build on alpha with newer kernel-headers
 Patch1203:	util-linux-2.11m-cmos-alpha.patch
-# Mandrivamove patches
-Patch1300:	util-linux-ng-2.18-losetup-try-LOOP_CHANGE_FD-when-loop-already-busy.patch
+%endif
+
+# (tpg) ClearLinux patches
+Patch2000:	agetty.patch
 
 BuildRequires:	libtool
 BuildRequires:	sed
+BuildRequires:	bison
+BuildRequires:	byacc
 BuildRequires:	rpm-build >= 1:5.4.10-5
 BuildRequires:	audit-devel
 BuildRequires:	gettext-devel
@@ -136,6 +135,7 @@ Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.3-3
+Conflicts:	rfkill < 0.5-10
 Requires:	pam >= 1.3.0-1
 Requires:	shadow >= 4.2.1-24
 Requires:	%{libblkid} = %{EVRD}
@@ -153,7 +153,7 @@ utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
 
-%package -n	%{libblkid}
+%package -n %{libblkid}
 Summary:	Block device ID library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -162,7 +162,7 @@ Conflicts:	%{libext2fs} < 1.41.6-2mnb2
 %description -n %{libblkid}
 This is block device identification library, part of util-linux.
 
-%package -n	%{devblkid}
+%package -n %{devblkid}
 Summary:	Block device ID library
 Group:		Development/C
 License:	LGPLv2+
@@ -171,11 +171,11 @@ Requires:	%{devuuid} = %{version}-%{release}
 Conflicts:	%{devext2fs} < 1.41.6-2mnb2
 Provides:	libblkid-devel = %{version}-%{release}
 
-%description -n	%{devblkid}
+%description -n %{devblkid}
 This is the block device identification development library and headers,
 part of util-linux.
 
-%package -n	%{libfdisk}
+%package -n %{libfdisk}
 Summary:	Fdisk library
 Group:		System/Libraries
 License:	LGPLv2+
@@ -183,24 +183,24 @@ License:	LGPLv2+
 %description -n %{libfdisk}
 This is fdisk library, part of util-linux.
 
-%package -n	%{devfdisk}
+%package -n %{devfdisk}
 Summary:	Fdisk development library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libfdisk} = %{version}-%{release}
 Provides:	libfdisk-devel = %{version}-%{release}
 
-%description -n	%{devfdisk}
+%description -n %{devfdisk}
 This is the fdisk development library and headers,
 part of util-linux.
 
-%package -n	%{libuuid}
+%package -n %{libuuid}
 Summary:	Universally unique ID library
 Group:		System/Libraries
 License:	BSD
 Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 
-%description -n	%{libuuid}
+%description -n %{libuuid}
 This is the universally unique ID library, part of e2fsprogs.
 
 The libuuid library generates and parses 128-bit universally unique
@@ -210,7 +210,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n	%{devuuid}
+%package -n %{devuuid}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	BSD
@@ -218,7 +218,7 @@ Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 Requires:	%{libuuid} = %{version}
 Provides:	libuuid-devel = %{version}-%{release}
 
-%description -n	%{devuuid}
+%description -n %{devuuid}
 This is the universally unique ID development library and headers,
 part of e2fsprogs.
 
@@ -229,7 +229,7 @@ be used for multiple purposes, from tagging objects with an extremely
 short lifetime, to reliably identifying very persistent objects
 across a network.
 
-%package -n	uuidd
+%package -n uuidd
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
@@ -237,47 +237,47 @@ Requires(post):	systemd
 Requires(pre):	shadow-utils >= 4.2.1-7
 Requires(pre,post,preun,postun):	rpm-helper >= 0.24.12-11
 
-%description -n	uuidd
+%description -n uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
 uniqueness of time-based UUID generation even at very high rates on
 SMP systems.
 
-%package -n	%{libmount}
+%package -n %{libmount}
 Summary:	Universal mount library
 Group:		System/Libraries
 License:	LGPLv2+
 
-%description -n	%{libmount}
+%description -n %{libmount}
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
 manage the mtab file, evaluate mount options, etc.
 
-%package -n	%{devmount}
+%package -n %{devmount}
 Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libmount} = %{EVRD}
 Provides:	libmount-devel = %{version}-%{release}
 
-%description -n	%{devmount}
+%description -n %{devmount}
 Development files and headers for libmount library.
 
-%package -n     %{libsmartcols}
-Summary:        Formatting library for ls-like programs
-Group:          System/Libraries
-License:        LGPL2+
+%package -n %{libsmartcols}
+Summary:	Formatting library for ls-like programs
+Group:		System/Libraries
+License:	LGPL2+
 Requires:	filesystem >= 3.0-9
 
 %description -n %{libsmartcols}
 The libsmartcols library is used to format output,
 for ls-like terminal programs.
 
-%package -n     %{devsmartcols}
-Summary:        Formatting library for ls-like programs
-Group:          Development/C
-License:        LGPL2+
-Requires:       %{libsmartcols} = %{EVRD}
-Provides:       libsmartcols-devel = %{version}-%{release}
+%package -n %{devsmartcols}
+Summary:	Formatting library for ls-like programs
+Group:		Development/C
+License:	LGPL2+
+Requires:	%{libsmartcols} = %{EVRD}
+Provides:	libsmartcols-devel = %{version}-%{release}
 
 %description -n %{devsmartcols}
 Development files and headers for libsmartcols library.
@@ -291,7 +291,7 @@ Requires:	%{name} = %{EVRD}
 chfn and chsh utilities with dependence on libuser.
 
 %if %{with python}
-%package -n	python-libmount
+%package -n python-libmount
 Summary:	Python bindings for the libmount library
 Group:		Development/Python
 Requires:	%{libmount} = %{EVRD}
@@ -304,10 +304,21 @@ supplied by the libmount library to work with mount tables (fstab,
 mountinfo, etc) and mount filesystems.
 %endif
 
+%package -n rfkill
+Summary:	Simple /dev/rfkill userspace tool
+Group:		System/Base
+Obsoletes:	rfkill < 1:0.5-10
+Provides:	rfkill = 1:0.5-10
+Conflicts:	rfkill < 0.5-10
+
+%description -n rfkill
+Rfkill is a simple userspace tool to manipulate /dev/rfkill.
+It's needed to enable and disable wireless and bluetooth from 
+userspace beginning with 2.6.31 series kernels.
+
 %prep
 %setup -q
 
-%patch1 -p1 -b .options~
 %patch5 -p1 -b .lastlog~
 
 # Mandriva
@@ -325,18 +336,11 @@ mountinfo, etc) and mount filesystems.
 %endif
 
 %patch111 -p1 -b .mkfsman~
+%ifarch %{sparc}
 %patch115 -p1 -b .fix-ioctl~
+%endif
 
-#%patch1100 -p1 -b .loopAES
-#%patch1101 -p0 -b .swapon-encrypted
-#%patch1102 -p0 -b .loopAES-password
-#%patch1103 -p0 -b .load-module
-#%patch1104 -p1 -b .set-as-encrypted
-
-#%patch1300 -p1 -b .CHANGE-FD
-
-# rebuild build system for loop-AES patch
-#./autogen.sh
+%patch2000 -p1
 
 %build
 %ifarch %{ix86}
@@ -373,13 +377,11 @@ unset LINGUAS || :
 	--enable-nologin \
 	--with-systemd \
 	--with-readline \
-	--enable-libmount-force-mountinfo \
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_systemunitdir} \
 
 # build util-linux
 %make REALTIME_LIBS="-lrt -lpthread"
-
 
 %install
 mkdir -p %{buildroot}/{bin,sbin}
@@ -440,8 +442,11 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE6} ./su-l
   install -m 644 %{SOURCE7} ./runuser
   install -m 644 %{SOURCE8} ./runuser-l
+  install -m 644 %{SOURCE12} ./rfkill
   popd
 }
+
+install -m 0644 %{SOURCE13} -D %{buildroot}%{_sysconfdir}/security/console.apps/rfkill
 
 # This has dependencies on stuff in /usr
 mv %{buildroot}{/sbin/,/usr/sbin}/cfdisk
@@ -711,10 +716,11 @@ end
 %{_bindir}/ul
 %{_bindir}/unshare
 %{_bindir}/uuidgen
+%{_bindir}/uuidparse
 %{_bindir}/whereis
 %{_bindir}/ipcmk
 %{_bindir}/lscpu
-%attr(2755,root,tty)	%{_bindir}/write
+%attr(2755,root,tty) %{_bindir}/write
 %{_sbindir}/readprofile
 %ifnarch s390 s390x
 %{_sbindir}/tunelp
@@ -751,6 +757,7 @@ end
 %{_mandir}/man1/setterm.1*
 %{_mandir}/man1/ul.1*
 %{_mandir}/man1/uuidgen.1*
+%{_mandir}/man1/uuidparse.1*
 %{_mandir}/man1/unshare.1*
 %{_mandir}/man1/utmpdump.1*
 %{_mandir}/man1/whereis.1*
@@ -789,8 +796,8 @@ end
 %{_mandir}/man8/raw.8*
 %{_mandir}/man8/rawdevices.8*
 %endif
-%_mandir/man8/readprofile.8*
-%_mandir/man8/resizepart.8*
+%{_mandir}/man8/readprofile.8*
+%{_mandir}/man8/resizepart.8*
 %ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
 %endif
@@ -802,8 +809,8 @@ end
 %{_mandir}/man8/wdctl.8*
 %{_mandir}/man8/fsck.minix.8*
 %{_mandir}/man8/mkfs.minix.8*
-%attr(4755,root,root)	/bin/mount
-%attr(4755,root,root)	/bin/umount
+%attr(4755,root,root) /bin/mount
+%attr(4755,root,root) /bin/umount
 /sbin/swapon
 /sbin/swapoff
 /sbin/switch_root
@@ -837,6 +844,12 @@ end
 %{_sysconfdir}/tmpfiles.d/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
+
+%files -n rfkill
+%config(noreplace) %{_sysconfdir}/pam.d/rfkill
+%config(noreplace) %{_sysconfdir}/security/console.apps/rfkill
+%{_bindir}/rfkill
+%{_mandir}/man8/rfkill.8*
 
 %files -n %{libblkid}
 /%{_lib}/libblkid.so.%{blkid_major}*
