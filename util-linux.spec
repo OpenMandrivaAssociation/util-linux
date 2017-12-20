@@ -41,8 +41,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.31
-Release:	5
+Version:	2.31.1
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -413,7 +413,7 @@ echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
 %endif
 
 # Correct mail spool path.
-perl -pi -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
+sed -i -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
 
 %ifarch %{sparcx}
 rm %{buildroot}%{_bindir}/sunhostid
@@ -447,6 +447,8 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   popd
 }
 
+# Consolehelper
+ln -s consolehelper %{buildroot}%{_bindir}/rfkill
 install -m 0644 %{SOURCE13} -D %{buildroot}%{_sysconfdir}/security/console.apps/rfkill
 
 # This has dependencies on stuff in /usr
@@ -850,6 +852,7 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/rfkill
 %config(noreplace) %{_sysconfdir}/security/console.apps/rfkill
 %{_bindir}/rfkill
+%{_sbindir}/rfkill
 %{_mandir}/man8/rfkill.8*
 
 %files -n %{libblkid}
