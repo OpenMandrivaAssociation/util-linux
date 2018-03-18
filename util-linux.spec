@@ -328,8 +328,10 @@ userspace beginning with 2.6.31 series kernels.
 %patch1201 -p1
 %endif
 
+%ifarch alpha %{sparc} ppc
 #LSB (sb)
 %patch1202 -p1 -b .chfnlsb~
+%endif
 
 #fix build on alpha with newer kernel-headers
 %ifarch alpha
@@ -382,7 +384,7 @@ unset LINGUAS || :
 	--with-systemdsystemunitdir=%{_systemunitdir} \
 
 # build util-linux
-%make REALTIME_LIBS="-lrt -lpthread"
+%make_build REALTIME_LIBS="-lrt -lpthread"
 
 %install
 mkdir -p %{buildroot}/{bin,sbin}
@@ -393,7 +395,7 @@ mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,security/console.apps,blkid}
 
 # install util-linux
-%makeinstall_std DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
+%make_install DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
 
 # (cg) Remove unwanted binaries (and their corresponding man pages)
 for unwanted in %{unwanted}; do
