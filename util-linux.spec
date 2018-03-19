@@ -42,7 +42,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.31.1
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -136,8 +136,8 @@ Conflicts:	coreutils < 8.19-2
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.7-2
 Conflicts:	rfkill < 0.5-10
-Requires:	pam >= 1.3.0-1
-Requires:	shadow >= 4.2.1-24
+Recommends:	pam >= 1.3.0-1
+Recommends:	shadow >= 4.2.1-24
 Requires:	%{libblkid} = %{EVRD}
 Requires:	%{libfdisk} = %{EVRD}
 Requires:	%{libmount} = %{EVRD}
@@ -233,9 +233,8 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
-Requires(post):	systemd
-Requires(pre):	shadow-utils >= 4.2.1-7
-Requires(pre,post,preun,postun):	rpm-helper >= 0.24.12-11
+Requires(pre):	shadow >= 4.2.1-7
+Requires(pre):	rpm-helper >= 0.24.12-11
 
 %description -n uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
@@ -286,6 +285,7 @@ Development files and headers for libsmartcols library.
 Summary:	libuser based util-linux utilities
 Group:		System/Base
 Requires:	%{name} = %{EVRD}
+Requires:	pam >= 1.3.0-1
 
 %description -n util-linux-user
 chfn and chsh utilities with dependence on libuser.
@@ -311,6 +311,7 @@ Obsoletes:	rfkill < 1:0.5-10
 Provides:	rfkill = 1:0.5-10
 Conflicts:	rfkill < 0.5-10
 Conflicts:	bash-completion < 2:2.7-2
+Requires:	pam >= 1.3.0-1
 
 %description -n rfkill
 Rfkill is a simple userspace tool to manipulate /dev/rfkill.
@@ -547,7 +548,7 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 %post
 ISCHRP=`grep CHRP /proc/cpuinfo`
 if [ -z "$ISCHRP" ]; then
-  ln -sf /sbin/clock-ppc /sbin/hwclock
+    ln -sf /sbin/clock-ppc /sbin/hwclock
 fi
 %endif
 
@@ -563,10 +564,10 @@ end
 %post -p <lua>
 if arg[2] >= 2 then
     if posix.stat("/etc/blkid.tab") then
-   	os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
+	os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
     end
     if posix.stat("/etc/blkid.tab.old") then
-   	os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
+	os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
     end
 end
 
@@ -578,7 +579,7 @@ end
 %doc NEWS AUTHORS
 %doc misc-utils/getopt-*.{bash,tcsh}
 /bin/dmesg
-%attr(755,root,root)	/bin/login
+%attr(755,root,root) /bin/login
 /bin/lsblk
 /bin/more
 /bin/kill
