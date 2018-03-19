@@ -577,7 +577,7 @@ end
 
 %files -f %{name}.files
 %doc NEWS AUTHORS
-%doc misc-utils/getopt-*.{bash,tcsh}
+%doc %{_docdir}/%{name}
 /bin/dmesg
 %attr(755,root,root) /bin/login
 /bin/lsblk
