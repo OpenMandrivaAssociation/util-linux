@@ -1,7 +1,7 @@
 # seems to cause issues with blkid on x86_64
 %define _disable_lto 1
 
-%global __requires_exclude ^/bin/tcsh
+%global __requires_exclude ^/bin/tcsh|^tcsh
 
 # (tpg) optimize it a bit
 %global optflags %optflags -O3
@@ -43,7 +43,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.31.1
-Release:	4
+Release:	5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
