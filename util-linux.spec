@@ -32,8 +32,7 @@
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
-### Features
-%define include_raw 1
+
 ### Macros
 %define no_hwclock_archs s390 s390x
 
@@ -44,7 +43,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.31.1
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -138,16 +137,13 @@ Conflicts:	coreutils < 8.19-2
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.7-2
 Conflicts:	rfkill < 0.5-10
-Recommends:	pam >= 1.3.0-1
-Recommends:	shadow >= 4.2.1-24
+Requires:	pam >= 1.3.0-1
+Requires:	shadow >= 4.2.1-24
 Requires:	%{libblkid} = %{EVRD}
 Requires:	%{libfdisk} = %{EVRD}
 Requires:	%{libmount} = %{EVRD}
 Requires:	%{libuuid} = %{EVRD}
 Requires:	%{libsmartcols} = %{EVRD}
-%if %{include_raw}
-Requires:	udev
-%endif
 
 %description
 The util-linux package contains a large variety of low-level system
@@ -368,9 +364,7 @@ unset LINGUAS || :
 	--enable-kill \
 	--enable-write \
 	--enable-mountpoint \
-%if %{include_raw}
 	--enable-raw \
-%endif
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--with-audit \
@@ -406,16 +400,9 @@ for unwanted in %{unwanted}; do
   rm -f %{buildroot}%{_mandir}/{,{??,??_??}/}man*/$unwanted.[[:digit:]]*
 done
 
-%if %{include_raw}
 echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
-{
-  # see RH bugzilla #216664
-  mkdir -p %{buildroot}%{_sysconfdir}/udev/rules.d
-  pushd %{buildroot}%{_sysconfdir}/udev/rules.d
-  install -m 644 %{SOURCE4} ./60-raw.rules
-  popd
-}
-%endif
+# see RH bugzilla #216664
+install -D -p -m 644 %{SOURCE4} %{buildroot}%{_udevrulesdir}/60-raw.rules
 
 # Correct mail spool path.
 sed -i -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
@@ -597,11 +584,9 @@ end
 /bin/su
 %attr(2555,root,tty) %{_bindir}/wall
 /bin/wdctl
-%if %{include_raw}
 /bin/raw
 %dir /etc/blkid
-%config %{_sysconfdir}/udev/rules.d/60-raw.rules
-%endif
+%{_udevrulesdir}/60-raw.rules
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
 %config(noreplace) %{_sysconfdir}/pam.d/su
@@ -800,10 +785,8 @@ end
 %{_mandir}/man8/mkfs.cramfs.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/pivot_root.8*
-%if %{include_raw}
 %{_mandir}/man8/raw.8*
 %{_mandir}/man8/rawdevices.8*
-%endif
 %{_mandir}/man8/readprofile.8*
 %{_mandir}/man8/resizepart.8*
 %ifnarch s390 s390x
