@@ -1,5 +1,6 @@
+# (tpg) this was set to 1 in 2015 so let's see if this still valid
 # seems to cause issues with blkid on x86_64
-%define _disable_lto 1
+#define _disable_lto 1
 
 %global __requires_exclude ^/bin/tcsh|^tcsh
 
@@ -42,8 +43,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.31.1
-Release:	5
+Version:	2.32
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -283,7 +284,6 @@ Development files and headers for libsmartcols library.
 Summary:	libuser based util-linux utilities
 Group:		System/Base
 Requires:	%{name} = %{EVRD}
-Requires:	pam >= 1.3.0-1
 
 %description -n util-linux-user
 chfn and chsh utilities with dependence on libuser.
@@ -426,7 +426,7 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
 
 # PAM settings
 {
-  pushd %{buildroot}%{_sysconfdir}/pam.d
+  cd %{buildroot}%{_sysconfdir}/pam.d
   install -m 644 %{SOURCE1} ./login
   install -m 644 %{SOURCE2} ./remote
   install -m 644 %{SOURCE3} ./chsh
@@ -436,7 +436,7 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE7} ./runuser
   install -m 644 %{SOURCE8} ./runuser-l
   install -m 644 %{SOURCE12} ./rfkill
-  popd
+  cd -
 }
 
 # Consolehelper
