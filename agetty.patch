@@ -1,6 +1,7 @@
---- util-linux-2.26/term-utils/agetty.c.org	2015-02-27 09:44:28.005955842 -0500
-+++ util-linux-2.26/term-utils/agetty.c	2015-02-27 09:45:28.454200135 -0500
-@@ -1379,7 +1379,7 @@
+diff -Naur util-linux-2.32/term-utils/agetty.c util-linux-2.32.tpg/term-utils/agetty.c
+--- util-linux-2.32/term-utils/agetty.c	2018-03-06 11:35:18.991711000 +0000
++++ util-linux-2.32.tpg/term-utils/agetty.c	2018-03-29 06:39:21.843183474 +0000
+@@ -1390,7 +1390,7 @@
  	 * Wait for a while, then read everything the modem has said so far and
  	 * try to extract the speed of the dial-in call.
  	 */
@@ -9,7 +10,15 @@
  	if ((nread = read(STDIN_FILENO, buf, sizeof(buf) - 1)) > 0) {
  		buf[nread] = '\0';
  		for (bp = buf; bp < buf + nread; bp++)
-@@ -1728,7 +1728,7 @@
+@@ -1907,6 +1907,7 @@
+ 		/* Always show login prompt. */
+ 		write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
+ 	}
++	malloc_trim(0);
+ }
+ 
+ /* Select next baud rate. */
+@@ -1952,7 +1953,7 @@
  	 * the baud rate).
  	 */
  	if ((op->flags & F_VCONSOLE) == 0)
@@ -18,21 +27,3 @@
  	tcflush(STDIN_FILENO, TCIFLUSH);
  
  	eightbit = (op->flags & F_EIGHTBITS);
---- util-linux-2.28/term-utils/agetty.c~	2016-04-04 08:29:50.000000000 +0000
-+++ util-linux-2.28/term-utils/agetty.c	2016-10-29 13:44:35.655558375 +0000
-@@ -36,6 +36,7 @@
- #include <netdb.h>
- #include <ifaddrs.h>
- #include <net/if.h>
-+#include <malloc.h>
- 
- #include "strutils.h"
- #include "all-io.h"
-@@ -1804,6 +1805,7 @@
- 		/* Always show login prompt. */
- 		write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
- 	}
-+	malloc_trim(0);
- }
- 
- /* Select next baud rate. */
