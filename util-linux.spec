@@ -1,6 +1,3 @@
-# seems to cause issues with blkid on x86_64
-%define _disable_lto 1
-
 # (tpg) optimize it a bit
 %global optflags %optflags -O3
 
@@ -41,7 +38,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.31.1
+Version:	2.32
 Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -406,9 +403,9 @@ echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
 {
   # see RH bugzilla #216664
   mkdir -p %{buildroot}%{_sysconfdir}/udev/rules.d
-  pushd %{buildroot}%{_sysconfdir}/udev/rules.d
+  cd %{buildroot}%{_sysconfdir}/udev/rules.d
   install -m 644 %{SOURCE4} ./60-raw.rules
-  popd
+  cd -
 }
 %endif
 
@@ -434,7 +431,7 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
 
 # PAM settings
 {
-  pushd %{buildroot}%{_sysconfdir}/pam.d
+  cd %{buildroot}%{_sysconfdir}/pam.d
   install -m 644 %{SOURCE1} ./login
   install -m 644 %{SOURCE2} ./remote
   install -m 644 %{SOURCE3} ./chsh
@@ -444,7 +441,7 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE7} ./runuser
   install -m 644 %{SOURCE8} ./runuser-l
   install -m 644 %{SOURCE12} ./rfkill
-  popd
+  cd -
 }
 
 # Consolehelper
