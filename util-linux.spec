@@ -47,7 +47,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.32
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -109,6 +109,7 @@ BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
+BuildRequires:	systemd
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(udev)
