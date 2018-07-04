@@ -7,9 +7,6 @@
 
 %global __requires_exclude ^/bin/tcsh|^tcsh
 
-# (tpg) optimize it a bit
-%global optflags %optflags -O3
-
 %define blkid_major 1
 %define libblkid %mklibname blkid %{blkid_major}
 %define devblkid %mklibname blkid -d
