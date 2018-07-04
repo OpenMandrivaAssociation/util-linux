@@ -1,6 +1,9 @@
-# (tpg) this was set to 1 in 2015 so let's see if this still valid
-# seems to cause issues with blkid on x86_64
-#define _disable_lto 1
+# Using LTO breaks building applications that use static libblkid
+# with gcc.
+# Currently that combination is needed for lvm2.
+# Please remove _disable_lto if and only if you've fixed
+# (or removed) lvm2.
+%define _disable_lto 1
 
 %global __requires_exclude ^/bin/tcsh|^tcsh
 
@@ -44,7 +47,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.32
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
