@@ -322,7 +322,7 @@ userspace beginning with 2.6.31 series kernels.
 Summary:	Documentation for %{name}
 Group:		Books/Other
 
-%description -n doc
+%description doc
 Documentation and manuals for %{name}.
 
 %prep
