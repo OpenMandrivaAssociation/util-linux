@@ -527,16 +527,16 @@ mv %{name}.lang %{name}.files
 
 # create list of setarch(8) symlinks
 find  %{buildroot}%{_bindir}/ -regextype posix-egrep -type l \
-	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)$" \
+	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|znver1|uname26)$" \
 	-printf "%{_bindir}/%f\n" >> %{name}.files
 
 find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
-	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)\.8.*" \
+	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|znver1|uname26)\.8.*" \
 	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
 %ifarch ppc
 %post
-ISCHRP=`grep CHRP /proc/cpuinfo`
+ISCHRP="$(grep CHRP /proc/cpuinfo)"
 if [ -z "$ISCHRP" ]; then
     ln -sf /sbin/clock-ppc /sbin/hwclock
 fi
@@ -566,8 +566,6 @@ end
 %_pre_groupadd uuidd uuidd
 
 %files -f %{name}.files
-%doc NEWS AUTHORS
-%doc %{_docdir}/%{name}
 /bin/dmesg
 %attr(755,root,root) /bin/login
 /bin/lsblk
@@ -626,7 +624,7 @@ end
 %{_mandir}/man1/nsenter.1*
 %{_mandir}/man1/setpriv.1*
 %{_mandir}/man1/wall.1*
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64
+%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64 znver1
 /sbin/sfdisk
 %{_mandir}/man8/sfdisk.8*
 %{_sbindir}/cfdisk
@@ -688,7 +686,7 @@ end
 %{_bindir}/mcookie
 %{_bindir}/mesg
 %{_bindir}/utmpdump
-%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64
+%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64 znver1
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
 %endif
