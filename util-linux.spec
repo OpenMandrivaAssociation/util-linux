@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.32
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -146,6 +146,7 @@ Requires:	%{libfdisk} = %{EVRD}
 Requires:	%{libmount} = %{EVRD}
 Requires:	%{libuuid} = %{EVRD}
 Requires:	%{libsmartcols} = %{EVRD}
+Requires:	%{name}-doc = %{EVRD}
 
 %description
 The util-linux package contains a large variety of low-level system
@@ -316,6 +317,13 @@ Requires:	pam >= 1.3.0-1
 Rfkill is a simple userspace tool to manipulate /dev/rfkill.
 It's needed to enable and disable wireless and bluetooth from 
 userspace beginning with 2.6.31 series kernels.
+
+%package doc
+Summary:	Documentation for %{name}
+Group:		Books/Other
+
+%description -n doc
+Documentation and manuals for %{name}.
 
 %prep
 %setup -q
@@ -565,7 +573,7 @@ end
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
 %_pre_groupadd uuidd uuidd
 
-%files -f %{name}.files
+%files
 /bin/dmesg
 %attr(755,root,root) /bin/login
 /bin/lsblk
@@ -594,7 +602,6 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
 /etc/mtab
 /sbin/agetty
-%{_mandir}/man8/agetty.8*
 /sbin/blkid
 /sbin/blkdiscard
 /sbin/blkzone
@@ -608,36 +615,16 @@ end
 /sbin/fsfreeze
 /sbin/swaplabel
 /sbin/runuser
-%{_mandir}/man8/partx.8*
-%{_mandir}/man8/addpart.8*
-%{_mandir}/man8/blkzone.8*
-%{_mandir}/man8/chmem.8*
-%{_mandir}/man8/delpart.8*
-%{_mandir}/man8/findmnt.8*
-%{_mandir}/man8/fsfreeze.8*
-%{_mandir}/man8/fstrim.8*
-%{_mandir}/man8/lsblk.8*
-%{_mandir}/man8/swaplabel.8*
-%{_mandir}/man1/lsmem.1*
-%{_mandir}/man1/fincore.1*
-%{_mandir}/man1/mountpoint.1*
-%{_mandir}/man1/nsenter.1*
-%{_mandir}/man1/setpriv.1*
-%{_mandir}/man1/wall.1*
 %ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64 znver1
 /sbin/sfdisk
-%{_mandir}/man8/sfdisk.8*
 %{_sbindir}/cfdisk
-%{_mandir}/man8/cfdisk.8*
 %endif
 /sbin/fdisk
-%{_mandir}/man8/fdisk.8*
 %ifnarch %no_hwclock_archs
 /sbin/clock
 %{_sbindir}/clock
 /sbin/hwclock
 /usr/sbin/hwclock
-%{_mandir}/man8/hwclock.8*
 %endif
 %ifarch ppc
 /sbin/clock-ppc
@@ -650,7 +637,6 @@ end
 /sbin/nologin
 /sbin/sulogin
 /sbin/zramctl
-%{_mandir}/man8/nologin.8*
 %{_bindir}/chrt
 %{_bindir}/ionice
 %{_bindir}/cal
@@ -660,7 +646,6 @@ end
 %{_bindir}/column
 %ifarch alpha ppc ppc64 %{sparcx} %mips
 %{_bindir}/cytune
-%{_mandir}/man8/cytune.8*
 %endif
 %{_bindir}/eject
 %ifnarch s390 s390x
@@ -720,6 +705,46 @@ end
 %{_sbindir}/rtcwake
 %{_sbindir}/ldattach
 %{_sbindir}/resizepart
+%attr(4755,root,root) /bin/mount
+%attr(4755,root,root) /bin/umount
+/sbin/swapon
+/sbin/swapoff
+/sbin/switch_root
+/sbin/losetup
+/sbin/wipefs
+%{_presetdir}/86-fstrim.preset
+%{_systemunitdir}/fstrim.*
+%{_datadir}/bash-completion/completions/*
+
+%files doc -f %{name}.files
+%doc %{_docdir}/%{name}
+%{_mandir}/man8/agetty.8*
+%{_mandir}/man8/partx.8*
+%{_mandir}/man8/addpart.8*
+%{_mandir}/man8/blkzone.8*
+%{_mandir}/man8/chmem.8*
+%ifarch alpha ppc ppc64 %{sparcx} %mips
+%{_mandir}/man8/cytune.8*
+%endif
+%{_mandir}/man8/delpart.8*
+%{_mandir}/man8/findmnt.8*
+%{_mandir}/man8/fsfreeze.8*
+%{_mandir}/man8/fstrim.8*
+%ifnarch %no_hwclock_archs
+%{_mandir}/man8/hwclock.8*
+%endif
+%{_mandir}/man8/lsblk.8*
+%{_mandir}/man8/nologin.8*
+%{_mandir}/man8/swaplabel.8*
+%{_mandir}/man1/lsmem.1*
+%{_mandir}/man1/fincore.1*
+%{_mandir}/man1/mountpoint.1*
+%{_mandir}/man1/nsenter.1*
+%{_mandir}/man1/setpriv.1*
+%{_mandir}/man1/wall.1*
+%{_mandir}/man8/sfdisk.8*
+%{_mandir}/man8/cfdisk.8*
+%{_mandir}/man8/fdisk.8*
 %{_mandir}/man1/cal.1*
 %{_mandir}/man8/chcpu.8*
 %{_mandir}/man1/col.1*
@@ -799,11 +824,6 @@ end
 %{_mandir}/man8/wdctl.8*
 %{_mandir}/man8/fsck.minix.8*
 %{_mandir}/man8/mkfs.minix.8*
-%attr(4755,root,root) /bin/mount
-%attr(4755,root,root) /bin/umount
-/sbin/swapon
-/sbin/swapoff
-/sbin/switch_root
 %{_mandir}/man5/fstab.5*
 %{_mandir}/man5/terminal-colors.d.5*
 %{_mandir}/man8/mount.8*
@@ -814,11 +834,6 @@ end
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/losetup.8*
 %{_mandir}/man8/zramctl.8.*
-/sbin/losetup
-/sbin/wipefs
-%{_presetdir}/86-fstrim.preset
-%{_systemunitdir}/fstrim.*
-%{_datadir}/bash-completion/completions/*
 
 %files user
 %config(noreplace) %{_sysconfdir}/pam.d/chfn
