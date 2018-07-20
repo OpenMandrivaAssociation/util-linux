@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.32.1
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -146,7 +146,7 @@ Requires:	%{libfdisk} = %{EVRD}
 Requires:	%{libmount} = %{EVRD}
 Requires:	%{libuuid} = %{EVRD}
 Requires:	%{libsmartcols} = %{EVRD}
-Requires:	%{name}-doc = %{EVRD}
+Recommends:	%{name}-doc = %{EVRD}
 
 %description
 The util-linux package contains a large variety of low-level system
