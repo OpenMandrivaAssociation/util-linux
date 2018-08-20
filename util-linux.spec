@@ -409,6 +409,12 @@ for unwanted in %{unwanted}; do
   rm -f %{buildroot}%{_mandir}/{,{??,??_??}/}man*/$unwanted.[[:digit:]]*
 done
 
+# Kept here because it goes with agetty
+cat >%{buildroot}%{_sysconfdir}/issue <<'EOF'
+\S{PRETTY_NAME} for \m
+Kernel \r on \4 / \l
+EOF
+
 echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
 # see RH bugzilla #216664
 install -D -p -m 644 %{SOURCE4} %{buildroot}%{_udevrulesdir}/60-raw.rules
@@ -600,6 +606,7 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/su-l
 %config(noreplace) %{_sysconfdir}/pam.d/runuser
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
+%config(noreplace) %{_sysconfdir}/issue
 /etc/mtab
 /sbin/agetty
 /sbin/blkid
