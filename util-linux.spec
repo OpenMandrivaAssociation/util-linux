@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.32.1
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -100,6 +100,7 @@ BuildRequires:	audit-devel
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	utempter-devel
+BuildRequires:	rpm-helper
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
 %endif
