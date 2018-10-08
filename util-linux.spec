@@ -22,9 +22,9 @@
 %define libext2fs %mklibname ext2fs 2
 %define devext2fs %mklibname ext2fs -d
 
-%define	mount_major 1
-%define	libmount %mklibname mount %{mount_major}
-%define	devmount %mklibname mount -d
+%define mount_major 1
+%define libmount %mklibname mount %{mount_major}
+%define devmount %mklibname mount -d
 
 %define smartcols_major 1
 %define libsmartcols %mklibname smartcols %{smartcols_major}
@@ -62,6 +62,7 @@ Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
 Source12:	rfkill.pam
 Source13:	rfkill.consoleapp
+Source14:	uuidd.sysusers
 
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
@@ -535,6 +536,8 @@ cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
 enable fstrim.timer
 EOF
 
+install -D -m644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
+
 %find_lang %{name} %{name}.lang
 
 # the files section supports only one -f option...
@@ -855,6 +858,7 @@ end
 %{_mandir}/man8/uuidd.8*
 %{_unitdir}/uuidd.*
 %{_sysconfdir}/tmpfiles.d/uuidd.conf
+%{_sysusersdir}/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 
