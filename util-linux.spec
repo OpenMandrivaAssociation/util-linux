@@ -96,7 +96,7 @@ BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	bison
 BuildRequires:	byacc
-BuildRequires:	rpm-build >= 1:5.4.10-5
+BuildRequires:	systemd-macros
 BuildRequires:	audit-devel
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
@@ -108,7 +108,6 @@ BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
-BuildRequires:	systemd
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(udev)
@@ -389,7 +388,7 @@ unset LINGUAS || :
 	--with-systemd \
 	--with-readline \
 	--enable-sulogin-emergency-mount \
-	--with-systemdsystemunitdir=%{_systemunitdir} \
+	--with-systemdsystemunitdir=%{_unitdir} \
 
 # build util-linux
 %make_build REALTIME_LIBS="-lrt -lpthread"
@@ -724,7 +723,7 @@ end
 /sbin/losetup
 /sbin/wipefs
 %{_presetdir}/86-fstrim.preset
-%{_systemunitdir}/fstrim.*
+%{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
 
 %files doc -f %{name}.files
