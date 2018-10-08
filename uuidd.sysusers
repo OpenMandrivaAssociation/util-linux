@@ -1,0 +1,2 @@
+g uuidd - -
+u uuidd - "UUID daemon" /var/lib/libuuid /bin/false
