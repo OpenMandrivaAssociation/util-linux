@@ -650,6 +650,7 @@ end
 %{_bindir}/chrt
 %{_bindir}/ionice
 %{_bindir}/cal
+%{_bindir}/choom
 %{_bindir}/col
 %{_bindir}/colcrt
 %{_bindir}/colrm
@@ -752,11 +753,13 @@ end
 %{_mandir}/man1/nsenter.1*
 %{_mandir}/man1/setpriv.1*
 %{_mandir}/man1/wall.1*
+%{_mandir}/man5/adjtime_config.5*
 %{_mandir}/man8/sfdisk.8*
 %{_mandir}/man8/cfdisk.8*
 %{_mandir}/man8/fdisk.8*
 %{_mandir}/man1/cal.1*
 %{_mandir}/man8/chcpu.8*
+%{_mandir}/man1/choom.1*
 %{_mandir}/man1/col.1*
 %{_mandir}/man1/colcrt.1*
 %{_mandir}/man1/colrm.1*
