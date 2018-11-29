@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -90,7 +90,7 @@ Patch1203:	util-linux-2.11m-cmos-alpha.patch
 %endif
 
 # (tpg) ClearLinux patches
-Patch2000:	agetty.patch
+Patch2000:	0001-Speed-up-agetty-waits.patch
 
 BuildRequires:	libtool
 BuildRequires:	sed
@@ -327,7 +327,7 @@ Group:		Books/Other
 Documentation and manuals for %{name}.
 
 %prep
-%setup -q
+%autosetup -q
 
 %patch5 -p1 -b .lastlog~
 
