@@ -327,7 +327,7 @@ Group:		Books/Other
 Documentation and manuals for %{name}.
 
 %prep
-%autosetup -q
+%autosetup
 
 %patch5 -p1 -b .lastlog~
 
