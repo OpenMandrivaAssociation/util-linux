@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -308,9 +308,6 @@ mountinfo, etc) and mount filesystems.
 %package -n rfkill
 Summary:	Simple /dev/rfkill userspace tool
 Group:		System/Base
-Obsoletes:	rfkill < 1:0.5-10
-Provides:	rfkill = 1:0.5-10
-Conflicts:	rfkill < 0.5-10
 Conflicts:	bash-completion < 2:2.7-2
 Requires:	pam >= 1.3.0-1
 
