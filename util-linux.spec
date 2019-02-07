@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33.1
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -75,6 +75,8 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
+
+Patch114:	 https://github.com/karelzak/util-linux/commit/167a2b520a38d20e0f5a8617d66cb7a27b0ae35a.patch
 
 %ifarch alpha %{sparc} ppc
 # sparc build fix
@@ -345,6 +347,7 @@ Documentation and manuals for %{name}.
 %endif
 
 %patch111 -p1 -b .mkfsman~
+%patch114 -p1 -b .sfdisk~
 %ifarch %{sparc}
 %patch115 -p1 -b .fix-ioctl~
 %endif
