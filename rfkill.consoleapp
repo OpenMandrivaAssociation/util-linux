@@ -1,3 +1,0 @@
-USER=root
-PROGRAM=/sbin/rfkill
-GUI=no

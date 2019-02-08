@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33.1
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -60,8 +60,6 @@ Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
 Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
-Source12:	rfkill.pam
-Source13:	rfkill.consoleapp
 Source14:	uuidd.sysusers
 
 # 151635 - makeing /var/log/lastlog
@@ -311,11 +309,10 @@ mountinfo, etc) and mount filesystems.
 Summary:	Simple /dev/rfkill userspace tool
 Group:		System/Base
 Conflicts:	bash-completion < 2:2.7-2
-Requires:	pam >= 1.3.0-1
 
 %description -n rfkill
 Rfkill is a simple userspace tool to manipulate /dev/rfkill.
-It's needed to enable and disable wireless and bluetooth from 
+It's needed to enable and disable wireless and bluetooth from
 userspace beginning with 2.6.31 series kernels.
 
 %package doc
@@ -399,7 +396,7 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_infodir}
 mkdir -p %{buildroot}%{_mandir}/man{1,6,8,5}
 mkdir -p %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,security/console.apps,blkid}
+mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,blkid}
 
 # install util-linux
 %make_install DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
@@ -451,13 +448,8 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
   install -m 644 %{SOURCE6} ./su-l
   install -m 644 %{SOURCE7} ./runuser
   install -m 644 %{SOURCE8} ./runuser-l
-  install -m 644 %{SOURCE12} ./rfkill
   cd -
 }
-
-# Consolehelper
-ln -s consolehelper %{buildroot}%{_bindir}/rfkill
-install -m 0644 %{SOURCE13} -D %{buildroot}%{_sysconfdir}/security/console.apps/rfkill
 
 # This has dependencies on stuff in /usr
 mv %{buildroot}{/sbin/,/usr/sbin}/cfdisk
@@ -865,9 +857,6 @@ end
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 
 %files -n rfkill
-%config(noreplace) %{_sysconfdir}/pam.d/rfkill
-%config(noreplace) %{_sysconfdir}/security/console.apps/rfkill
-%{_bindir}/rfkill
 %{_sbindir}/rfkill
 %{_mandir}/man8/rfkill.8*
 
