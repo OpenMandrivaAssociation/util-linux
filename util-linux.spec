@@ -74,7 +74,9 @@ Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
 # misc documentation fixes for man pages
 Patch111:	util-linux-2.11t-mkfsman.patch
 
-Patch114:	 https://github.com/karelzak/util-linux/commit/167a2b520a38d20e0f5a8617d66cb7a27b0ae35a.patch
+# (crazy) remove this one next release
+#https://github.com/karelzak/util-linux/commit/167a2b520a38d20e0f5a8617d66cb7a27b0ae35a.patch
+Patch114: 167a2b520a38d20e0f5a8617d66cb7a27b0ae35a.patch
 
 %ifarch alpha %{sparc} ppc
 # sparc build fix
