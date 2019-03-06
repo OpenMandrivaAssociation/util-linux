@@ -619,7 +619,7 @@ end
 /sbin/fsfreeze
 /sbin/swaplabel
 /sbin/runuser
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64 znver1
+%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64 znver1 riscv64
 /sbin/sfdisk
 %{_sbindir}/cfdisk
 %endif
@@ -676,7 +676,7 @@ end
 %{_bindir}/mcookie
 %{_bindir}/mesg
 %{_bindir}/utmpdump
-%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64 znver1
+%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64 znver1 riscv64
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
 %endif
