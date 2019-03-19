@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33.1
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -531,6 +531,12 @@ EOF
 
 install -D -m644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
 
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-uuidd.preset << EOF
+enable uuidd.socket
+enable uuidd.service
+EOF
+
 %find_lang %{name} %{name}.lang
 
 # the files section supports only one -f option...
@@ -852,6 +858,7 @@ end
 
 %files -n uuidd
 %{_mandir}/man8/uuidd.8*
+%{_presetdir}/86-uuidd.preset
 %{_unitdir}/uuidd.*
 %{_sysconfdir}/tmpfiles.d/uuidd.conf
 %{_sysusersdir}/uuidd.conf
