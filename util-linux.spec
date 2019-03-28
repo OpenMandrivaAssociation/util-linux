@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33.1
-Release:	4
+Release:	5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -582,7 +582,7 @@ end
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
 %_pre_groupadd uuidd uuidd
 
-%files
+%files -f %{name}.files
 /bin/dmesg
 %attr(755,root,root) /bin/login
 /bin/lsblk
@@ -727,7 +727,7 @@ end
 %{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
 
-%files doc -f %{name}.files
+%files doc
 %doc %{_docdir}/%{name}
 %{_mandir}/man8/agetty.8*
 %{_mandir}/man8/partx.8*
