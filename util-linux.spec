@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.33.2
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -89,6 +89,9 @@ Patch1203:	util-linux-2.11m-cmos-alpha.patch
 
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
+Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
+Patch2002:	0004-Don-t-unparse-UUID-even-if-we-have-libuuid.patch
+Patch2003:	blkid-does-not-need-uuid.patch
 
 BuildRequires:	libtool
 BuildRequires:	sed
@@ -347,6 +350,9 @@ Documentation and manuals for %{name}.
 %endif
 
 %patch2000 -p1 -b .2000~
+%patch2001 -p1 -b .2001~
+%patch2002 -p1 -b .2002~
+%patch2003 -p1 -b .2003~
 
 %build
 %serverbuild_hardened
