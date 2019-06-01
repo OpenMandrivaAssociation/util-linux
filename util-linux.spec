@@ -115,7 +115,7 @@ BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
 BuildRequires:	readline-devel
-BuildRequires:	kernel-headers
+BuildRequires:	kernel-release-headers
 Provides:	/bin/su
 %rename		eject
 %rename		fdisk
