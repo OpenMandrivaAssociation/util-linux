@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.34
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -125,6 +125,7 @@ Provides:	/bin/su
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
+%rename		hardlink
 %ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
@@ -455,6 +456,8 @@ ln -sf clock-rs6k %{buildroot}/sbin/hwclock
 ln -sf ../../sbin/hwclock %{buildroot}/usr/sbin/hwclock
 ln -sf ../../sbin/clock %{buildroot}/usr/sbin/clock
 ln -sf hwclock %{buildroot}/sbin/clock
+# (tpg) compat symlink
+ln -sf ../bin/hardlink %{buildroot}%{_sbindir}/hardlink
 
 install -D -p -m 644 %{SOURCE11} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
 
@@ -658,6 +661,7 @@ end
 %{_bindir}/fallocate
 %{_bindir}/getopt
 %{_bindir}/hardlink
+%{_sbindir}/hardlink
 %{_bindir}/hexdump
 %{_bindir}/ipcrm
 %{_bindir}/ipcs
