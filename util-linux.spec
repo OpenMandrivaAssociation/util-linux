@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.34
-Release:	2
+Release:	3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -453,11 +453,12 @@ cp -f ./clock-ppc %{buildroot}/sbin/clock-ppc
 mv %{buildroot}/sbin/hwclock %{buildroot}/sbin/clock-rs6k
 ln -sf clock-rs6k %{buildroot}/sbin/hwclock
 %endif
-ln -sf ../../sbin/hwclock %{buildroot}/usr/sbin/hwclock
-ln -sf ../../sbin/clock %{buildroot}/usr/sbin/clock
+ln -sf ../../sbin/hwclock %{buildroot}%{_sbindir}/hwclock
+ln -sf ../../sbin/clock %{buildroot}%{_sbindir}/clock
 ln -sf hwclock %{buildroot}/sbin/clock
 # (tpg) compat symlink
 ln -sf ../bin/hardlink %{buildroot}%{_sbindir}/hardlink
+ln -sf ../sbin/pivot_root %{buildroot}%{_sbindir}/pivot_root
 
 install -D -p -m 644 %{SOURCE11} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
 
@@ -612,6 +613,7 @@ end
 /sbin/blockdev
 /sbin/fstrim
 /sbin/pivot_root
+%{_sbindir}/pivot_root
 /sbin/ctrlaltdel
 /sbin/addpart
 /sbin/delpart
