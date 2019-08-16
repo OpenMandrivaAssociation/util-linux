@@ -64,29 +64,6 @@ Source14:	uuidd.sysusers
 
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
-# /etc/blkid.tab --> /etc/blkid/blkid.tab
-Patch11:	util-linux-ng-2.16-blkid-cachefile.patch
-
-### Upstream patches
-
-### Mandriva Specific patches
-
-# misc documentation fixes for man pages
-Patch111:	util-linux-2.11t-mkfsman.patch
-
-%ifarch alpha %{sparc} ppc
-# sparc build fix
-Patch115:	util-linux-2.22-fix-ioctl.patch
-# clock program for ppc
-Patch1200:	util-linux-2.10r-clock-1.1-ppc.patch
-# leng options for clock-ppc
-Patch1201:	util-linux-2.10s-clock-syntax-ppc.patch
-# Added r & w options to chfn (lsb mandate)
-Patch1202:	util-linux-2.26-chfn-lsb-usergroups.patch
-# fix build on alpha with newer kernel-headers
-Patch1203:	util-linux-2.11m-cmos-alpha.patch
-%endif
-
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
@@ -324,30 +301,7 @@ Documentation and manuals for %{name}.
 
 %prep
 %setup -q
-
 %patch5 -p1 -b .lastlog~
-
-# Mandriva
-%ifarch ppc
-%patch1200 -p0
-%patch1201 -p1
-%endif
-
-%ifarch alpha %{sparc} ppc
-#LSB (sb)
-%patch1202 -p1 -b .chfnlsb~
-%endif
-
-#fix build on alpha with newer kernel-headers
-%ifarch alpha
-%patch1203 -p1
-%endif
-
-%patch111 -p1 -b .mkfsman~
-%ifarch %{sparc}
-%patch115 -p1 -b .fix-ioctl~
-%endif
-
 %patch2000 -p1 -b .2000~
 %patch2001 -p1 -b .2001~
 
