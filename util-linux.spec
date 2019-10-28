@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.34
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -64,6 +64,10 @@ Source14:	uuidd.sysusers
 
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
+# https://github.com/karelzak/util-linux/issues/813
+Patch6:		lsblk-force-to-print-PKNAME-for-partition.patch
+# https://github.com/systemd/systemd/issues/10872
+Patch7:		libmount-improve-mountinfo-reliability.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
@@ -300,10 +304,7 @@ Group:		Books/Other
 Documentation and manuals for %{name}.
 
 %prep
-%setup -q
-%patch5 -p1 -b .lastlog~
-%patch2000 -p1 -b .2000~
-%patch2001 -p1 -b .2001~
+%auto setup -p1
 
 %build
 %serverbuild_hardened
