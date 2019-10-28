@@ -304,7 +304,7 @@ Group:		Books/Other
 Documentation and manuals for %{name}.
 
 %prep
-%auto setup -p1
+%autosetup -p1
 
 %build
 %serverbuild_hardened
