@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.35
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -73,13 +73,14 @@ BuildRequires:	sed
 BuildRequires:	bison
 BuildRequires:	byacc
 BuildRequires:	systemd-macros
-BuildRequires:	audit-devel
+BuildRequires:	pkgconfig(audit)
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	utempter-devel
 BuildRequires:	rpm-helper
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
+BuildRequires:	pkgconfig(libcryptsetup)
 %endif
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
@@ -89,7 +90,8 @@ BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
-BuildRequires:	readline-devel
+BuildRequires:	pkgconfig(readline)
+BuildRequires:	pkgconfig(libpcre2-8)
 BuildRequires:	kernel-release-headers
 Provides:	/bin/su
 %rename		eject
@@ -329,6 +331,9 @@ unset LINGUAS || :
 	--enable-nologin \
 	--with-systemd \
 	--with-readline \
+%if !%{build_bootstrap}
+	--with-cryptsetup \
+%endif
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_unitdir} \
 
