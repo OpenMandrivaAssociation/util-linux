@@ -44,7 +44,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.35.1
-Release:	1
+Release:	2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -62,6 +62,8 @@ Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
 Source14:	uuidd.sysusers
 
+Patch0:		https://github.com/karelzak/util-linux/commit/fa3fface0f83dbf186f046210700473da7a4800b.patch
+Patch1:		https://github.com/karelzak/util-linux/commit/ac762ed71f982468f4c83291158e97cf86281beb.patch
 # 151635 - makeing /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches

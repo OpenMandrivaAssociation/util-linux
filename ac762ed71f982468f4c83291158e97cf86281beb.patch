@@ -1,0 +1,101 @@
+From ac762ed71f982468f4c83291158e97cf86281beb Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Mon, 2 Mar 2020 14:41:39 +0100
+Subject: [PATCH] sfdisk: fix previous --append patch, improve man page
+
+- fix stupid typo (!has_container_or_unused(sf))
+- use fdisk_is_partition_used() as fdisk_get_partition() returns
+  nothing for unused partition
+- update tests
+- add more hints to the man page
+
+Addresses: https://github.com/calamares/calamares/issues/1332
+Signed-off-by: Karel Zak <kzak@redhat.com>
+---
+ disk-utils/sfdisk.8                 | 8 ++++++++
+ disk-utils/sfdisk.c                 | 9 ++++++---
+ tests/expected/sfdisk/dos-dump-gaps | 2 +-
+ tests/expected/sfdisk/dos-dump-old  | 2 +-
+ 4 files changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/disk-utils/sfdisk.8 b/disk-utils/sfdisk.8
+index 2ba72b136..8b96b2e31 100644
+--- a/disk-utils/sfdisk.8
++++ b/disk-utils/sfdisk.8
+@@ -74,6 +74,10 @@ the event handling on the device.  For example:
+ .sp
+ .RE
+ Note, this semantic is not currently supported by udevd for MD and DM devices.
++.PP
++The sfdisk prompt is only a hint for users and a displayed partition number does
++not mean that the same partition table entry will be created (if -N not
++specified), especially for tables with gaps.
+ 
+ .SH COMMANDS
+ The commands are mutually exclusive.
+@@ -189,6 +193,10 @@ tools can automatically relocate the header to follow the standard.
+ .TP
+ .BR \-a , " \-\-append"
+ Don't create a new partition table, but only append the specified partitions.
++.sp
++Note that unused partition maybe be re-used in this case although it is not the
++last partition in the partition table. See also \fB\-N\fR to specify entry in
++the partition table.
+ .TP
+ .BR \-b , " \-\-backup"
+ Back up the current partition table sectors before starting the partitioning.
+diff --git a/disk-utils/sfdisk.c b/disk-utils/sfdisk.c
+index adeed1cbd..c77d4942a 100644
+--- a/disk-utils/sfdisk.c
++++ b/disk-utils/sfdisk.c
+@@ -1530,10 +1530,13 @@ static int has_container_or_unused(struct sfdisk *sf)
+ 
+ 	nparts = fdisk_get_npartitions(sf->cxt);
+ 	for (i = 0; i < nparts; i++) {
++
++		if (!fdisk_is_partition_used(sf->cxt, i)) {
++			sf->unused = 1;
++			continue;
++		}
+ 		if (fdisk_get_partition(sf->cxt, i, &pa) != 0)
+ 			continue;
+-		if (!fdisk_partition_is_used(pa))
+-			sf->unused = 1;
+ 		if (fdisk_partition_is_container(pa))
+ 			sf->container = 1;
+ 	}
+@@ -1840,7 +1843,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
+ 		if (created
+ 		    && partno < 0
+ 		    && next_partno == fdisk_get_npartitions(sf->cxt)
+-		    && has_container_or_unused(sf)) {
++		    && !has_container_or_unused(sf)) {
+ 			fdisk_info(sf->cxt, _("All partitions used."));
+ 			rc = SFDISK_DONE_ASK;
+ 			break;
+diff --git a/tests/expected/sfdisk/dos-dump-gaps b/tests/expected/sfdisk/dos-dump-gaps
+index 51ad60916..26a6e93f2 100644
+--- a/tests/expected/sfdisk/dos-dump-gaps
++++ b/tests/expected/sfdisk/dos-dump-gaps
+@@ -12,7 +12,7 @@ I/O size (minimum/optimal): 4096 bytes / <removed> bytes
+ <removed>2: Ignoring partition.
+ <removed>3: Created a new <removed>.
+ <removed>4: Ignoring partition.
+-All partitions used.
++<removed>5: Done.
+ 
+ New situation:
+ Disklabel type: dos
+diff --git a/tests/expected/sfdisk/dos-dump-old b/tests/expected/sfdisk/dos-dump-old
+index 06bbf281e..eb0cc114f 100644
+--- a/tests/expected/sfdisk/dos-dump-old
++++ b/tests/expected/sfdisk/dos-dump-old
+@@ -12,7 +12,7 @@ I/O size (minimum/optimal): 4096 bytes / <removed> bytes
+ <removed>2: Ignoring partition.
+ <removed>3: Ignoring partition.
+ <removed>4: Ignoring partition.
+-All partitions used.
++<removed>5: Done.
+ 
+ New situation:
+ Disklabel type: dos
