@@ -419,7 +419,7 @@ ln -sf ../../sbin/clock %{buildroot}%{_sbindir}/clock
 ln -sf hwclock %{buildroot}/sbin/clock
 # (tpg) compat symlink
 ln -sf ../bin/hardlink %{buildroot}%{_sbindir}/hardlink
-ln -sf ../sbin/pivot_root %{buildroot}%{_sbindir}/pivot_root
+ln -sf ../../sbin/pivot_root %{buildroot}%{_sbindir}/pivot_root
 
 install -D -p -m 644 %{SOURCE11} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
 
