@@ -4,6 +4,8 @@
 # Please remove _disable_lto if and only if you've fixed
 # (or removed) lvm2.
 %define _disable_lto 1
+# To make the python modules happy
+%define _disable_ld_no_undefined 1
 
 %global __requires_exclude ^/bin/tcsh|^tcsh
 
@@ -19,7 +21,8 @@
 %define libuuid %mklibname uuid %{uuid_major}
 %define devuuid %mklibname uuid -d
 
-%define libext2fs %mklibname ext2fs 2
+%define ext2fs_major 2
+%define libext2fs %mklibname ext2fs %{ext2fs_major}
 %define devext2fs %mklibname ext2fs -d
 
 %define mount_major 1
@@ -34,6 +37,33 @@
 
 %define build_bootstrap 0
 
+# libuuid is used by libSM, which in turn is used by wine
+%ifarch %{x86_64}
+%bcond_without compat32
+%else
+%bcond_with compat32
+%endif
+
+%if %{with compat32}
+%define lib32blkid libblkid%{blkid_major}
+%define dev32blkid libblkid-devel
+
+%define lib32fdisk libfdisk%{fdisk_major}
+%define dev32fdisk libfdisk-devel
+
+%define lib32uuid libuuid%{uuid_major}
+%define dev32uuid libuuid-devel
+
+%define lib32ext2fs libext2fs%{ext2fs_major}
+%define dev32ext2fs libext2fs-devel
+
+%define lib32mount libmount%{mount_major}
+%define dev32mount libmount-devel
+
+%define lib32smartcols libsmartcols%{smartcols_major}
+%define dev32smartcols libsmartcols-devel
+%endif
+
 ### Macros
 %define no_hwclock_archs s390 s390x
 
@@ -44,7 +74,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.35.1
-Release:	3
+Release:	4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -155,7 +185,6 @@ License:	LGPLv2+
 Requires:	%{libblkid} = %{version}-%{release}
 Requires:	%{devuuid} = %{version}-%{release}
 Conflicts:	%{devext2fs} < 1.41.6-2mnb2
-Provides:	libblkid-devel = %{version}-%{release}
 
 %description -n %{devblkid}
 This is the block device identification development library and headers,
@@ -174,7 +203,6 @@ Summary:	Fdisk development library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libfdisk} = %{version}-%{release}
-Provides:	libfdisk-devel = %{version}-%{release}
 
 %description -n %{devfdisk}
 This is the fdisk development library and headers,
@@ -202,7 +230,6 @@ Group:		Development/C
 License:	BSD
 Conflicts:	%{libext2fs} < 1.41.8-2mnb2
 Requires:	%{libuuid} = %{version}
-Provides:	libuuid-devel = %{version}-%{release}
 
 %description -n %{devuuid}
 This is the universally unique ID development library and headers,
@@ -242,7 +269,6 @@ Summary:	Universally unique ID library
 Group:		Development/C
 License:	LGPLv2+
 Requires:	%{libmount} = %{EVRD}
-Provides:	libmount-devel = %{version}-%{release}
 
 %description -n %{devmount}
 Development files and headers for libmount library.
@@ -262,7 +288,6 @@ Summary:	Formatting library for ls-like programs
 Group:		Development/C
 License:	LGPL2+
 Requires:	%{libsmartcols} = %{EVRD}
-Provides:	libsmartcols-devel = %{version}-%{release}
 
 %description -n %{devsmartcols}
 Development files and headers for libsmartcols library.
@@ -306,13 +331,154 @@ Group:		Books/Other
 %description doc
 Documentation and manuals for %{name}.
 
+%if %{with compat32}
+%package -n %{lib32blkid}
+Summary:	Block device ID library (32-bit)
+Group:		System/Libraries
+License:	LGPLv2+
+
+%description -n %{lib32blkid}
+This is block device identification library, part of util-linux.
+
+%package -n %{dev32blkid}
+Summary:	Block device ID library (32-bit)
+Group:		Development/C
+License:	LGPLv2+
+Requires:	%{lib32blkid} = %{version}-%{release}
+Requires:	%{dev32uuid} = %{version}-%{release}
+Requires:	%{devblkid} = %{EVRD}
+
+%description -n %{dev32blkid}
+This is the block device identification development library and headers,
+part of util-linux.
+
+%package -n %{lib32fdisk}
+Summary:	Fdisk library (32-bit)
+Group:		System/Libraries
+License:	LGPLv2+
+
+%description -n %{lib32fdisk}
+This is fdisk library, part of util-linux.
+
+%package -n %{dev32fdisk}
+Summary:	Fdisk development library (32-bit)
+Group:		Development/C
+License:	LGPLv2+
+Requires:	%{lib32fdisk} = %{version}-%{release}
+Requires:	%{devfdisk} = %{EVRD}
+
+%description -n %{dev32fdisk}
+This is the fdisk development library and headers,
+part of util-linux.
+
+%package -n %{lib32uuid}
+Summary:	Universally unique ID library (32-bit)
+Group:		System/Libraries
+License:	BSD
+
+%description -n %{lib32uuid}
+This is the universally unique ID library, part of e2fsprogs.
+
+The libuuid library generates and parses 128-bit universally unique
+id's (UUID's).A UUID is an identifier that is unique across both
+space and time, with respect to the space of all UUIDs.  A UUID can
+be used for multiple purposes, from tagging objects with an extremely
+short lifetime, to reliably identifying very persistent objects
+across a network.
+
+%package -n %{dev32uuid}
+Summary:	Universally unique ID library (32-bit)
+Group:		Development/C
+License:	BSD
+Requires:	%{lib32uuid} = %{version}
+Requires:	%{devuuid} = %{EVRD}
+
+%description -n %{dev32uuid}
+This is the universally unique ID development library and headers,
+part of e2fsprogs.
+
+The libuuid library generates and parses 128-bit universally unique
+id's (UUID's).A UUID is an identifier that is unique across both
+space and time, with respect to the space of all UUIDs.  A UUID can
+be used for multiple purposes, from tagging objects with an extremely
+short lifetime, to reliably identifying very persistent objects
+across a network.
+
+%package -n %{lib32mount}
+Summary:	Universal mount library (32-bit)
+Group:		System/Libraries
+License:	LGPLv2+
+
+%description -n %{lib32mount}
+The libmount library is used to parse /etc/fstab,
+/etc/mtab and /proc/self/mountinfo files,
+manage the mtab file, evaluate mount options, etc.
+
+%package -n %{dev32mount}
+Summary:	Universally unique ID library (32-bit)
+Group:		Development/C
+License:	LGPLv2+
+Requires:	%{lib32mount} = %{EVRD}
+Requires:	%{devmount} = %{EVRD}
+
+%description -n %{dev32mount}
+Development files and headers for libmount library.
+
+%package -n %{lib32smartcols}
+Summary:	Formatting library for ls-like programs (32-bit)
+Group:		System/Libraries
+License:	LGPL2+
+Requires:	filesystem >= 3.0-9
+
+%description -n %{lib32smartcols}
+The libsmartcols library is used to format output,
+for ls-like terminal programs.
+
+%package -n %{dev32smartcols}
+Summary:	Formatting library for ls-like programs (32-bit)
+Group:		Development/C
+License:	LGPL2+
+Requires:	%{lib32smartcols} = %{EVRD}
+Requires:	%{devsmartcols} = %{EVRD}
+
+%description -n %{dev32smartcols}
+Development files and headers for libsmartcols library.
+%endif
+
 %prep
 %autosetup -p1
 
-%build
-%serverbuild_hardened
-unset LINGUAS || :
+export CONFIGURE_TOP="`pwd`"
 
+%if %{with compat32}
+mkdir build32
+cd build32
+%configure32 \
+	--enable-static=yes \
+	--disable-all-programs \
+	--disable-makeinstall-chown \
+	--disable-rpath \
+	--enable-libuuid \
+	--enable-libblkid \
+	--disable-libmount \
+	--enable-libsmartcols \
+	--enable-libfdisk \
+	--without-audit \
+	--without-python \
+	--without-selinux \
+	--without-udev \
+	--without-utempter \
+	--without-systemd \
+%if !%{build_bootstrap}
+	--without-cryptsetup \
+%endif
+	--without-readline
+cd ..
+%endif
+
+
+mkdir build
+cd build
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
@@ -340,10 +506,18 @@ unset LINGUAS || :
 	--with-cryptsetup \
 %endif
 	--enable-sulogin-emergency-mount \
-	--with-systemdsystemunitdir=%{_unitdir} \
+	--with-systemdsystemunitdir=%{_unitdir}
+
+%build
+%serverbuild_hardened
+unset LINGUAS || :
+
+%if %{with compat32}
+%make_build -C build32
+%endif
 
 # build util-linux
-%make_build REALTIME_LIBS="-lrt -lpthread"
+%make_build -C build REALTIME_LIBS="-lrt -lpthread"
 
 %install
 mkdir -p %{buildroot}/{bin,sbin}
@@ -353,8 +527,12 @@ mkdir -p %{buildroot}%{_mandir}/man{1,6,8,5}
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,blkid}
 
+%if %{with compat32}
+%make_install -C build32
+%endif
+
 # install util-linux
-%make_install DESTDIR=%{buildroot} MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
+%make_install -C build MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
 
 # (cg) Remove unwanted binaries (and their corresponding man pages)
 for unwanted in %{unwanted}; do
@@ -893,3 +1071,48 @@ end
 %{_libdir}/libsmartcols.so
 %{_libdir}/libsmartcols.*a
 %{_libdir}/pkgconfig/smartcols.pc
+
+%if %{with compat32}
+%files -n %{lib32blkid}
+%{_prefix}/lib/libblkid.so.%{blkid_major}*
+
+%files -n %{dev32blkid}
+%{_prefix}/lib/libblkid.a
+%{_prefix}/lib/libblkid.so
+%{_prefix}/lib/pkgconfig/blkid.pc
+
+%files -n %{lib32fdisk}
+%{_prefix}/lib/libfdisk.so.%{fdisk_major}*
+
+%files -n %{dev32fdisk}
+%{_prefix}/lib/libfdisk.a
+%{_prefix}/lib/libfdisk.so
+%{_prefix}/lib/pkgconfig/fdisk.pc
+
+%files -n %{lib32uuid}
+%{_prefix}/lib/libuuid.so.%{uuid_major}*
+
+%files -n %{dev32uuid}
+%{_prefix}/lib/libuuid.a
+%{_prefix}/lib/libuuid.so
+%{_prefix}/lib/pkgconfig/uuid.pc
+
+%if 0
+# 32-bit libmount isn't used anywhere
+%files -n %{lib32mount}
+%{_prefix}/lib/libmount.so.%{mount_major}*
+
+%files -n %{dev32mount}
+%{_prefix}/lib/libmount.so
+%{_prefix}/lib/libmount.a
+%{_prefix}/lib/pkgconfig/mount.pc
+%endif
+
+%files -n %{lib32smartcols}
+%{_prefix}/lib/libsmartcols.so.%{smartcols_major}*
+
+%files -n %{dev32smartcols}
+%{_prefix}/lib/libsmartcols.so
+%{_prefix}/lib/libsmartcols.*a
+%{_prefix}/lib/pkgconfig/smartcols.pc
+%endif
