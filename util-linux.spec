@@ -74,7 +74,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.35.1
-Release:	4
+Release:	5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -162,6 +162,9 @@ Requires:	%{libmount} = %{EVRD}
 Requires:	%{libuuid} = %{EVRD}
 Requires:	%{libsmartcols} = %{EVRD}
 Suggests:	%{name}-doc = %{EVRD}
+%if %{with compat32}
+BuildRequires:	libcrypt-devel
+%endif
 
 %description
 The util-linux package contains a large variety of low-level system
@@ -460,7 +463,7 @@ cd build32
 	--disable-rpath \
 	--enable-libuuid \
 	--enable-libblkid \
-	--disable-libmount \
+	--enable-libmount \
 	--enable-libsmartcols \
 	--enable-libfdisk \
 	--without-audit \
@@ -1097,7 +1100,6 @@ end
 %{_prefix}/lib/libuuid.so
 %{_prefix}/lib/pkgconfig/uuid.pc
 
-%if 0
 # 32-bit libmount isn't used anywhere
 %files -n %{lib32mount}
 %{_prefix}/lib/libmount.so.%{mount_major}*
@@ -1106,7 +1108,6 @@ end
 %{_prefix}/lib/libmount.so
 %{_prefix}/lib/libmount.a
 %{_prefix}/lib/pkgconfig/mount.pc
-%endif
 
 %files -n %{lib32smartcols}
 %{_prefix}/lib/libsmartcols.so.%{smartcols_major}*
