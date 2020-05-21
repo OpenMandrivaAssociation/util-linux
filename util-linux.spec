@@ -73,8 +73,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.35.1
-Release:	5
+Version:	2.35.2
+Release:	1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -96,9 +96,6 @@ Patch0:		https://github.com/karelzak/util-linux/commit/fa3fface0f83dbf186f046210
 Patch1:		https://github.com/karelzak/util-linux/commit/ac762ed71f982468f4c83291158e97cf86281beb.patch
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
-Patch6:		https://src.fedoraproject.org/rpms/util-linux/raw/master/f/0001-libfdisk-script-accept-sector-size-ignore-unknown-he.patch
-Patch7:		https://src.fedoraproject.org/rpms/util-linux/raw/master/f/0002-fstrim-do-not-use-Protect-setting-in-systemd-service.patch
-Patch8:		https://src.fedoraproject.org/rpms/util-linux/raw/master/f/0003-lsblk-fix-P-regression-from-v2.34.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
