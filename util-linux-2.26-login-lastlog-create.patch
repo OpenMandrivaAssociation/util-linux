@@ -1,7 +1,7 @@
-diff -Naur util-linux-2.26/login-utils/login.c util-linux-2.26.tpg/login-utils/login.c
---- util-linux-2.26/login-utils/login.c	2015-02-10 09:49:46.000000000 +0000
-+++ util-linux-2.26.tpg/login-utils/login.c	2015-02-21 00:36:50.692331885 +0000
-@@ -514,7 +514,7 @@
+diff -up util-linux-2.36-rc1/login-utils/login.c.1~ util-linux-2.36-rc1/login-utils/login.c
+--- util-linux-2.36-rc1/login-utils/login.c.1~	2020-06-28 02:19:57.835607135 +0200
++++ util-linux-2.36-rc1/login-utils/login.c	2020-06-28 02:20:25.627171973 +0200
+@@ -585,7 +585,7 @@ static void log_lastlog(struct login_con
  	sa.sa_handler = SIG_IGN;
  	sigaction(SIGXFSZ, &sa, &oldsa_xfsz);
  
@@ -9,4 +9,4 @@ diff -Naur util-linux-2.26/login-utils/login.c util-linux-2.26.tpg/login-utils/l
 +	fd = open(_PATH_LASTLOG, O_RDWR | O_CREAT, 0);
  	if (fd < 0)
  		goto done;
- 
+ 	offset = cxt->pwd->pw_uid * sizeof(ll);

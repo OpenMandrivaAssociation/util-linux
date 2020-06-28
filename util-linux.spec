@@ -71,14 +71,16 @@
 %bcond_without python
 %endif
 
+%define beta rc1
+
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.35.2
-Release:	2
+Version:	2.36
+Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
-Source0:	http://www.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}.tar.xz
+Source0:	http://www.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}%{?beta:-%{beta}}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-login.pamd
 Source2:	util-linux-remote.pamd
@@ -92,8 +94,6 @@ Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
 Source14:	uuidd.sysusers
 
-Patch0:		https://github.com/karelzak/util-linux/commit/fa3fface0f83dbf186f046210700473da7a4800b.patch
-Patch1:		https://github.com/karelzak/util-linux/commit/ac762ed71f982468f4c83291158e97cf86281beb.patch
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
@@ -446,7 +446,7 @@ Development files and headers for libsmartcols library.
 %endif
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n %{name}-%{version}%{?beta:-%{beta}}
 
 export CONFIGURE_TOP="`pwd`"
 
@@ -685,31 +685,23 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|znver1|uname26)\.8.*" \
 	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
-%ifarch ppc
-%post
-ISCHRP="$(grep CHRP /proc/cpuinfo)"
-if [ -z "$ISCHRP" ]; then
-    ln -sf /sbin/clock-ppc /sbin/hwclock
-fi
-%endif
-
 %pre -p <lua>
 if arg[2] >= 2 then
-    st = posix.stat("/etc/mtab")
-    if st and st.type ~= "link" then
-	posix.unlink("/etc/mtab")
-	posix.link("/proc/mounts", "/etc/mtab", true)
-    end
+	st = posix.stat("/etc/mtab")
+	if st and st.type ~= "link" then
+		posix.unlink("/etc/mtab")
+		posix.link("/proc/mounts", "/etc/mtab", true)
+	end
 end
 
 %post -p <lua>
 if arg[2] >= 2 then
-    if posix.stat("/etc/blkid.tab") then
-	os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
-    end
-    if posix.stat("/etc/blkid.tab.old") then
-	os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
-    end
+	if posix.stat("/etc/blkid.tab") then
+		os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
+	end
+	if posix.stat("/etc/blkid.tab.old") then
+		os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
+	end
 end
 
 %pre -n uuidd
@@ -731,6 +723,8 @@ end
 %{_bindir}/lsmem
 %{_bindir}/nsenter
 %{_bindir}/setpriv
+%{_bindir}/irqtop
+%{_bindir}/lsirq
 /bin/su
 %attr(2555,root,tty) %{_bindir}/wall
 /bin/wdctl
@@ -885,6 +879,8 @@ end
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/nologin.8*
 %{_mandir}/man8/swaplabel.8*
+%{_mandir}/man1/irqtop.1*
+%{_mandir}/man1/lsirq.1*
 %{_mandir}/man1/lsmem.1*
 %{_mandir}/man1/fincore.1*
 %{_mandir}/man1/hardlink.1*
