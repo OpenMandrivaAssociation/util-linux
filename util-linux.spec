@@ -76,7 +76,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.36
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -112,7 +112,8 @@ BuildRequires:	utempter-devel
 BuildRequires:	rpm-helper
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
-BuildRequires:	pkgconfig(libcryptsetup)
+# (tpg) disable it as it is still EXPERIMENTAL
+#BuildRequires:	pkgconfig(libcryptsetup)
 %endif
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
@@ -469,9 +470,9 @@ cd build32
 	--without-udev \
 	--without-utempter \
 	--without-systemd \
-%if !%{build_bootstrap}
+#if !#{build_bootstrap}
 	--without-cryptsetup \
-%endif
+#endif
 	--without-readline
 cd ..
 %endif
@@ -502,9 +503,9 @@ cd build
 	--enable-nologin \
 	--with-systemd \
 	--with-readline \
-%if !%{build_bootstrap}
+#if !#{build_bootstrap}
 	--with-cryptsetup \
-%endif
+#endif
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_unitdir}
 
