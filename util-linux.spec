@@ -470,9 +470,7 @@ cd build32
 	--without-udev \
 	--without-utempter \
 	--without-systemd \
-#if !#{build_bootstrap}
 	--without-cryptsetup \
-#endif
 	--without-readline
 cd ..
 %endif
@@ -503,9 +501,7 @@ cd build
 	--enable-nologin \
 	--with-systemd \
 	--with-readline \
-#if !#{build_bootstrap}
 	--with-cryptsetup \
-#endif
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_unitdir}
 
