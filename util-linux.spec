@@ -71,7 +71,7 @@
 %bcond_without python
 %endif
 
-%define beta rc2
+#define beta rc2
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
