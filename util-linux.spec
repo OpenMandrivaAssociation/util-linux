@@ -76,7 +76,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.36.1
-Release:	%{?beta:0.%{beta}.}2
+Release:	%{?beta:0.%{beta}.}3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -705,6 +705,15 @@ end
 %pre -n uuidd
 %_pre_useradd uuidd /var/lib/libuuid /bin/false
 %_pre_groupadd uuidd uuidd
+
+%post -n uuidd
+%systemd_post uidd.socket uuidd.service
+
+%preun -n uuidd
+%systemd_preun uuidd.socket uuidd.service
+
+%postun -n uuidd
+%systemd_postun_with_restart uuidd.socket uuidd.service
 
 %files -f %{name}.files
 /bin/dmesg
