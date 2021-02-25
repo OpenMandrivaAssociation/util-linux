@@ -96,7 +96,6 @@ Source14:	uuidd.sysusers
 
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
-Patch6:		https://src.fedoraproject.org/rpms/util-linux/raw/master/f/libmount-don-t-use-symfollow-for-helpers-on-user-mou.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
