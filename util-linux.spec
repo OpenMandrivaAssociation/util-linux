@@ -75,8 +75,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.36.1
-Release:	%{?beta:0.%{beta}.}3
+Version:	2.36.2
+Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -96,7 +96,6 @@ Source14:	uuidd.sysusers
 
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
-Patch6:		https://src.fedoraproject.org/rpms/util-linux/raw/master/f/libmount-don-t-use-symfollow-for-helpers-on-user-mou.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
