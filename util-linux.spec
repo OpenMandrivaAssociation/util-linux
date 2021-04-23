@@ -76,7 +76,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.36.2
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -109,7 +109,6 @@ BuildRequires:	pkgconfig(audit)
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	utempter-devel
-BuildRequires:	rpm-helper
 %if !%{build_bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
 # (tpg) disable it as it is still EXPERIMENTAL
@@ -247,8 +246,7 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
-Requires(pre):	shadow >= 4.2.1-7
-Requires(pre):	rpm-helper >= 0.24.12-11
+%systemd_requires
 
 %description -n uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
@@ -596,7 +594,8 @@ ln -sf hwclock %{buildroot}/sbin/clock
 ln -sf ../bin/hardlink %{buildroot}%{_sbindir}/hardlink
 ln -sf ../../sbin/pivot_root %{buildroot}%{_sbindir}/pivot_root
 
-install -D -p -m 644 %{SOURCE11} %{buildroot}%{_sysconfdir}/tmpfiles.d/uuidd.conf
+install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/uuidd.conf
+install -D -p -m 644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
 
 # And a dirs uuidd needs that the makefiles don't create
 install -d %{buildroot}/var/lib/libuuid
@@ -660,7 +659,7 @@ cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
 enable fstrim.timer
 EOF
 
-install -D -m644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
+
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-uuidd.preset << EOF
@@ -701,18 +700,17 @@ if arg[2] >= 2 then
 	end
 end
 
-%pre -n uuidd
-%_pre_useradd uuidd /var/lib/libuuid /bin/false
-%_pre_groupadd uuidd uuidd
-
 %post -n uuidd
-%systemd_post uidd.socket uuidd.service
+%systemd_post uidd.socket
+%systemd_post uuidd.service
 
 %preun -n uuidd
-%systemd_preun uuidd.socket uuidd.service
+%systemd_preun uuidd.socket
+%systemd_preun uuidd.service
 
 %postun -n uuidd
-%systemd_postun_with_restart uuidd.socket uuidd.service
+%systemd_postun_with_restart uuidd.socket
+%systemd_postun_with_restart uuidd.service
 
 %files -f %{name}.files
 /bin/dmesg
@@ -1002,7 +1000,7 @@ end
 %{_mandir}/man8/uuidd.8*
 %{_presetdir}/86-uuidd.preset
 %{_unitdir}/uuidd.*
-%{_sysconfdir}/tmpfiles.d/uuidd.conf
+%{_tmpfilesdir}/uuidd.conf
 %{_sysusersdir}/uuidd.conf
 %attr(-, uuidd, uuidd) %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
