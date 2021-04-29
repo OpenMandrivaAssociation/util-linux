@@ -1,1 +1,1 @@
-u uuidd 68 "UUID daemon" /var/lib/libuuid /bin/false
+u uuidd 68 "UUID generator helper daemon" /var/lib/libuuid /sbin/nologin

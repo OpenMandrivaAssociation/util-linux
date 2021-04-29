@@ -76,7 +76,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.36.2
-Release:	%{?beta:0.%{beta}.}2
+Release:	%{?beta:0.%{beta}.}3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -246,6 +246,9 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
+Requires(pre):	glibc
+Requires(pre):	shadow
+Requires(pre):	passwd
 %systemd_requires
 
 %description -n uuidd
@@ -699,6 +702,13 @@ if arg[2] >= 2 then
 		os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
 	end
 end
+
+%pre -n uuidd
+getent group uuidd >/dev/null || groupadd -r uuidd
+getent passwd uuidd >/dev/null || \
+useradd -r -g uuidd -d /var/lib/libuuid -s /sbin/nologin \
+    -c "UUID generator helper daemon" uuidd
+exit 0
 
 %post -n uuidd
 %systemd_post uidd.socket
