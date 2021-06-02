@@ -617,7 +617,7 @@ done
 rm %{buildroot}/sbin/{hwclock,clock} %{buildroot}%{_mandir}/man8/hwclock.8* %{buildroot}/usr/sbin/{hwclock,clock}
 %endif
 %ifarch s390 s390x
-rm %{buildroot}/usr/{bin,sbin}/{fdformat,tunelp,floppy} %{buildroot}%{_mandir}/man8/{fdformat,tunelp,floppy}.8*
+rm %{buildroot}/usr/{bin,sbin}/{tunelp,floppy} %{buildroot}%{_mandir}/man8/{tunelp,floppy}.8*
 %endif
 
 # deprecated commands
@@ -803,9 +803,6 @@ exit 0
 %{_bindir}/cytune
 %endif
 %{_bindir}/eject
-%ifnarch s390 s390x
-%{_sbindir}/fdformat
-%endif
 /bin/flock
 %{_bindir}/flock
 %{_bindir}/fallocate
@@ -960,9 +957,6 @@ exit 0
 %{_mandir}/man8/blkid.8*
 %{_mandir}/man8/blkdiscard.8*
 %{_mandir}/man8/ctrlaltdel.8*
-%ifnarch s390 s390x
-%{_mandir}/man8/fdformat.8*
-%endif
 %{_mandir}/man8/findfs.8*
 %{_mandir}/man8/fsck.8*
 %{_mandir}/man8/fsck.cramfs.8*
