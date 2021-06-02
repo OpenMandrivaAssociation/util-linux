@@ -853,6 +853,7 @@ exit 0
 %{_bindir}/ipcmk
 %{_bindir}/lscpu
 %attr(2755,root,tty) %{_bindir}/write
+%{_bindir}/uclampset
 %{_sbindir}/readprofile
 %ifnarch s390 s390x
 %{_sbindir}/tunelp
@@ -992,6 +993,7 @@ exit 0
 %{_mandir}/man8/umount.8*
 %{_mandir}/man8/losetup.8*
 %{_mandir}/man8/zramctl.8.*
+%{_mandir}/man1/uclampset.1.*
 
 %files user
 %config(noreplace) %{_sysconfdir}/pam.d/chfn
