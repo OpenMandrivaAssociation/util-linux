@@ -104,7 +104,8 @@ BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	bison
 BuildRequires:	byacc
-BuildRequires:	systemd-macros
+BuildRequires:	asciidoctor
+BuildRequires:	systemd-rpm-macros
 BuildRequires:	pkgconfig(audit)
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
