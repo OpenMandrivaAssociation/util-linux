@@ -76,7 +76,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.37
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -106,7 +106,6 @@ BuildRequires:	bison
 BuildRequires:	byacc
 BuildRequires:	asciidoctor
 BuildRequires:	systemd-rpm-macros
-BuildRequires:	pkgconfig(audit)
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
 BuildRequires:	utempter-devel
@@ -493,7 +492,7 @@ cd build
 	--enable-raw \
 	--disable-makeinstall-chown \
 	--disable-rpath \
-	--with-audit \
+	--without-audit \
 	--with-python=3 \
 	--without-selinux \
 	--with-udev \
