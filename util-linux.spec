@@ -75,8 +75,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.37
-Release:	%{?beta:0.%{beta}.}2
+Version:	2.37.1
+Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -999,11 +999,11 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/chsh
 %attr(4711,root,root) %{_bindir}/chfn
 %attr(4711,root,root) %{_bindir}/chsh
-%{_mandir}/man1/chfn.1*
-%{_mandir}/man1/chsh.1*
+%doc %{_mandir}/man1/chfn.1*
+%doc %{_mandir}/man1/chsh.1*
 
 %files -n uuidd
-%{_mandir}/man8/uuidd.8*
+%doc %{_mandir}/man8/uuidd.8*
 %{_presetdir}/86-uuidd.preset
 %{_unitdir}/uuidd.*
 %{_tmpfilesdir}/uuidd.conf
@@ -1013,7 +1013,7 @@ exit 0
 
 %files -n rfkill
 %{_sbindir}/rfkill
-%{_mandir}/man8/rfkill.8*
+%doc %{_mandir}/man8/rfkill.8*
 
 %files -n %{libblkid}
 /%{_lib}/libblkid.so.%{blkid_major}*
@@ -1022,7 +1022,7 @@ exit 0
 %{_libdir}/libblkid.a
 %{_libdir}/libblkid.so
 %{_includedir}/blkid
-%{_mandir}/man3/libblkid.3*
+%doc %{_mandir}/man3/libblkid.3*
 %{_libdir}/pkgconfig/blkid.pc
 
 %files -n %{libfdisk}
@@ -1041,17 +1041,17 @@ exit 0
 %{_libdir}/libuuid.a
 %{_libdir}/libuuid.so
 %{_includedir}/uuid
-%{_mandir}/man3/uuid.3*
-%{_mandir}/man3/uuid_clear.3*
-%{_mandir}/man3/uuid_compare.3*
-%{_mandir}/man3/uuid_copy.3*
-%{_mandir}/man3/uuid_generate.3*
-%{_mandir}/man3/uuid_generate_random.3*
-%{_mandir}/man3/uuid_generate_time.3*
-%{_mandir}/man3/uuid_is_null.3*
-%{_mandir}/man3/uuid_parse.3*
-%{_mandir}/man3/uuid_time.3*
-%{_mandir}/man3/uuid_unparse.3*
+%doc %{_mandir}/man3/uuid.3*
+%doc %{_mandir}/man3/uuid_clear.3*
+%doc %{_mandir}/man3/uuid_compare.3*
+%doc %{_mandir}/man3/uuid_copy.3*
+%doc %{_mandir}/man3/uuid_generate.3*
+%doc %{_mandir}/man3/uuid_generate_random.3*
+%doc %{_mandir}/man3/uuid_generate_time.3*
+%doc %{_mandir}/man3/uuid_is_null.3*
+%doc %{_mandir}/man3/uuid_parse.3*
+%doc %{_mandir}/man3/uuid_time.3*
+%doc %{_mandir}/man3/uuid_unparse.3*
 %{_libdir}/pkgconfig/uuid.pc
 
 %files -n %{libmount}
