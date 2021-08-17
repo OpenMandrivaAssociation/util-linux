@@ -75,7 +75,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.37.1
+Version:	2.37.2
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
