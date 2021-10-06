@@ -76,7 +76,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.37.2
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		http://www.kernel.org/pub/linux/utils/util-linux
@@ -85,7 +85,6 @@ Source0:	http://www.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -
 Source1:	util-linux-login.pamd
 Source2:	util-linux-remote.pamd
 Source3:	util-linux-chsh-chfn.pamd
-Source4:	util-linux-60-raw.rules
 Source5:	util-linux-su.pamd
 Source6:	util-linux-su-l.pamd
 Source7:	util-linux-runuser.pamd
@@ -123,7 +122,6 @@ BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
 BuildRequires:	pkgconfig(readline)
-BuildRequires:	pkgconfig(libpcre2-8)
 BuildRequires:	kernel-release-headers
 Provides:	/bin/su
 %rename		eject
@@ -450,7 +448,7 @@ Development files and headers for libsmartcols library.
 %prep
 %autosetup -p1 -n %{name}-%{version}%{?beta:-%{beta}}
 
-export CONFIGURE_TOP="`pwd`"
+export CONFIGURE_TOP="$(pwd)"
 
 %if %{with compat32}
 mkdir build32
@@ -489,7 +487,7 @@ cd build
 	--enable-kill \
 	--enable-write \
 	--enable-mountpoint \
-	--enable-raw \
+	--disable-raw \
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--without-audit \
@@ -543,10 +541,6 @@ cat >%{buildroot}%{_sysconfdir}/issue <<'EOF'
 \S{PRETTY_NAME} for \m
 Kernel \r on \4 / \l
 EOF
-
-echo '.so man8/raw.8' > %{buildroot}%{_mandir}/man8/rawdevices.8
-# see RH bugzilla #216664
-install -D -p -m 644 %{SOURCE4} %{buildroot}%{_udevrulesdir}/60-raw.rules
 
 # Correct mail spool path.
 sed -i -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
@@ -650,13 +644,6 @@ for I in taskset; do
     fi
 done
 
-# /sbin -> /bin
-for I in raw; do
-    if [ -e %{buildroot}/sbin/$I ]; then
-	mv %{buildroot}/sbin/$I %{buildroot}/bin/$I
-    fi
-done
-
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
 enable fstrim.timer
@@ -742,9 +729,7 @@ exit 0
 /bin/su
 %attr(2555,root,tty) %{_bindir}/wall
 /bin/wdctl
-/bin/raw
 %dir /etc/blkid
-%{_udevrulesdir}/60-raw.rules
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
 %config(noreplace) %{_sysconfdir}/pam.d/su
@@ -967,8 +952,6 @@ exit 0
 %{_mandir}/man8/mkfs.cramfs.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/pivot_root.8*
-%{_mandir}/man8/raw.8*
-%{_mandir}/man8/rawdevices.8*
 %{_mandir}/man8/readprofile.8*
 %{_mandir}/man8/resizepart.8*
 %ifnarch s390 s390x
