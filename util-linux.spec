@@ -76,10 +76,10 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.37.2
-Release:	%{?beta:0.%{beta}.}2
+Release:	%{?beta:0.%{beta}.}3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
-URL:		http://www.kernel.org/pub/linux/utils/util-linux
+URL:		https://en.wikipedia.org/wiki/Util-linux
 Source0:	http://www.kernel.org/pub/linux/utils/%{name}/v%(echo %{version} |cut -d. -f1-2)/%{name}-%{version}%{?beta:-%{beta}}.tar.xz
 # based on Fedora pam files, with pam_selinux stripped out
 Source1:	util-linux-login.pamd
@@ -134,12 +134,9 @@ Provides:	/bin/su
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
-%rename		hardlink
 %ifarch alpha %{sparc} ppc
 Obsoletes:	clock < %{version}-%{release}
 %endif
-# old versions of e2fsprogs provides blkid / uuidd
-Conflicts:	e2fsprogs < 1.41.8-2mnb2
 Conflicts:	setup < 2.7.18-6
 # old version of sysvinit-tools provides sulogin and utmpdump
 Conflicts:	sysvinit < 2.87-11
@@ -151,11 +148,11 @@ Conflicts:	bash-completion < 2:2.7-2
 Conflicts:	rfkill < 0.5-10
 Requires:	pam >= 1.3.0-1
 Requires:	shadow >= 4.2.1-24
-Requires:	%{libblkid} = %{EVRD}
 Requires:	%{libfdisk} = %{EVRD}
-Requires:	%{libmount} = %{EVRD}
-Requires:	%{libuuid} = %{EVRD}
-Requires:	%{libsmartcols} = %{EVRD}
+
+
+
+Requires:	util-linux-core = %{EVRD}
 Suggests:	%{name}-doc = %{EVRD}
 %if %{with compat32}
 BuildRequires:	libcrypt-devel
@@ -166,6 +163,29 @@ The util-linux package contains a large variety of low-level system
 utilities that are necessary for a Linux system to function.  Among
 others, Util-linux-ng contains the fdisk configuration tool and the login
 program.
+
+%package core
+Summary:	The most essential utilities from the util-linux suite.
+License:	GPLv2 and GPLv2+ and LGPLv2+ and BSD with advertising and Public Domain
+Requires:	%{libuuid} = %{EVRD}
+Requires:	%{libblkid} = %{EVRD}
+Requires:	%{libmount} = %{EVRD}
+Requires:	%{libsmartcols} = %{EVRD}
+# old versions of e2fsprogs contain fsck, uuidgen
+Conflicts:	e2fsprogs < 1.41.8-5
+%rename hardlink
+
+%description core
+This is a very basic set of Linux utilities that is necessary on
+minimal installations.
+
+%package user
+Summary:	libuser based util-linux utilities
+Group:		System/Base
+Requires:	%{name} = %{EVRD}
+
+%description user
+chfn and chsh utilities with dependence on libuser.
 
 %package -n %{libblkid}
 Summary:	Block device ID library
@@ -292,13 +312,6 @@ Requires:	%{libsmartcols} = %{EVRD}
 %description -n %{devsmartcols}
 Development files and headers for libsmartcols library.
 
-%package user
-Summary:	libuser based util-linux utilities
-Group:		System/Base
-Requires:	%{name} = %{EVRD}
-
-%description -n util-linux-user
-chfn and chsh utilities with dependence on libuser.
 
 %if %{with python}
 %package -n python-libmount
@@ -477,6 +490,12 @@ cd ..
 
 mkdir build
 cd build
+export CFLAGS="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 %{optflags}"
+export SUID_CFLAGS="-fpie"
+export SUID_LDFLAGS="-pie -Wl,-z,relro -Wl,-z,now"
+export DAEMON_CFLAGS="$SUID_CFLAGS"
+export DAEMON_LDFLAGS="$SUID_LDFLAGS"
+
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
@@ -521,7 +540,7 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_infodir}
 mkdir -p %{buildroot}%{_mandir}/man{1,6,8,5}
 mkdir -p %{buildroot}%{_sbindir}
-mkdir -p %{buildroot}%{_sysconfdir}/{pam.d,blkid}
+mkdir -p %{buildroot}%{_sysconfdir}/pam.d
 
 %if %{with compat32}
 %make_install -C build32
@@ -597,14 +616,6 @@ install -D -p -m 644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
 # And a dirs uuidd needs that the makefiles don't create
 install -d %{buildroot}/var/lib/libuuid
 
-# move flock in /bin, required for udev
-# logger is useful in initscripts while /usr isn't mounted as well
-# ionice needed for readahead_early
-for p in flock logger ionice; do
-    mv %{buildroot}{%{_bindir},/bin}/$p
-    ln -sf ../../bin/$p %{buildroot}%{_bindir}/$p
-done
-
 # Final cleanup
 %ifarch %no_hwclock_archs
 rm %{buildroot}/sbin/{hwclock,clock} %{buildroot}%{_mandir}/man8/hwclock.8* %{buildroot}/usr/sbin/{hwclock,clock}
@@ -614,14 +625,8 @@ rm %{buildroot}/usr/{bin,sbin}/{tunelp,floppy} %{buildroot}%{_mandir}/man8/{tune
 %endif
 
 # deprecated commands
-for I in /sbin/mkfs.bfs %{_bindir}/scriptreplay; do
-    rm %{buildroot}$I
-done
-
-# deprecated man pages
-for I in man8/mkfs.bfs.8 man1/scriptreplay.1; do
-    rm %{buildroot}%{_mandir}/${I}*
-done
+rm -rf %{buildroot}/sbin/mkfs.bfs %{buildroot}%{_bindir}/scriptreplay
+rm -rf %{buildroot}%{_mandir}/man8/mkfs.bfs.8 %{buildroot}%{_mandir}/man1/scriptreplay.1
 
 # we install getopt/getopt-*.{bash,tcsh} as doc files
 # note: versions <=2.12 use path "%{_datadir}/misc/getopt/*"
@@ -649,8 +654,6 @@ cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
 enable fstrim.timer
 EOF
 
-
-
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-uuidd.preset << EOF
 enable uuidd.socket
@@ -671,12 +674,12 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|znver1|uname26)\.8.*" \
 	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
-%pre -p <lua>
+%post -p <lua> core
 if arg[2] >= 2 then
 	st = posix.stat("/etc/mtab")
 	if st and st.type ~= "link" then
 		posix.unlink("/etc/mtab")
-		posix.link("/proc/mounts", "/etc/mtab", true)
+		posix.link("/proc/self/mounts", "/etc/mtab", true)
 	end
 end
 
@@ -710,26 +713,6 @@ exit 0
 %systemd_postun_with_restart uuidd.service
 
 %files -f %{name}.files
-/bin/dmesg
-%attr(755,root,root) /bin/login
-/bin/lsblk
-/bin/more
-/bin/kill
-/bin/taskset
-/bin/ionice
-/bin/findmnt
-/bin/mountpoint
-%{_bindir}/chmem
-%{_bindir}/fincore
-%{_bindir}/lsmem
-%{_bindir}/nsenter
-%{_bindir}/setpriv
-%{_bindir}/irqtop
-%{_bindir}/lsirq
-/bin/su
-%attr(2555,root,tty) %{_bindir}/wall
-/bin/wdctl
-%dir /etc/blkid
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
 %config(noreplace) %{_sysconfdir}/pam.d/su
@@ -737,19 +720,19 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/runuser
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
 %config(noreplace) %{_sysconfdir}/issue
-/etc/mtab
-/sbin/agetty
-/sbin/blkid
+%attr(755,root,root) /bin/login
+/bin/lsblk
+%attr(4755,root,root) /bin/su
+/bin/wdctl
+%attr(2555,root,tty) %{_bindir}/wall
 /sbin/blkdiscard
 /sbin/blkzone
-/sbin/blockdev
 /sbin/fstrim
 /sbin/pivot_root
 %{_sbindir}/pivot_root
 /sbin/ctrlaltdel
 /sbin/addpart
 /sbin/delpart
-/sbin/partx
 /sbin/fsfreeze
 /sbin/swaplabel
 /sbin/runuser
@@ -769,14 +752,24 @@ exit 0
 /sbin/clock-rs6k
 %endif
 /sbin/findfs
-/sbin/fsck
 /sbin/mkfs
-/sbin/mkswap
 /sbin/nologin
 /sbin/sulogin
 /sbin/zramctl
-%{_bindir}/chrt
-%{_bindir}/ionice
+%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64 znver1 riscv64
+/sbin/fsck.cramfs
+/sbin/mkfs.cramfs
+%endif
+/sbin/fsck.minix
+/sbin/mkfs.minix
+/sbin/chcpu
+/sbin/wipefs
+%{_bindir}/chmem
+%{_bindir}/fincore
+%{_bindir}/lsmem
+%{_bindir}/setpriv
+%{_bindir}/irqtop
+%{_bindir}/lsirq
 %{_bindir}/cal
 %{_bindir}/choom
 %{_bindir}/col
@@ -787,20 +780,12 @@ exit 0
 %{_bindir}/cytune
 %endif
 %{_bindir}/eject
-/bin/flock
-%{_bindir}/flock
 %{_bindir}/fallocate
 %{_bindir}/getopt
-%{_bindir}/hardlink
-%{_sbindir}/hardlink
 %{_bindir}/hexdump
-%{_bindir}/ipcrm
-%{_bindir}/ipcs
 %{_bindir}/isosize
-/bin/logger
 %{_bindir}/last
 %{_bindir}/lastb
-%{_bindir}/logger
 %{_bindir}/look
 %{_bindir}/lslocks
 %{_bindir}/lslogins
@@ -809,32 +794,21 @@ exit 0
 %{_bindir}/mcookie
 %{_bindir}/mesg
 %{_bindir}/utmpdump
-%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64 znver1 riscv64
-/sbin/fsck.cramfs
-/sbin/mkfs.cramfs
-%endif
-/sbin/fsck.minix
-/sbin/mkfs.minix
-/sbin/chcpu
 %{_bindir}/namei
 %{_bindir}/prlimit
 %{_bindir}/rename
-%{_bindir}/renice
 %{_bindir}/rev
 %{_bindir}/script
 %{_bindir}/scriptlive
 %{_bindir}/setarch
-%{_bindir}/setsid
 %{_bindir}/setterm
 %ifarch %{sparcx}
 %{_bindir}/sunhostid
 %endif
 %{_bindir}/ul
-%{_bindir}/unshare
 %{_bindir}/uuidgen
 %{_bindir}/uuidparse
 %{_bindir}/whereis
-%{_bindir}/ipcmk
 %{_bindir}/lscpu
 %attr(2755,root,tty) %{_bindir}/write
 %{_bindir}/uclampset
@@ -845,16 +819,127 @@ exit 0
 %{_sbindir}/rtcwake
 %{_sbindir}/ldattach
 %{_sbindir}/resizepart
-%attr(4755,root,root) /bin/mount
-%attr(4755,root,root) /bin/umount
-/sbin/swapon
-/sbin/swapoff
-/sbin/switch_root
-/sbin/losetup
-/sbin/wipefs
 %{_presetdir}/86-fstrim.preset
 %{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
+
+%files core
+%ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
+%attr(4755,root,root) /bin/mount
+%attr(4755,root,root) /bin/umount
+%{_bindir}/chrt
+/bin/dmesg
+/bin/findmnt
+%{_bindir}/flock
+%{_bindir}/hardlink
+%{_sbindir}/hardlink
+%{_bindir}/ionice
+%{_bindir}/ipcmk
+%{_bindir}/ipcrm
+%{_bindir}/ipcs
+/bin/kill
+%{_bindir}/logger
+/bin/more
+/bin/mountpoint
+%{_bindir}/nsenter
+%{_bindir}/renice
+/bin/taskset
+%{_bindir}/setsid
+%{_bindir}/unshare
+/sbin/blkid
+/sbin/blockdev
+/sbin/fsck
+/sbin/losetup
+/sbin/mkswap
+/sbin/partx
+/sbin/swapon
+/sbin/swapoff
+/sbin/agetty
+/sbin/switch_root
+
+%files user
+%config(noreplace) %{_sysconfdir}/pam.d/chfn
+%config(noreplace) %{_sysconfdir}/pam.d/chsh
+%attr(4711,root,root) %{_bindir}/chfn
+%attr(4711,root,root) %{_bindir}/chsh
+%doc %{_mandir}/man1/chfn.1*
+%doc %{_mandir}/man1/chsh.1*
+
+%files -n uuidd
+%doc %{_mandir}/man8/uuidd.8*
+%{_presetdir}/86-uuidd.preset
+%{_unitdir}/uuidd.*
+%{_tmpfilesdir}/uuidd.conf
+%{_sysusersdir}/uuidd.conf
+%attr(-, uuidd, uuidd) %{_sbindir}/uuidd
+%dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
+
+%files -n rfkill
+%{_sbindir}/rfkill
+%doc %{_mandir}/man8/rfkill.8*
+
+%files -n %{libblkid}
+/%{_lib}/libblkid.so.%{blkid_major}*
+
+%files -n %{devblkid}
+%{_libdir}/libblkid.a
+%{_libdir}/libblkid.so
+%{_includedir}/blkid
+%doc %{_mandir}/man3/libblkid.3*
+%{_libdir}/pkgconfig/blkid.pc
+
+%files -n %{libfdisk}
+/%{_lib}/libfdisk.so.%{fdisk_major}*
+
+%files -n %{devfdisk}
+%{_libdir}/libfdisk.a
+%{_libdir}/libfdisk.so
+%{_includedir}/libfdisk
+%{_libdir}/pkgconfig/fdisk.pc
+
+%files -n %{libuuid}
+/%{_lib}/libuuid.so.%{uuid_major}*
+
+%files -n %{devuuid}
+%{_libdir}/libuuid.a
+%{_libdir}/libuuid.so
+%{_includedir}/uuid
+%doc %{_mandir}/man3/uuid.3*
+%doc %{_mandir}/man3/uuid_clear.3*
+%doc %{_mandir}/man3/uuid_compare.3*
+%doc %{_mandir}/man3/uuid_copy.3*
+%doc %{_mandir}/man3/uuid_generate.3*
+%doc %{_mandir}/man3/uuid_generate_random.3*
+%doc %{_mandir}/man3/uuid_generate_time.3*
+%doc %{_mandir}/man3/uuid_is_null.3*
+%doc %{_mandir}/man3/uuid_parse.3*
+%doc %{_mandir}/man3/uuid_time.3*
+%doc %{_mandir}/man3/uuid_unparse.3*
+%{_libdir}/pkgconfig/uuid.pc
+
+%files -n %{libmount}
+/%{_lib}/libmount.so.%{mount_major}*
+
+%files -n %{devmount}
+%{_includedir}/libmount/libmount.h
+%{_libdir}/libmount.so
+%{_libdir}/libmount.a
+%{_libdir}/pkgconfig/mount.pc
+
+%if %{with python}
+%files -n python-libmount
+%dir %{python_sitearch}/libmount
+%{py_platsitedir}/libmount/*
+%endif
+
+%files -n %{libsmartcols}
+/%{_lib}/libsmartcols.so.%{smartcols_major}*
+
+%files -n %{devsmartcols}
+%{_includedir}/libsmartcols
+%{_libdir}/libsmartcols.so
+%{_libdir}/libsmartcols.*a
+%{_libdir}/pkgconfig/smartcols.pc
 
 %files doc
 %doc %{_docdir}/%{name}
@@ -976,90 +1061,6 @@ exit 0
 %{_mandir}/man8/losetup.8*
 %{_mandir}/man8/zramctl.8.*
 %{_mandir}/man1/uclampset.1.*
-
-%files user
-%config(noreplace) %{_sysconfdir}/pam.d/chfn
-%config(noreplace) %{_sysconfdir}/pam.d/chsh
-%attr(4711,root,root) %{_bindir}/chfn
-%attr(4711,root,root) %{_bindir}/chsh
-%doc %{_mandir}/man1/chfn.1*
-%doc %{_mandir}/man1/chsh.1*
-
-%files -n uuidd
-%doc %{_mandir}/man8/uuidd.8*
-%{_presetdir}/86-uuidd.preset
-%{_unitdir}/uuidd.*
-%{_tmpfilesdir}/uuidd.conf
-%{_sysusersdir}/uuidd.conf
-%attr(-, uuidd, uuidd) %{_sbindir}/uuidd
-%dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
-
-%files -n rfkill
-%{_sbindir}/rfkill
-%doc %{_mandir}/man8/rfkill.8*
-
-%files -n %{libblkid}
-/%{_lib}/libblkid.so.%{blkid_major}*
-
-%files -n %{devblkid}
-%{_libdir}/libblkid.a
-%{_libdir}/libblkid.so
-%{_includedir}/blkid
-%doc %{_mandir}/man3/libblkid.3*
-%{_libdir}/pkgconfig/blkid.pc
-
-%files -n %{libfdisk}
-/%{_lib}/libfdisk.so.%{fdisk_major}*
-
-%files -n %{devfdisk}
-%{_libdir}/libfdisk.a
-%{_libdir}/libfdisk.so
-%{_includedir}/libfdisk
-%{_libdir}/pkgconfig/fdisk.pc
-
-%files -n %{libuuid}
-/%{_lib}/libuuid.so.%{uuid_major}*
-
-%files -n %{devuuid}
-%{_libdir}/libuuid.a
-%{_libdir}/libuuid.so
-%{_includedir}/uuid
-%doc %{_mandir}/man3/uuid.3*
-%doc %{_mandir}/man3/uuid_clear.3*
-%doc %{_mandir}/man3/uuid_compare.3*
-%doc %{_mandir}/man3/uuid_copy.3*
-%doc %{_mandir}/man3/uuid_generate.3*
-%doc %{_mandir}/man3/uuid_generate_random.3*
-%doc %{_mandir}/man3/uuid_generate_time.3*
-%doc %{_mandir}/man3/uuid_is_null.3*
-%doc %{_mandir}/man3/uuid_parse.3*
-%doc %{_mandir}/man3/uuid_time.3*
-%doc %{_mandir}/man3/uuid_unparse.3*
-%{_libdir}/pkgconfig/uuid.pc
-
-%files -n %{libmount}
-/%{_lib}/libmount.so.%{mount_major}*
-
-%files -n %{devmount}
-%{_includedir}/libmount/libmount.h
-%{_libdir}/libmount.so
-%{_libdir}/libmount.a
-%{_libdir}/pkgconfig/mount.pc
-
-%if %{with python}
-%files -n python-libmount
-%dir %{python_sitearch}/libmount
-%{py_platsitedir}/libmount/*
-%endif
-
-%files -n %{libsmartcols}
-/%{_lib}/libsmartcols.so.%{smartcols_major}*
-
-%files -n %{devsmartcols}
-%{_includedir}/libsmartcols
-%{_libdir}/libsmartcols.so
-%{_libdir}/libsmartcols.*a
-%{_libdir}/pkgconfig/smartcols.pc
 
 %if %{with compat32}
 %files -n %{lib32blkid}
