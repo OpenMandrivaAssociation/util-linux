@@ -71,11 +71,11 @@
 %bcond_without python
 %endif
 
-#define beta rc2
+%define beta rc4
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.37.4
+Version:	2.38
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -722,6 +722,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/issue
 %attr(755,root,root) /bin/login
 /bin/lsblk
+/bin/lsfd
 %attr(4755,root,root) /bin/su
 /bin/wdctl
 %attr(2555,root,tty) %{_bindir}/wall
@@ -822,6 +823,7 @@ exit 0
 %{_presetdir}/86-fstrim.preset
 %{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
+%{_mandir}/man1/lsfd.1*
 
 %files core
 %ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
