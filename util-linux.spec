@@ -64,9 +64,6 @@
 %define dev32smartcols libsmartcols-devel
 %endif
 
-### Macros
-%define no_hwclock_archs s390 s390x
-
 %if !%{build_bootstrap}
 %bcond_without python
 %endif
@@ -76,7 +73,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.38
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -134,9 +131,6 @@ Provides:	/bin/su
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
-%ifarch alpha %{sparc} ppc
-Obsoletes:	clock < %{version}-%{release}
-%endif
 Conflicts:	setup < 2.7.18-6
 # old version of sysvinit-tools provides sulogin and utmpdump
 Conflicts:	sysvinit < 2.87-11
@@ -149,9 +143,6 @@ Conflicts:	rfkill < 0.5-10
 Requires:	pam >= 1.3.0-1
 Requires:	shadow >= 4.2.1-24
 Requires:	%{libfdisk} = %{EVRD}
-
-
-
 Requires:	util-linux-core = %{EVRD}
 Suggests:	%{name}-doc = %{EVRD}
 %if %{with compat32}
@@ -264,9 +255,7 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
-Requires(pre):	glibc
-Requires(pre):	shadow
-Requires(pre):	passwd
+Requires(pre):	systemd
 %systemd_requires
 
 %description -n uuidd
@@ -311,7 +300,6 @@ Requires:	%{libsmartcols} = %{EVRD}
 
 %description -n %{devsmartcols}
 Development files and headers for libsmartcols library.
-
 
 %if %{with python}
 %package -n python-libmount
@@ -499,7 +487,6 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 %configure \
 	--bindir=/bin \
 	--sbindir=/sbin \
-	--libdir=/%{_lib} \
 	--enable-static=yes \
 	--enable-wall \
 	--enable-partx \
@@ -564,23 +551,6 @@ EOF
 # Correct mail spool path.
 sed -i -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login.1
 
-%ifarch %{sparcx}
-rm %{buildroot}%{_bindir}/sunhostid
-cat << E-O-F > %{buildroot}%{_bindir}/sunhostid
-#!/bin/sh
-# this should be %{_bindir}/sunhostid or somesuch.
-# Copyright 1999 Peter Jones, <pjones@redhat.com> .
-# GPL and all that good stuff apply.
-(
-idprom=\`cat /proc/openprom/idprom\`
-echo \$idprom|dd bs=1 skip=2 count=2
-echo \$idprom|dd bs=1 skip=27 count=6
-echo
-) 2>/dev/null
-E-O-F
-chmod 755 %{buildroot}%{_bindir}/sunhostid
-%endif
-
 # PAM settings
 {
   cd %{buildroot}%{_sysconfdir}/pam.d
@@ -598,11 +568,6 @@ chmod 755 %{buildroot}%{_bindir}/sunhostid
 # This has dependencies on stuff in /usr
 mv %{buildroot}{/sbin/,/usr/sbin}/cfdisk
 
-%ifarch ppc
-cp -f ./clock-ppc %{buildroot}/sbin/clock-ppc
-mv %{buildroot}/sbin/hwclock %{buildroot}/sbin/clock-rs6k
-ln -sf clock-rs6k %{buildroot}/sbin/hwclock
-%endif
 ln -sf ../../sbin/hwclock %{buildroot}%{_sbindir}/hwclock
 ln -sf ../../sbin/clock %{buildroot}%{_sbindir}/clock
 ln -sf hwclock %{buildroot}/sbin/clock
@@ -617,12 +582,6 @@ install -D -p -m 644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
 install -d %{buildroot}/var/lib/libuuid
 
 # Final cleanup
-%ifarch %no_hwclock_archs
-rm %{buildroot}/sbin/{hwclock,clock} %{buildroot}%{_mandir}/man8/hwclock.8* %{buildroot}/usr/sbin/{hwclock,clock}
-%endif
-%ifarch s390 s390x
-rm %{buildroot}/usr/{bin,sbin}/{tunelp,floppy} %{buildroot}%{_mandir}/man8/{tunelp,floppy}.8*
-%endif
 
 # deprecated commands
 rm -rf %{buildroot}/sbin/mkfs.bfs %{buildroot}%{_bindir}/scriptreplay
@@ -676,29 +635,25 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
 
 %post -p <lua> core
 if arg[2] >= 2 then
-	st = posix.stat("/etc/mtab")
-	if st and st.type ~= "link" then
-		posix.unlink("/etc/mtab")
-		posix.link("/proc/self/mounts", "/etc/mtab", true)
-	end
+    st = posix.stat("/etc/mtab")
+    if st and st.type ~= "link" then
+	posix.unlink("/etc/mtab")
+	posix.link("/proc/self/mounts", "/etc/mtab", true)
+    end
 end
 
 %post -p <lua>
 if arg[2] >= 2 then
-	if posix.stat("/etc/blkid.tab") then
-		os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
-	end
-	if posix.stat("/etc/blkid.tab.old") then
-		os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
-	end
+    if posix.stat("/etc/blkid.tab") then
+	os.rename("/etc/blkid.tab", "/etc/blkid/blkid.tab")
+    end
+    if posix.stat("/etc/blkid.tab.old") then
+	os.rename("/etc/blkid.tab.old", "/etc/blkid/blkid.tab.old")
+    end
 end
 
 %pre -n uuidd
-getent group uuidd >/dev/null || groupadd -r uuidd
-getent passwd uuidd >/dev/null || \
-useradd -r -g uuidd -d /var/lib/libuuid -s /sbin/nologin \
-    -c "UUID generator helper daemon" uuidd
-exit 0
+%sysusers_create_package uuidd %{SOURCE14}
 
 %post -n uuidd
 %systemd_post uidd.socket
@@ -737,27 +692,21 @@ exit 0
 /sbin/fsfreeze
 /sbin/swaplabel
 /sbin/runuser
-%ifarch %ix86 alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %mips %arm aarch64 znver1 riscv64
+%ifarch %{ix86} x86_64 %{arm} aarch64 znver1 riscv64
 /sbin/sfdisk
 %{_sbindir}/cfdisk
 %endif
 /sbin/fdisk
-%ifnarch %no_hwclock_archs
 /sbin/clock
 %{_sbindir}/clock
 /sbin/hwclock
 /usr/sbin/hwclock
-%endif
-%ifarch ppc
-/sbin/clock-ppc
-/sbin/clock-rs6k
-%endif
 /sbin/findfs
 /sbin/mkfs
 /sbin/nologin
 /sbin/sulogin
 /sbin/zramctl
-%ifarch %{ix86} alpha ia64 x86_64 s390 s390x ppc ppc64 %{sparcx} %{mips} %{arm} aarch64 znver1 riscv64
+%ifarch %{ix86} x86_64 %{arm} aarch64 znver1 riscv64
 /sbin/fsck.cramfs
 /sbin/mkfs.cramfs
 %endif
@@ -777,9 +726,6 @@ exit 0
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
-%ifarch alpha ppc ppc64 %{sparcx} %mips
-%{_bindir}/cytune
-%endif
 %{_bindir}/eject
 %{_bindir}/fallocate
 %{_bindir}/getopt
@@ -803,9 +749,6 @@ exit 0
 %{_bindir}/scriptlive
 %{_bindir}/setarch
 %{_bindir}/setterm
-%ifarch %{sparcx}
-%{_bindir}/sunhostid
-%endif
 %{_bindir}/ul
 %{_bindir}/uuidgen
 %{_bindir}/uuidparse
@@ -814,16 +757,14 @@ exit 0
 %attr(2755,root,tty) %{_bindir}/write
 %{_bindir}/uclampset
 %{_sbindir}/readprofile
-%ifnarch s390 s390x
 %{_sbindir}/tunelp
-%endif
 %{_sbindir}/rtcwake
 %{_sbindir}/ldattach
 %{_sbindir}/resizepart
 %{_presetdir}/86-fstrim.preset
 %{_unitdir}/fstrim.*
 %{_datadir}/bash-completion/completions/*
-%{_mandir}/man1/lsfd.1*
+%doc %{_mandir}/man1/lsfd.1*
 
 %files core
 %ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
@@ -881,7 +822,7 @@ exit 0
 %doc %{_mandir}/man8/rfkill.8*
 
 %files -n %{libblkid}
-/%{_lib}/libblkid.so.%{blkid_major}*
+%{_libdir}/libblkid.so.%{blkid_major}*
 
 %files -n %{devblkid}
 %{_libdir}/libblkid.a
@@ -891,7 +832,7 @@ exit 0
 %{_libdir}/pkgconfig/blkid.pc
 
 %files -n %{libfdisk}
-/%{_lib}/libfdisk.so.%{fdisk_major}*
+%{_libdir}/libfdisk.so.%{fdisk_major}*
 
 %files -n %{devfdisk}
 %{_libdir}/libfdisk.a
@@ -900,7 +841,7 @@ exit 0
 %{_libdir}/pkgconfig/fdisk.pc
 
 %files -n %{libuuid}
-/%{_lib}/libuuid.so.%{uuid_major}*
+%{_libdir}/libuuid.so.%{uuid_major}*
 
 %files -n %{devuuid}
 %{_libdir}/libuuid.a
@@ -920,7 +861,7 @@ exit 0
 %{_libdir}/pkgconfig/uuid.pc
 
 %files -n %{libmount}
-/%{_lib}/libmount.so.%{mount_major}*
+%{_libdir}/libmount.so.%{mount_major}*
 
 %files -n %{devmount}
 %{_includedir}/libmount/libmount.h
@@ -935,7 +876,7 @@ exit 0
 %endif
 
 %files -n %{libsmartcols}
-/%{_lib}/libsmartcols.so.%{smartcols_major}*
+%{_libdir}/libsmartcols.so.%{smartcols_major}*
 
 %files -n %{devsmartcols}
 %{_includedir}/libsmartcols
@@ -950,16 +891,11 @@ exit 0
 %{_mandir}/man8/addpart.8*
 %{_mandir}/man8/blkzone.8*
 %{_mandir}/man8/chmem.8*
-%ifarch alpha ppc ppc64 %{sparcx} %mips
-%{_mandir}/man8/cytune.8*
-%endif
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/findmnt.8*
 %{_mandir}/man8/fsfreeze.8*
 %{_mandir}/man8/fstrim.8*
-%ifnarch %no_hwclock_archs
 %{_mandir}/man8/hwclock.8*
-%endif
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/nologin.8*
 %{_mandir}/man8/swaplabel.8*
@@ -1041,9 +977,7 @@ exit 0
 %{_mandir}/man8/pivot_root.8*
 %{_mandir}/man8/readprofile.8*
 %{_mandir}/man8/resizepart.8*
-%ifnarch s390 s390x
 %{_mandir}/man8/tunelp.8*
-%endif
 %{_mandir}/man8/setarch.8*
 %{_mandir}/man8/sulogin.8*
 %{_mandir}/man8/rtcwake.8*
