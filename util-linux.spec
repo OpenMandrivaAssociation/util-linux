@@ -33,6 +33,8 @@
 %define libsmartcols %mklibname smartcols %{smartcols_major}
 %define devsmartcols %mklibname smartcols -d
 
+%global compldir %{_datadir}/bash-completion/completions/
+
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
 %define build_bootstrap 0
@@ -73,7 +75,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.38
-Release:	%{?beta:0.%{beta}.}3
+Release:	%{?beta:0.%{beta}.}4
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -121,6 +123,8 @@ BuildRequires:	pkgconfig(libuser)
 BuildRequires:	pkgconfig(readline)
 BuildRequires:	kernel-release-headers
 Provides:	/bin/su
+Provides:	/sbin/nologin
+Provides:	/sbin/findfs
 %rename		eject
 %rename		fdisk
 %rename		linux32
@@ -165,6 +169,14 @@ Requires:	%{libsmartcols} = %{EVRD}
 # old versions of e2fsprogs contain fsck, uuidgen
 Conflicts:	e2fsprogs < 1.41.8-5
 %rename hardlink
+Provides:	/bin/dmesg
+Provides:	/bin/kill
+Provides:	/bin/more
+Provides:	/bin/mount
+Provides:	/bin/umount
+Provides:	/sbin/blkid
+Provides:	/sbin/blockdev
+Provides:	/sbin/fsck
 
 %description core
 This is a very basic set of Linux utilities that is necessary on
@@ -485,9 +497,10 @@ export DAEMON_CFLAGS="$SUID_CFLAGS"
 export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 
 %configure \
-	--bindir=/bin \
-	--sbindir=/sbin \
 	--enable-static=yes \
+	--disable-bfs \
+	--disable-minix \
+	--disable-cramfs \
 	--enable-wall \
 	--enable-partx \
 	--enable-kill \
@@ -497,7 +510,7 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--without-audit \
-	--with-python=3 \
+	--with-python=%{pyver} \
 	--without-selinux \
 	--with-udev \
 	--with-utempter \
@@ -511,7 +524,6 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--with-systemdsystemunitdir=%{_unitdir}
 
 %build
-%serverbuild_hardened
 unset LINGUAS || :
 
 %if %{with compat32}
@@ -523,10 +535,8 @@ unset LINGUAS || :
 
 %install
 mkdir -p %{buildroot}/{bin,sbin}
-mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_infodir}
 mkdir -p %{buildroot}%{_mandir}/man{1,6,8,5}
-mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d
 
 %if %{with compat32}
@@ -565,26 +575,19 @@ sed -i -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login
   cd -
 }
 
-# This has dependencies on stuff in /usr
-mv %{buildroot}{/sbin/,/usr/sbin}/cfdisk
-
-ln -sf ../../sbin/hwclock %{buildroot}%{_sbindir}/hwclock
-ln -sf ../../sbin/clock %{buildroot}%{_sbindir}/clock
-ln -sf hwclock %{buildroot}/sbin/clock
-# (tpg) compat symlink
-ln -sf ../bin/hardlink %{buildroot}%{_sbindir}/hardlink
-ln -sf ../../sbin/pivot_root %{buildroot}%{_sbindir}/pivot_root
-
 install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/uuidd.conf
 install -D -p -m 644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
 
 # And a dirs uuidd needs that the makefiles don't create
+install -d %{buildroot}/run/uuidd
 install -d %{buildroot}/var/lib/libuuid
 
 # Final cleanup
 
 # deprecated commands
-rm -rf %{buildroot}/sbin/mkfs.bfs %{buildroot}%{_bindir}/scriptreplay
+rm -rf %{buildroot}%{_bindir}/scriptreplay
+rm -rf %{buildroot}%{compldir}/scriptreplay
+rm -rf %{buildroot}%{compldir}/mkfs.bfs
 rm -rf %{buildroot}%{_mandir}/man8/mkfs.bfs.8 %{buildroot}%{_mandir}/man1/scriptreplay.1
 
 # we install getopt/getopt-*.{bash,tcsh} as doc files
@@ -594,19 +597,17 @@ chmod 644 misc-utils/getopt-*.{bash,tcsh}
 # link mtab
 ln -sf ../proc/self/mounts %{buildroot}/etc/mtab
 
-# /usr/sbin -> /sbin
-for I in addpart delpart partx; do
-    if [ -e %{buildroot}/usr/sbin/$I ]; then
-	mv %{buildroot}/usr/sbin/$I %{buildroot}/sbin/$I
-    fi
+# compat symlinks
+for i in taskset login lsblk lsfd su wdctl mount umount dmesg findmnt kill more mountpoint ; do
+    ln -s %{_bindir}/$i %{buildroot}/bin/$i
+done
+for i in partx pivot_root hwclock fstrim ctrlaltdel runuser sfdisk fdisk mkfs nologin sulogin blkid blockdev fsck losetup mkswap swapon swapoff agetty switch_root ; do
+    ln -s %{_sbindir}/$i %{buildroot}/sbin/$i
 done
 
-# /usr/bin -> /bin
-for I in taskset; do
-    if [ -e %{buildroot}/usr/bin/$I ]; then
-	mv %{buildroot}/usr/bin/$I %{buildroot}/bin/$I
-    fi
-done
+ln -s %{_sbindir}/hwclock %{buildroot}/sbin/clock
+ln -s %{_sbindir}/hwclock %{buildroot}/%{_sbindir}/clock
+ln -s %{_bindir}/hardlink %{buildroot}/%{_sbindir}/hardlink
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
@@ -675,52 +676,14 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/runuser
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
 %config(noreplace) %{_sysconfdir}/issue
-%attr(755,root,root) /bin/login
-/bin/lsblk
-/bin/lsfd
-%attr(4755,root,root) /bin/su
-/bin/wdctl
-%attr(2555,root,tty) %{_bindir}/wall
-/sbin/blkdiscard
-/sbin/blkzone
-/sbin/fstrim
-/sbin/pivot_root
-%{_sbindir}/pivot_root
-/sbin/ctrlaltdel
-/sbin/addpart
-/sbin/delpart
-/sbin/fsfreeze
-/sbin/swaplabel
-/sbin/runuser
-%ifarch %{ix86} x86_64 %{arm} aarch64 znver1 riscv64
-/sbin/sfdisk
-%{_sbindir}/cfdisk
-%endif
-/sbin/fdisk
-/sbin/clock
-%{_sbindir}/clock
-/sbin/hwclock
-/usr/sbin/hwclock
-/sbin/findfs
-/sbin/mkfs
-/sbin/nologin
-/sbin/sulogin
-/sbin/zramctl
-%ifarch %{ix86} x86_64 %{arm} aarch64 znver1 riscv64
-/sbin/fsck.cramfs
-/sbin/mkfs.cramfs
-%endif
-/sbin/fsck.minix
-/sbin/mkfs.minix
-/sbin/chcpu
-/sbin/wipefs
-%{_bindir}/chmem
-%{_bindir}/fincore
-%{_bindir}/lsmem
-%{_bindir}/setpriv
-%{_bindir}/irqtop
-%{_bindir}/lsirq
+
+/bin/su
+%attr(4755,root,root) %{_bindir}/su
+/bin/login
+%attr(755,root,root) %{_bindir}/login
+%attr(2755,root,tty) %{_bindir}/write
 %{_bindir}/cal
+%{_bindir}/chmem
 %{_bindir}/choom
 %{_bindir}/col
 %{_bindir}/colcrt
@@ -728,19 +691,27 @@ end
 %{_bindir}/column
 %{_bindir}/eject
 %{_bindir}/fallocate
+%{_bindir}/fincore
 %{_bindir}/getopt
 %{_bindir}/hexdump
+%{_bindir}/irqtop
 %{_bindir}/isosize
 %{_bindir}/last
 %{_bindir}/lastb
 %{_bindir}/look
+/bin/lsblk
+%{_bindir}/lsblk
+%{_bindir}/lscpu
+/bin/lsfd
+%{_bindir}/lsfd
+%{_bindir}/lsipc
+%{_bindir}/lsirq
 %{_bindir}/lslocks
 %{_bindir}/lslogins
-%{_bindir}/lsipc
+%{_bindir}/lsmem
 %{_bindir}/lsns
 %{_bindir}/mcookie
 %{_bindir}/mesg
-%{_bindir}/utmpdump
 %{_bindir}/namei
 %{_bindir}/prlimit
 %{_bindir}/rename
@@ -748,57 +719,209 @@ end
 %{_bindir}/script
 %{_bindir}/scriptlive
 %{_bindir}/setarch
+%{_bindir}/setpriv
 %{_bindir}/setterm
+%{_bindir}/uclampset
 %{_bindir}/ul
+%{_bindir}/utmpdump
 %{_bindir}/uuidgen
 %{_bindir}/uuidparse
+%{_bindir}/wall
+/bin/wdctl
+%{_bindir}/wdctl
 %{_bindir}/whereis
-%{_bindir}/lscpu
-%attr(2755,root,tty) %{_bindir}/write
-%{_bindir}/uclampset
-%{_sbindir}/readprofile
-%{_sbindir}/tunelp
-%{_sbindir}/rtcwake
+%{_sbindir}/addpart
+%{_sbindir}/blkdiscard
+%{_sbindir}/blkzone
+%{_sbindir}/cfdisk
+%{_sbindir}/chcpu
+/sbin/clock
+%{_sbindir}/clock
+/sbin/ctrlaltdel
+%{_sbindir}/ctrlaltdel
+%{_sbindir}/delpart
+/sbin/fdisk
+%{_sbindir}/fdisk
+%{_sbindir}/findfs
+%{_sbindir}/fsfreeze
+/sbin/fstrim
+%{_sbindir}/fstrim
+/sbin/hwclock
+%{_sbindir}/hwclock
 %{_sbindir}/ldattach
+/sbin/mkfs
+%{_sbindir}/mkfs
+/sbin/nologin
+%{_sbindir}/nologin
+/sbin/pivot_root
+%{_sbindir}/pivot_root
+%{_sbindir}/readprofile
 %{_sbindir}/resizepart
+%{_sbindir}/rfkill
+%{_sbindir}/rtcwake
+/sbin/runuser
+%{_sbindir}/runuser
+/sbin/sfdisk
+%{_sbindir}/sfdisk
+/sbin/sulogin
+%{_sbindir}/sulogin
+%{_sbindir}/swaplabel
+%{_sbindir}/tunelp
+%{_sbindir}/wipefs
+%{_sbindir}/zramctl
+
 %{_presetdir}/86-fstrim.preset
 %{_unitdir}/fstrim.*
-%{_datadir}/bash-completion/completions/*
-%doc %{_mandir}/man1/lsfd.1*
+
+%{compldir}/addpart
+%{compldir}/blkdiscard
+%{compldir}/blkzone
+%{compldir}/cal
+%{compldir}/cfdisk
+%{compldir}/chcpu
+%{compldir}/chmem
+%{compldir}/col
+%{compldir}/colcrt
+%{compldir}/colrm
+%{compldir}/column
+%{compldir}/ctrlaltdel
+%{compldir}/delpart
+%{compldir}/eject
+%{compldir}/fallocate
+%{compldir}/fdisk
+%{compldir}/fincore
+%{compldir}/findfs
+%{compldir}/fsfreeze
+%{compldir}/fstrim
+%{compldir}/getopt
+%{compldir}/hexdump
+%{compldir}/hwclock
+%{compldir}/irqtop
+%{compldir}/isosize
+%{compldir}/last
+%{compldir}/lastb
+%{compldir}/ldattach
+%{compldir}/look
+%{compldir}/lsblk
+%{compldir}/lscpu
+%{compldir}/lsipc
+%{compldir}/lsirq
+%{compldir}/lslocks
+%{compldir}/lslogins
+%{compldir}/lsmem
+%{compldir}/lsns
+%{compldir}/mcookie
+%{compldir}/mesg
+%{compldir}/mkfs
+%{compldir}/namei
+%{compldir}/pivot_root
+%{compldir}/prlimit
+%{compldir}/readprofile
+%{compldir}/rename
+%{compldir}/resizepart
+%{compldir}/rev
+%{compldir}/rfkill
+%{compldir}/rtcwake
+%{compldir}/runuser
+%{compldir}/script
+%{compldir}/scriptlive
+%{compldir}/setarch
+%{compldir}/setpriv
+%{compldir}/setterm
+%{compldir}/sfdisk
+%{compldir}/su
+%{compldir}/swaplabel
+%{compldir}/tunelp
+%{compldir}/uclampset
+%{compldir}/ul
+%{compldir}/utmpdump
+%{compldir}/uuidgen
+%{compldir}/uuidparse
+%{compldir}/wall
+%{compldir}/wdctl
+%{compldir}/whereis
+%{compldir}/wipefs
+%{compldir}/write
+%{compldir}/zramctl
 
 %files core
-%ghost %verify(not md5 size mtime) %config(noreplace,missingok) /etc/mtab
-%attr(4755,root,root) /bin/mount
-%attr(4755,root,root) /bin/umount
+/bin/mount
+%attr(4755,root,root) %{_bindir}/mount
+/bin/umount
+%attr(4755,root,root) %{_bindir}/umount
 %{_bindir}/chrt
 /bin/dmesg
+%{_bindir}/dmesg
 /bin/findmnt
+%{_bindir}/findmnt
 %{_bindir}/flock
 %{_bindir}/hardlink
-%{_sbindir}/hardlink
 %{_bindir}/ionice
 %{_bindir}/ipcmk
 %{_bindir}/ipcrm
 %{_bindir}/ipcs
 /bin/kill
+%{_bindir}/kill
 %{_bindir}/logger
 /bin/more
+%{_bindir}/more
 /bin/mountpoint
+%{_bindir}/mountpoint
 %{_bindir}/nsenter
 %{_bindir}/renice
-/bin/taskset
 %{_bindir}/setsid
+/bin/taskset
+%{_bindir}/taskset
 %{_bindir}/unshare
-/sbin/blkid
-/sbin/blockdev
-/sbin/fsck
-/sbin/losetup
-/sbin/mkswap
-/sbin/partx
-/sbin/swapon
-/sbin/swapoff
 /sbin/agetty
+%{_sbindir}/agetty
+/sbin/blkid
+%{_sbindir}/blkid
+/sbin/blockdev
+%{_sbindir}/blockdev
+/sbin/fsck
+%{_sbindir}/fsck
+%{_sbindir}/hardlink
+/sbin/losetup
+%{_sbindir}/losetup
+/sbin/mkswap
+%{_sbindir}/mkswap
+/sbin/partx
+%{_sbindir}/partx
+/sbin/swapoff
+%{_sbindir}/swapoff
+/sbin/swapon
+%{_sbindir}/swapon
 /sbin/switch_root
+%{_sbindir}/switch_root
+%{compldir}/blkid
+%{compldir}/blockdev
+%{compldir}/chrt
+%{compldir}/dmesg
+%{compldir}/findmnt
+%{compldir}/flock
+%{compldir}/hardlink
+%{compldir}/fsck
+%{compldir}/ionice
+%{compldir}/ipcmk
+%{compldir}/ipcrm
+%{compldir}/ipcs
+%{compldir}/logger
+%{compldir}/losetup
+%{compldir}/mkswap
+%{compldir}/more
+%{compldir}/mount
+%{compldir}/mountpoint
+%{compldir}/nsenter
+%{compldir}/partx
+%{compldir}/renice
+%{compldir}/setsid
+%{compldir}/swapoff
+%{compldir}/swapon
+%{compldir}/taskset
+%{compldir}/unshare
+%{compldir}/umount
+/etc/mtab
 
 %files user
 %config(noreplace) %{_sysconfdir}/pam.d/chfn
@@ -807,6 +930,8 @@ end
 %attr(4711,root,root) %{_bindir}/chsh
 %doc %{_mandir}/man1/chfn.1*
 %doc %{_mandir}/man1/chsh.1*
+%{compldir}/chfn
+%{compldir}/chsh
 
 %files -n uuidd
 %doc %{_mandir}/man8/uuidd.8*
@@ -814,8 +939,10 @@ end
 %{_unitdir}/uuidd.*
 %{_tmpfilesdir}/uuidd.conf
 %{_sysusersdir}/uuidd.conf
-%attr(-, uuidd, uuidd) %{_sbindir}/uuidd
+%{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
+%dir %attr(2775, uuidd, uuidd) /run/uuidd
+%{compldir}/uuidd
 
 %files -n rfkill
 %{_sbindir}/rfkill
@@ -959,6 +1086,7 @@ end
 %{_mandir}/man1/ipcmk.1*
 %{_mandir}/man1/lscpu.1*
 %{_mandir}/man1/lslogins.1*
+%{_mandir}/man1/lsfd.1*
 %{_mandir}/man1/su.1*
 %{_mandir}/man3/uuid_generate_time_safe.3*
 %{_mandir}/man8/blockdev.8*
@@ -967,12 +1095,10 @@ end
 %{_mandir}/man8/ctrlaltdel.8*
 %{_mandir}/man8/findfs.8*
 %{_mandir}/man8/fsck.8*
-%{_mandir}/man8/fsck.cramfs.8*
 %{_mandir}/man8/isosize.8*
 %{_mandir}/man8/lslocks.8*
 %{_mandir}/man8/lsns.8*
 %{_mandir}/man8/mkfs.8*
-%{_mandir}/man8/mkfs.cramfs.8*
 %{_mandir}/man8/mkswap.8*
 %{_mandir}/man8/pivot_root.8*
 %{_mandir}/man8/readprofile.8*
@@ -984,8 +1110,6 @@ end
 %{_mandir}/man8/ldattach.8*
 %{_mandir}/man8/wipefs.8*
 %{_mandir}/man8/wdctl.8*
-%{_mandir}/man8/fsck.minix.8*
-%{_mandir}/man8/mkfs.minix.8*
 %{_mandir}/man5/fstab.5*
 %{_mandir}/man5/terminal-colors.d.5*
 %{_mandir}/man8/mount.8*
