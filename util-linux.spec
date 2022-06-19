@@ -75,7 +75,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.38
-Release:	%{?beta:0.%{beta}.}4
+Release:	%{?beta:0.%{beta}.}5
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -169,6 +169,7 @@ Requires:	%{libsmartcols} = %{EVRD}
 # old versions of e2fsprogs contain fsck, uuidgen
 Conflicts:	e2fsprogs < 1.41.8-5
 %rename hardlink
+# FIXME Those Provides: should be renamed at some point
 Provides:	/bin/dmesg
 Provides:	/bin/kill
 Provides:	/bin/more
@@ -534,7 +535,6 @@ unset LINGUAS || :
 %make_build -C build REALTIME_LIBS="-lrt -lpthread"
 
 %install
-mkdir -p %{buildroot}/{bin,sbin}
 mkdir -p %{buildroot}%{_infodir}
 mkdir -p %{buildroot}%{_mandir}/man{1,6,8,5}
 mkdir -p %{buildroot}%{_sysconfdir}/pam.d
@@ -546,9 +546,14 @@ mkdir -p %{buildroot}%{_sysconfdir}/pam.d
 # install util-linux
 %make_install -C build MANDIR=%{buildroot}%{_mandir} INFODIR=%{buildroot}%{_infodir}
 
+%if "%{_sbindir}" != "%{_prefix}/sbin"
+mv %{buildroot}%{_prefix}/sbin/* %{buildroot}%{_sbindir}
+rmdir %{buildroot}%{_prefix}/sbin
+%endif
+
 # (cg) Remove unwanted binaries (and their corresponding man pages)
 for unwanted in %{unwanted}; do
-  rm -f %{buildroot}{%{_bindir},%{_sbindir}}/$unwanted
+  rm -f %{buildroot}%{_bindir}/$unwanted
   rm -f %{buildroot}%{_mandir}/{,{??,??_??}/}man*/$unwanted.[[:digit:]]*
 done
 
@@ -590,24 +595,15 @@ rm -rf %{buildroot}%{compldir}/scriptreplay
 rm -rf %{buildroot}%{compldir}/mkfs.bfs
 rm -rf %{buildroot}%{_mandir}/man8/mkfs.bfs.8 %{buildroot}%{_mandir}/man1/scriptreplay.1
 
+# deprecated symlink
+ln -s hwclock %{buildroot}%{_bindir}/clock
+
 # we install getopt/getopt-*.{bash,tcsh} as doc files
 # note: versions <=2.12 use path "%{_datadir}/misc/getopt/*"
 chmod 644 misc-utils/getopt-*.{bash,tcsh}
 
 # link mtab
 ln -sf ../proc/self/mounts %{buildroot}/etc/mtab
-
-# compat symlinks
-for i in taskset login lsblk lsfd su wdctl mount umount dmesg findmnt kill more mountpoint ; do
-    ln -s %{_bindir}/$i %{buildroot}/bin/$i
-done
-for i in partx pivot_root hwclock fstrim ctrlaltdel runuser sfdisk fdisk mkfs nologin sulogin blkid blockdev fsck losetup mkswap swapon swapoff agetty switch_root ; do
-    ln -s %{_sbindir}/$i %{buildroot}/sbin/$i
-done
-
-ln -s %{_sbindir}/hwclock %{buildroot}/sbin/clock
-ln -s %{_sbindir}/hwclock %{buildroot}/%{_sbindir}/clock
-ln -s %{_bindir}/hardlink %{buildroot}/%{_sbindir}/hardlink
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
@@ -677,9 +673,7 @@ end
 %config(noreplace) %{_sysconfdir}/pam.d/runuser-l
 %config(noreplace) %{_sysconfdir}/issue
 
-/bin/su
 %attr(4755,root,root) %{_bindir}/su
-/bin/login
 %attr(755,root,root) %{_bindir}/login
 %attr(2755,root,tty) %{_bindir}/write
 %{_bindir}/cal
@@ -699,10 +693,8 @@ end
 %{_bindir}/last
 %{_bindir}/lastb
 %{_bindir}/look
-/bin/lsblk
 %{_bindir}/lsblk
 %{_bindir}/lscpu
-/bin/lsfd
 %{_bindir}/lsfd
 %{_bindir}/lsipc
 %{_bindir}/lsirq
@@ -727,7 +719,6 @@ end
 %{_bindir}/uuidgen
 %{_bindir}/uuidparse
 %{_bindir}/wall
-/bin/wdctl
 %{_bindir}/wdctl
 %{_bindir}/whereis
 %{_sbindir}/addpart
@@ -735,35 +726,24 @@ end
 %{_sbindir}/blkzone
 %{_sbindir}/cfdisk
 %{_sbindir}/chcpu
-/sbin/clock
 %{_sbindir}/clock
-/sbin/ctrlaltdel
 %{_sbindir}/ctrlaltdel
 %{_sbindir}/delpart
-/sbin/fdisk
 %{_sbindir}/fdisk
 %{_sbindir}/findfs
 %{_sbindir}/fsfreeze
-/sbin/fstrim
 %{_sbindir}/fstrim
-/sbin/hwclock
 %{_sbindir}/hwclock
 %{_sbindir}/ldattach
-/sbin/mkfs
 %{_sbindir}/mkfs
-/sbin/nologin
 %{_sbindir}/nologin
-/sbin/pivot_root
 %{_sbindir}/pivot_root
 %{_sbindir}/readprofile
 %{_sbindir}/resizepart
 %{_sbindir}/rfkill
 %{_sbindir}/rtcwake
-/sbin/runuser
 %{_sbindir}/runuser
-/sbin/sfdisk
 %{_sbindir}/sfdisk
-/sbin/sulogin
 %{_sbindir}/sulogin
 %{_sbindir}/swaplabel
 %{_sbindir}/tunelp
@@ -845,14 +825,10 @@ end
 %{compldir}/zramctl
 
 %files core
-/bin/mount
 %attr(4755,root,root) %{_bindir}/mount
-/bin/umount
 %attr(4755,root,root) %{_bindir}/umount
 %{_bindir}/chrt
-/bin/dmesg
 %{_bindir}/dmesg
-/bin/findmnt
 %{_bindir}/findmnt
 %{_bindir}/flock
 %{_bindir}/hardlink
@@ -860,39 +836,24 @@ end
 %{_bindir}/ipcmk
 %{_bindir}/ipcrm
 %{_bindir}/ipcs
-/bin/kill
 %{_bindir}/kill
 %{_bindir}/logger
-/bin/more
 %{_bindir}/more
-/bin/mountpoint
 %{_bindir}/mountpoint
 %{_bindir}/nsenter
 %{_bindir}/renice
 %{_bindir}/setsid
-/bin/taskset
 %{_bindir}/taskset
 %{_bindir}/unshare
-/sbin/agetty
 %{_sbindir}/agetty
-/sbin/blkid
 %{_sbindir}/blkid
-/sbin/blockdev
 %{_sbindir}/blockdev
-/sbin/fsck
 %{_sbindir}/fsck
-%{_sbindir}/hardlink
-/sbin/losetup
 %{_sbindir}/losetup
-/sbin/mkswap
 %{_sbindir}/mkswap
-/sbin/partx
 %{_sbindir}/partx
-/sbin/swapoff
 %{_sbindir}/swapoff
-/sbin/swapon
 %{_sbindir}/swapon
-/sbin/switch_root
 %{_sbindir}/switch_root
 %{compldir}/blkid
 %{compldir}/blockdev
