@@ -75,7 +75,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.38
-Release:	%{?beta:0.%{beta}.}5
+Release:	%{?beta:0.%{beta}.}6
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -469,6 +469,7 @@ mkdir build32
 cd build32
 %configure32 \
 	--enable-static=yes \
+	--enable-usrdir-path \
 	--disable-all-programs \
 	--disable-makeinstall-chown \
 	--disable-rpath \
@@ -499,6 +500,7 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 
 %configure \
 	--enable-static=yes \
+	--enable-usrdir-path \
 	--disable-bfs \
 	--disable-minix \
 	--disable-cramfs \
@@ -603,7 +605,7 @@ ln -s hwclock %{buildroot}%{_bindir}/clock
 chmod 644 misc-utils/getopt-*.{bash,tcsh}
 
 # link mtab
-ln -sf ../proc/self/mounts %{buildroot}/etc/mtab
+ln -sf ../proc/self/mounts %{buildroot}/%{_sysconfdir}/mtab
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-fstrim.preset << EOF
@@ -882,7 +884,7 @@ end
 %{compldir}/taskset
 %{compldir}/unshare
 %{compldir}/umount
-/etc/mtab
+%{_sysconfdir}/mtab
 
 %files user
 %config(noreplace) %{_sysconfdir}/pam.d/chfn
