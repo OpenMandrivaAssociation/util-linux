@@ -1,13 +1,9 @@
-# Using LTO breaks building applications that use static libblkid
-# with gcc.
-# Currently that combination is needed for lvm2.
-# Please remove _disable_lto if and only if you've fixed
-# (or removed) lvm2.
-%define _disable_lto 1
 # To make the python modules happy
 %define _disable_ld_no_undefined 1
 
 %global __requires_exclude ^/bin/tcsh|^tcsh
+
+%global optflags %{optflags} -Oz
 
 %define blkid_major 1
 %define libblkid %mklibname blkid %{blkid_major}
@@ -75,7 +71,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.38.1
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -121,7 +117,7 @@ BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(libuser)
 BuildRequires:	pkgconfig(readline)
-BuildRequires:	kernel-release-headers
+BuildRequires:	kernel-headers
 Provides:	/bin/su
 Provides:	/sbin/nologin
 Provides:	/sbin/findfs
@@ -619,19 +615,50 @@ enable uuidd.socket
 enable uuidd.service
 EOF
 
-%find_lang %{name} %{name}.lang
+# find MO files
+%find_lang %{name}
 
 # the files section supports only one -f option...
 mv %{name}.lang %{name}.files
 
 # create list of setarch(8) symlinks
 find  %{buildroot}%{_bindir}/ -regextype posix-egrep -type l \
-	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|znver1|uname26)$" \
-	-printf "%{_bindir}/%f\n" >> %{name}.files
+    -regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)$" \
+    -printf "%{_bindir}/%f\n" >> %{name}.files
 
 find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
-	-regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|znver1|uname26)\.8.*" \
-	-printf "%{_mandir}/man8/%f*\n" >> %{name}.files
+    -regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)\.8.*" \
+    -printf "%{_mandir}/man8/%f*\n" >> %{name}.files
+
+# (tpg) strip LTO from "LLVM IR bitcode" files
+check_convert_bitcode() {
+    printf '%s\n' "Checking for LLVM IR bitcode"
+    llvm_file_name=$(realpath ${1})
+    llvm_file_type=$(file ${llvm_file_name})
+
+    if printf '%s\n' "${llvm_file_type}" | grep -q "LLVM IR bitcode"; then
+# recompile without LTO
+	clang %{optflags} -fno-lto -Wno-unused-command-line-argument -x ir ${llvm_file_name} -c -o ${llvm_file_name}
+    elif printf '%s\n' "${llvm_file_type}" | grep -q "current ar archive"; then
+	printf '%s\n' "Unpacking ar archive ${llvm_file_name} to check for LLVM bitcode components."
+# create archive stage for objects
+	archive_stage=$(mktemp -d)
+	archive=${llvm_file_name}
+	cd ${archive_stage}
+	ar x ${archive}
+	for archived_file in $(find -not -type d); do
+	    check_convert_bitcode ${archived_file}
+	    printf '%s\n' "Repacking ${archived_file} into ${archive}."
+	    ar r ${archive} ${archived_file}
+	done
+	ranlib ${archive}
+	cd ..
+    fi
+}
+
+for i in $(find %{buildroot} -type f -name "*.[ao]"); do
+    check_convert_bitcode ${i}
+done
 
 %post -p <lua> core
 if arg[2] >= 2 then
