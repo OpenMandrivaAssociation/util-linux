@@ -66,12 +66,12 @@
 %bcond_without python
 %endif
 
-#define beta rc4
+%define beta rc2
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.38.1
-Release:	%{?beta:0.%{beta}.}2
+Version:	2.39
+Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -751,6 +751,10 @@ end
 %{_bindir}/wall
 %{_bindir}/wdctl
 %{_bindir}/whereis
+%{_bindir}/blkpr
+%{_bindir}/fadvise
+%{_bindir}/pipesz
+%{_bindir}/waitpid
 %{_sbindir}/addpart
 %{_sbindir}/blkdiscard
 %{_sbindir}/blkzone
@@ -853,6 +857,12 @@ end
 %{compldir}/wipefs
 %{compldir}/write
 %{compldir}/zramctl
+
+%{_datadir}/bash-completion/completions/pipesz
+%{_mandir}/man1/fadvise.1*
+%{_mandir}/man1/pipesz.1*
+%{_mandir}/man1/waitpid.1*
+%{_mandir}/man8/blkpr.8*
 
 %files core
 %attr(4755,root,root) %{_bindir}/mount
