@@ -1,0 +1,11 @@
+diff -up util-linux-2.38.1/misc-utils/kill.c.omv~ util-linux-2.38.1/misc-utils/kill.c
+--- util-linux-2.38.1/misc-utils/kill.c.omv~	2023-04-19 17:19:57.200769897 +0200
++++ util-linux-2.38.1/misc-utils/kill.c	2023-04-19 17:21:35.343510738 +0200
+@@ -44,6 +44,7 @@
+  * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+  */
+ 
++#include <sys/pidfd.h>
+ #include <ctype.h>		/* for isdigit() */
+ #include <signal.h>
+ #include <stdio.h>
