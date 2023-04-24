@@ -118,6 +118,7 @@ BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	utempter-devel
 BuildRequires:	pkgconfig(libuser)
+BuildRequires:	pkgconfig(systemd)
 # (tpg) disable it as it is still EXPERIMENTAL
 #BuildRequires:	pkgconfig(libcryptsetup)
 %endif
@@ -125,7 +126,6 @@ BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
 BuildRequires:	pkgconfig(slang)
-BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(readline)
 BuildRequires:	kernel-headers
@@ -528,15 +528,16 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--without-utempter \
 	--without-cryptsetup \
 	--without-user \
+	--without-systemd \
 %else
 	--with-udev \
 	--with-utempter \
 	--with-cryptsetup \
+	--with-systemd \
 %endif
 	--enable-chfn-chsh \
 	--enable-tunelp \
 	--enable-nologin \
-	--with-systemd \
 	--with-readline \
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_unitdir}
