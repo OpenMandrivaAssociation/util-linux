@@ -964,7 +964,9 @@ end
 %files -n uuidd
 %doc %{_mandir}/man8/uuidd.8*
 %{_presetdir}/86-uuidd.preset
+%if ! %{with bootstrap}
 %{_unitdir}/uuidd.*
+%endif
 %{_tmpfilesdir}/uuidd.conf
 %{_sysusersdir}/uuidd.conf
 %{_sbindir}/uuidd
