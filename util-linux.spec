@@ -527,7 +527,7 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--without-udev \
 	--without-utempter \
 	--without-cryptsetup \
-	--without-libuser \
+	--without-user \
 %else
 	--with-udev \
 	--with-utempter \
