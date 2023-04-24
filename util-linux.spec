@@ -1063,7 +1063,9 @@ end
 %{_mandir}/man1/hardlink.1*
 %{_mandir}/man1/mountpoint.1*
 %{_mandir}/man1/nsenter.1*
+%if ! %{with bootstrap}
 %{_mandir}/man1/setpriv.1*
+%endif
 %{_mandir}/man1/scriptlive.1*
 %{_mandir}/man1/wall.1*
 %{_mandir}/man5/adjtime_config.5*
