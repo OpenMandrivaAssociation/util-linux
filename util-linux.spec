@@ -33,7 +33,15 @@
 
 %define git_url git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git
 
-%define build_bootstrap 0
+# There is a nasty dependency loop.
+# cryptsetup requires libuuid (util-linux)
+# systemd requires cryptsetup
+# util-linux (libuuid) requires libudev (part of systemd)
+%if %{cross_compiling}
+%bcond_without bootstrap
+%else
+%bcond_with bootstrap
+%endif
 
 # libuuid is used by libSM, which in turn is used by wine
 %ifarch %{x86_64}
@@ -62,7 +70,9 @@
 %define dev32smartcols libsmartcols-devel
 %endif
 
-%if !%{build_bootstrap}
+%if %{with bootstrap}
+%bcond_with python
+%else
 %bcond_without python
 %endif
 
@@ -103,9 +113,11 @@ BuildRequires:	asciidoctor
 BuildRequires:	systemd-rpm-macros
 BuildRequires:	gettext-devel
 BuildRequires:	pam-devel
-BuildRequires:	utempter-devel
-%if !%{build_bootstrap}
+%if !%{with bootstrap}
 BuildRequires:	pkgconfig(ext2fs)
+BuildRequires:	pkgconfig(udev)
+BuildRequires:	utempter-devel
+BuildRequires:	pkgconfig(libuser)
 # (tpg) disable it as it is still EXPERIMENTAL
 #BuildRequires:	pkgconfig(libcryptsetup)
 %endif
@@ -114,9 +126,7 @@ BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(systemd)
-BuildRequires:	pkgconfig(udev)
 BuildRequires:	pkgconfig(zlib)
-BuildRequires:	pkgconfig(libuser)
 BuildRequires:	pkgconfig(readline)
 BuildRequires:	kernel-headers
 Provides:	/bin/su
@@ -187,7 +197,7 @@ Group:		System/Base
 Requires:	%{name} = %{EVRD}
 
 %description user
-chfn and chsh utilities with dependence on libuser.
+chfn and chsh utilities with dependency on libuser.
 
 %package -n %{libblkid}
 Summary:	Block device ID library
@@ -513,14 +523,21 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--without-audit \
 	--with-python=%{pyver} \
 	--without-selinux \
+%if %{with bootstrap}
+	--without-udev \
+	--without-utempter \
+	--without-cryptsetup \
+	--without-libuser \
+%else
 	--with-udev \
 	--with-utempter \
+	--with-cryptsetup \
+%endif
 	--enable-chfn-chsh \
 	--enable-tunelp \
 	--enable-nologin \
 	--with-systemd \
 	--with-readline \
-	--with-cryptsetup \
 	--enable-sulogin-emergency-mount \
 	--with-systemdsystemunitdir=%{_unitdir}
 
