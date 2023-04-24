@@ -521,7 +521,6 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--disable-makeinstall-chown \
 	--disable-rpath \
 	--without-audit \
-	--with-python=%{pyver} \
 	--without-selinux \
 %if %{with bootstrap}
 	--without-udev \
@@ -529,7 +528,9 @@ export DAEMON_LDFLAGS="$SUID_LDFLAGS"
 	--without-cryptsetup \
 	--without-user \
 	--without-systemd \
+	--without-python \
 %else
+	--with-python=%{pyver} \
 	--with-udev \
 	--with-utempter \
 	--with-cryptsetup \
