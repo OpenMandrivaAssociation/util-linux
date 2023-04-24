@@ -760,7 +760,11 @@ end
 %{_bindir}/script
 %{_bindir}/scriptlive
 %{_bindir}/setarch
+%if ! %{with bootstrap}
 %{_bindir}/setpriv
+%{compldir}/setpriv
+%{_unitdir}/fstrim.*
+%endif
 %{_bindir}/setterm
 %{_bindir}/uclampset
 %{_bindir}/ul
@@ -807,7 +811,6 @@ end
 %{_sbindir}/zramctl
 
 %{_presetdir}/86-fstrim.preset
-%{_unitdir}/fstrim.*
 
 %{compldir}/addpart
 %{compldir}/blkdiscard
@@ -862,7 +865,6 @@ end
 %{compldir}/script
 %{compldir}/scriptlive
 %{compldir}/setarch
-%{compldir}/setpriv
 %{compldir}/setterm
 %{compldir}/sfdisk
 %{compldir}/su
