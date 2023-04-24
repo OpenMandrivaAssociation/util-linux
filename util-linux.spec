@@ -276,8 +276,10 @@ across a network.
 Summary:	Helper daemon to guarantee uniqueness of time-based UUIDs
 Group:		System/Servers
 License:	GPLv2
+%if ! %{with bootstrap}
 Requires(pre):	systemd
 %systemd_requires
+%endif
 
 %description -n uuidd
 The uuidd package contains a userspace daemon (uuidd) which guarantees
