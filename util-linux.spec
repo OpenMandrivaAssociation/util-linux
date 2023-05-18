@@ -76,7 +76,7 @@
 %bcond_without python
 %endif
 
-%define beta rc2
+#define beta rc2
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
@@ -637,7 +637,7 @@ enable uuidd.service
 EOF
 
 # find MO files
-%find_lang %{name}
+%find_lang %{name} --with-man --all-name
 
 # the files section supports only one -f option...
 mv %{name}.lang %{name}.files
@@ -882,6 +882,8 @@ end
 %{compldir}/zramctl
 
 %{_datadir}/bash-completion/completions/pipesz
+%{_datadir}/bash-completion/completions/fadvise
+%{_datadir}/bash-completion/completions/waitpid
 %{_mandir}/man1/fadvise.1*
 %{_mandir}/man1/pipesz.1*
 %{_mandir}/man1/waitpid.1*
