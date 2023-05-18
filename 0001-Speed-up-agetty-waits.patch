@@ -1,6 +1,6 @@
-diff -up util-linux-2.38.1/term-utils/agetty.c.2~ util-linux-2.38.1/term-utils/agetty.c
---- util-linux-2.38.1/term-utils/agetty.c.2~	2022-08-04 10:21:36.060638401 +0200
-+++ util-linux-2.38.1/term-utils/agetty.c	2023-04-19 17:36:15.387119146 +0200
+diff -up util-linux-2.39-rc2/term-utils/agetty.c.2~ util-linux-2.39-rc2/term-utils/agetty.c
+--- util-linux-2.39-rc2/term-utils/agetty.c.2~	2023-03-23 16:21:32.793172786 +0100
++++ util-linux-2.39-rc2/term-utils/agetty.c	2023-04-17 18:01:07.227080099 +0200
 @@ -24,6 +24,7 @@
  #include <sys/wait.h>
  #include <fcntl.h>
@@ -9,7 +9,7 @@ diff -up util-linux-2.38.1/term-utils/agetty.c.2~ util-linux-2.38.1/term-utils/a
  #include <ctype.h>
  #include <utmpx.h>
  #include <getopt.h>
-@@ -1480,7 +1481,7 @@ static void auto_baud(struct termios *tp
+@@ -1488,7 +1489,7 @@ static void auto_baud(struct termios *tp
  	 * Wait for a while, then read everything the modem has said so far and
  	 * try to extract the speed of the dial-in call.
  	 */
@@ -18,15 +18,15 @@ diff -up util-linux-2.38.1/term-utils/agetty.c.2~ util-linux-2.38.1/term-utils/a
  	if ((nread = read(STDIN_FILENO, buf, sizeof(buf) - 1)) > 0) {
  		buf[nread] = '\0';
  		for (bp = buf; bp < buf + nread; bp++)
-@@ -2138,6 +2139,7 @@ again:
- 		/* Always show login prompt. */
- 		write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
+@@ -2148,6 +2149,7 @@ again:
+ 		write_all(STDOUT_FILENO, LOGIN_PROMPT,
+ 				sizeof(LOGIN_PROMPT) - 1);
  	}
 +	malloc_trim(0);
  }
  
  /* Select next baud rate. */
-@@ -2183,7 +2185,7 @@ static char *get_logname(struct issue *i
+@@ -2193,7 +2195,7 @@ static char *get_logname(struct issue *i
  	 * the baud rate).
  	 */
  	if ((op->flags & F_VCONSOLE) == 0)

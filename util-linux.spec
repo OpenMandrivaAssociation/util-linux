@@ -76,11 +76,11 @@
 %bcond_without python
 %endif
 
-#define beta rc2
+%define beta rc2
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.38.1
+Version:	2.39
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -98,7 +98,6 @@ Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
 Source14:	uuidd.sysusers
 
-Patch0:		util-linux-2.38.1-compile.patch
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
@@ -777,13 +776,10 @@ end
 %{_bindir}/wall
 %{_bindir}/wdctl
 %{_bindir}/whereis
-# Tools added in 2.39
-%if 0
 %{_bindir}/blkpr
 %{_bindir}/fadvise
 %{_bindir}/pipesz
 %{_bindir}/waitpid
-%endif
 %{_sbindir}/addpart
 %{_sbindir}/blkdiscard
 %{_sbindir}/blkzone
@@ -885,14 +881,11 @@ end
 %{compldir}/write
 %{compldir}/zramctl
 
-# Tools added in 2.39
-%if 0
 %{_datadir}/bash-completion/completions/pipesz
 %{_mandir}/man1/fadvise.1*
 %{_mandir}/man1/pipesz.1*
 %{_mandir}/man1/waitpid.1*
 %{_mandir}/man8/blkpr.8*
-%endif
 
 %files core
 %attr(4755,root,root) %{_bindir}/mount
