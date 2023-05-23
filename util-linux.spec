@@ -81,7 +81,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.39
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -103,7 +103,8 @@ Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
-
+# (tpg) upstream patches
+Patch3000:	https://github.com/util-linux/util-linux/commit/c0267687fd7b41b00d523d1985182d7eb574effd.patch
 BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	bison
@@ -116,7 +117,6 @@ BuildRequires:	pam-devel
 BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	pkgconfig(udev)
 BuildRequires:	utempter-devel
-BuildRequires:	pkgconfig(libuser)
 BuildRequires:	pkgconfig(systemd)
 # (tpg) disable it as it is still EXPERIMENTAL
 #BuildRequires:	pkgconfig(libcryptsetup)
@@ -141,6 +141,7 @@ Provides:	/sbin/findfs
 %rename		schedutils
 %rename		setarch
 %rename		util-linux-ng
+%rename		util-linux-user
 Conflicts:	setup < 2.7.18-6
 # old version of sysvinit-tools provides sulogin and utmpdump
 Conflicts:	sysvinit < 2.87-11
@@ -189,14 +190,6 @@ Provides:	/sbin/fsck
 %description core
 This is a very basic set of Linux utilities that is necessary on
 minimal installations.
-
-%package user
-Summary:	libuser based util-linux utilities
-Group:		System/Base
-Requires:	%{name} = %{EVRD}
-
-%description user
-chfn and chsh utilities with dependency on libuser.
 
 %package -n %{libblkid}
 Summary:	Block device ID library
@@ -716,6 +709,8 @@ end
 %systemd_postun_with_restart uuidd.service
 
 %files -f %{name}.files
+%config(noreplace) %{_sysconfdir}/pam.d/chfn
+%config(noreplace) %{_sysconfdir}/pam.d/chsh
 %config(noreplace) %{_sysconfdir}/pam.d/login
 %config(noreplace) %{_sysconfdir}/pam.d/remote
 %config(noreplace) %{_sysconfdir}/pam.d/su
@@ -727,6 +722,8 @@ end
 %attr(4755,root,root) %{_bindir}/su
 %attr(755,root,root) %{_bindir}/login
 %attr(2755,root,tty) %{_bindir}/write
+%attr(4711,root,root) %{_bindir}/chfn
+%attr(4711,root,root) %{_bindir}/chsh
 %{_bindir}/cal
 %{_bindir}/chmem
 %{_bindir}/choom
@@ -817,7 +814,9 @@ end
 %{compldir}/cal
 %{compldir}/cfdisk
 %{compldir}/chcpu
+%{compldir}/chfn
 %{compldir}/chmem
+%{compldir}/chsh
 %{compldir}/col
 %{compldir}/colcrt
 %{compldir}/colrm
@@ -884,10 +883,6 @@ end
 %{_datadir}/bash-completion/completions/pipesz
 %{_datadir}/bash-completion/completions/fadvise
 %{_datadir}/bash-completion/completions/waitpid
-%{_mandir}/man1/fadvise.1*
-%{_mandir}/man1/pipesz.1*
-%{_mandir}/man1/waitpid.1*
-%{_mandir}/man8/blkpr.8*
 
 %files core
 %attr(4755,root,root) %{_bindir}/mount
@@ -948,16 +943,6 @@ end
 %{compldir}/unshare
 %{compldir}/umount
 %{_sysconfdir}/mtab
-
-%files user
-%config(noreplace) %{_sysconfdir}/pam.d/chfn
-%config(noreplace) %{_sysconfdir}/pam.d/chsh
-%attr(4711,root,root) %{_bindir}/chfn
-%attr(4711,root,root) %{_bindir}/chsh
-%doc %{_mandir}/man1/chfn.1*
-%doc %{_mandir}/man1/chsh.1*
-%{compldir}/chfn
-%{compldir}/chsh
 
 %files -n uuidd
 %doc %{_mandir}/man8/uuidd.8*
@@ -1045,7 +1030,9 @@ end
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/addpart.8*
 %{_mandir}/man8/blkzone.8*
+%{_mandir}/man1/chfn.1*
 %{_mandir}/man8/chmem.8*
+%{_mandir}/man1/chsh.1*
 %{_mandir}/man8/delpart.8*
 %{_mandir}/man8/findmnt.8*
 %{_mandir}/man8/fsfreeze.8*
@@ -1151,6 +1138,10 @@ end
 %{_mandir}/man8/losetup.8*
 %{_mandir}/man8/zramctl.8.*
 %{_mandir}/man1/uclampset.1.*
+%doc %{_mandir}/man1/fadvise.1*
+%doc %{_mandir}/man1/pipesz.1*
+%doc %{_mandir}/man1/waitpid.1*
+%doc %{_mandir}/man8/blkpr.8*
 
 %if %{with compat32}
 %files -n %{lib32blkid}
