@@ -80,8 +80,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.39
-Release:	%{?beta:0.%{beta}.}2
+Version:	2.39.1
+Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -103,8 +103,6 @@ Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
-# (tpg) upstream patches
-Patch3000:	https://github.com/util-linux/util-linux/commit/c0267687fd7b41b00d523d1985182d7eb574effd.patch
 BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	bison
