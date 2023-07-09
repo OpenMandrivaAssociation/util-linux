@@ -1,6 +1,12 @@
 # To make the python modules happy
 %define _disable_ld_no_undefined 1
 
+# Workaround for libtool being a horrible mess that adds -rpath /usr/lib64
+# while relinking during make install
+%if %{cross_compiling}
+%define prefer_gcc 1
+%endif
+
 %global __requires_exclude ^/bin/tcsh|^tcsh
 
 %global optflags %{optflags} -Oz
