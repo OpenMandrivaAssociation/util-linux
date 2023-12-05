@@ -86,7 +86,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.39.2
+Version:	2.39.3
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -103,7 +103,6 @@ Source8:	util-linux-runuser-l.pamd
 Source9:	%{name}.rpmlintrc
 Source11:	uuidd-tmpfiles.conf
 Source14:	uuidd.sysusers
-Patch0:		https://src.fedoraproject.org/rpms/util-linux/raw/rawhide/f/libmount-Fix-regression-when-mounting-with-atime.patch
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
