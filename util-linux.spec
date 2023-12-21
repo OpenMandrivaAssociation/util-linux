@@ -87,7 +87,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.39.3
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -728,7 +728,7 @@ end
 %{_bindir}/namei
 %{_bindir}/prlimit
 %{_bindir}/rename
-%{_bindir}/rev
+
 %{_bindir}/script
 %{_bindir}/scriptlive
 %{_bindir}/setarch
@@ -773,7 +773,6 @@ end
 %{_sbindir}/rtcwake
 %{_sbindir}/runuser
 %{_sbindir}/sfdisk
-%{_sbindir}/sulogin
 %{_sbindir}/swaplabel
 %{_sbindir}/tunelp
 %{_sbindir}/wipefs
@@ -875,6 +874,7 @@ end
 %{_bindir}/mountpoint
 %{_bindir}/nsenter
 %{_bindir}/renice
+%{_bindir}/rev
 %{_bindir}/setsid
 %{_bindir}/taskset
 %{_bindir}/unshare
@@ -885,6 +885,8 @@ end
 %{_sbindir}/losetup
 %{_sbindir}/mkswap
 %{_sbindir}/partx
+%{_sbindir}/sulogin
+
 %{_sbindir}/swapoff
 %{_sbindir}/swapon
 %{_sbindir}/switch_root
