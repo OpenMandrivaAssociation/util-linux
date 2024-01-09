@@ -87,7 +87,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.39.3
-Release:	%{?beta:0.%{beta}.}2
+Release:	%{?beta:0.%{beta}.}3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -707,7 +707,6 @@ end
 %{_bindir}/eject
 %{_bindir}/fallocate
 %{_bindir}/fincore
-%{_bindir}/getopt
 %{_bindir}/hexdump
 %{_bindir}/irqtop
 %{_bindir}/isosize
@@ -802,7 +801,6 @@ end
 %{compldir}/findfs
 %{compldir}/fsfreeze
 %{compldir}/fstrim
-%{compldir}/getopt
 %{compldir}/hexdump
 %{compldir}/hwclock
 %{compldir}/irqtop
@@ -863,6 +861,7 @@ end
 %{_bindir}/dmesg
 %{_bindir}/findmnt
 %{_bindir}/flock
+%{_bindir}/getopt
 %{_bindir}/hardlink
 %{_bindir}/ionice
 %{_bindir}/ipcmk
@@ -896,6 +895,7 @@ end
 %{compldir}/dmesg
 %{compldir}/findmnt
 %{compldir}/flock
+%{compldir}/getopt
 %{compldir}/hardlink
 %{compldir}/fsck
 %{compldir}/ionice
@@ -1016,6 +1016,7 @@ end
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/nologin.8*
 %{_mandir}/man8/swaplabel.8*
+%{_mandir}/man1/getopt.1*
 %{_mandir}/man1/irqtop.1*
 %{_mandir}/man1/lsirq.1*
 %{_mandir}/man1/lsmem.1*
@@ -1042,7 +1043,6 @@ end
 %{_mandir}/man1/eject.1*
 %{_mandir}/man1/flock.1*
 %{_mandir}/man1/fallocate.1*
-%{_mandir}/man1/getopt.1*
 %{_mandir}/man1/hexdump.1*
 %{_mandir}/man1/kill.1*
 %{_mandir}/man1/last.1*
