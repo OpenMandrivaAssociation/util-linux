@@ -1124,8 +1124,8 @@ end
 %{_mandir}/man3/ll2_remove_entry.3.*
 %{_mandir}/man3/ll2_rename_user.3.*
 %{_mandir}/man3/ll2_update_login_time.3.*
-%{_mandir}/man/man3/ll2_write_entry.3.*
-%{_mandir}/man/man5/scols-filter.5.*
+%{_mandir}/man3/ll2_write_entry.3.*
+%{_mandir}/man5/scols-filter.5.*
 %{_mandir}/man8/lastlog2.8.*
 %{_mandir}/man8/pam_lastlog2.8.*
 %{_mandir}/man1/logger.1*
