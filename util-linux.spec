@@ -127,6 +127,7 @@ BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
+BuildRequires:	pkgconfig(sqlite3)
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(readline)
