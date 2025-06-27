@@ -329,6 +329,9 @@ Group:		Development/C
 License:	LGPLv2+
 Requires:	%{liblastlog} = %{EVRD}
 
+%description -n %{devlastlog}
+Development library files for lastlog.
+
 %description -n %{libmount}
 The libmount library is used to parse /etc/fstab,
 /etc/mtab and /proc/self/mountinfo files,
