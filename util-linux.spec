@@ -320,6 +320,9 @@ Summary:	Lastlog library
 Group:		System/Libraries
 License:	LGPLv2+
 
+%description -n %{liblastlog}
+Library files for lastlog.
+
 %package -n %{devlastlog}
 Summary:	Development library for lastlog
 Group:		Development/C
