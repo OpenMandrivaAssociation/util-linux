@@ -31,6 +31,11 @@
 %define libmount %mklibname mount %{mount_major}
 %define devmount %mklibname mount -d
 
+%define lastlog_major 2
+%define liblastlog %mklibname lastlog %{lastlog_major}
+%define devlastlog %mklibname lastlog -d
+
+
 %define smartcols_major 1
 %define libsmartcols %mklibname smartcols %{smartcols_major}
 %define devsmartcols %mklibname smartcols -d
@@ -86,7 +91,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.39.4
+Version:	2.41.1
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -127,6 +132,7 @@ BuildRequires:	pkgconfig(systemd)
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(ncursesw) >= 5.9-6.20120922.3
 #BuildRequires:	termcap-devel
+BuildRequires:	pkgconfig(sqlite3)
 BuildRequires:	pkgconfig(slang)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(readline)
@@ -299,6 +305,37 @@ Requires:	%{libmount} = %{EVRD}
 
 %description -n %{devmount}
 Development files and headers for libmount library.
+
+%package -n lastlog%{lastlog_major}
+Summary:	Lastlog binary
+Group:		System/Libraries
+License:	LGPLv2+
+Requires:	%{liblastlog} = %{EVRD}
+
+%description -n lastlog%{lastlog_major}
+Binary files for lastlog.
+
+%package -n %{liblastlog}
+Summary:	Lastlog library
+Group:		System/Libraries
+License:	LGPLv2+
+
+%description -n %{liblastlog}
+Library files for lastlog.
+
+%package -n %{devlastlog}
+Summary:	Development library for lastlog
+Group:		Development/C
+License:	LGPLv2+
+Requires:	%{liblastlog} = %{EVRD}
+
+%description -n %{devlastlog}
+Development library files for lastlog.
+
+%description -n %{libmount}
+The libmount library is used to parse /etc/fstab,
+/etc/mtab and /proc/self/mountinfo files,
+manage the mtab file, evaluate mount options, etc.
 
 %package -n %{libsmartcols}
 Summary:	Formatting library for ls-like programs
@@ -697,6 +734,7 @@ end
 %attr(2755,root,tty) %{_bindir}/write
 %attr(4711,root,root) %{_bindir}/chfn
 %attr(4711,root,root) %{_bindir}/chsh
+%{_bindir}/bits
 %{_bindir}/cal
 %{_bindir}/chmem
 %{_bindir}/choom
@@ -704,7 +742,10 @@ end
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
+%{_bindir}/coresched
 %{_bindir}/eject
+%{_bindir}/enosys
+%{_bindir}/exch
 %{_bindir}/fallocate
 %{_bindir}/fincore
 %{_bindir}/hexdump
@@ -715,6 +756,7 @@ end
 %{_bindir}/look
 %{_bindir}/lsblk
 %{_bindir}/lscpu
+%{_bindir}/lsclocks
 %{_bindir}/lsfd
 %{_bindir}/lsipc
 %{_bindir}/lsirq
@@ -727,7 +769,7 @@ end
 %{_bindir}/namei
 %{_bindir}/prlimit
 %{_bindir}/rename
-
+%{_bindir}/setpgid
 %{_bindir}/script
 %{_bindir}/scriptlive
 %{_bindir}/setarch
@@ -853,6 +895,11 @@ end
 %{_datadir}/bash-completion/completions/pipesz
 %{_datadir}/bash-completion/completions/fadvise
 %{_datadir}/bash-completion/completions/waitpid
+%{_datadir}/bash-completion/completions/enosys
+%{_datadir}/bash-completion/completions/exch
+%{_datadir}/bash-completion/completions/lastlog2
+%{_datadir}/bash-completion/completions/lsclocks
+%{_datadir}/bash-completion/completions/setpgid
 
 %files core
 %attr(4755,root,root) %{_bindir}/mount
@@ -927,6 +974,8 @@ end
 %endif
 %{_tmpfilesdir}/uuidd.conf
 %{_sysusersdir}/uuidd.conf
+%{_prefix}/lib/tmpfiles.d/uuidd-tmpfiles.conf
+%{_prefix}/lib/sysusers.d/uuidd-sysusers.conf
 %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 %dir %attr(2775, uuidd, uuidd) /run/uuidd
@@ -975,6 +1024,21 @@ end
 %doc %{_mandir}/man3/uuid_unparse.3*
 %{_libdir}/pkgconfig/uuid.pc
 
+%files -n lastlog%{lastlog_major}
+%{_bindir}/lastlog2
+%{_prefix}/lib/systemd/system/lastlog2-import.service
+%{_prefix}/lib/tmpfiles.d/lastlog2-tmpfiles.conf
+
+%files -n %{liblastlog}
+%{_libdir}/liblastlog2.so.%{lastlog_major}*
+%{_libdir}/security/pam_lastlog2.so
+
+%files -n %{devlastlog}
+%{_libdir}/liblastlog2.a
+%{_libdir}/liblastlog2.so
+%{_libdir}/pkgconfig/lastlog2.pc
+%{_includedir}/liblastlog2/lastlog2.h
+
 %files -n %{libmount}
 %{_libdir}/libmount.so.%{mount_major}*
 
@@ -1005,10 +1069,14 @@ end
 %{_mandir}/man8/partx.8*
 %{_mandir}/man8/addpart.8*
 %{_mandir}/man8/blkzone.8*
+%{_mandir}/man1/bits.1.*
 %{_mandir}/man1/chfn.1*
 %{_mandir}/man8/chmem.8*
 %{_mandir}/man1/chsh.1*
+%{_mandir}/man1/coresched.1.*
 %{_mandir}/man8/delpart.8*
+%{_mandir}/man1/enosys.1.*
+%{_mandir}/man1/exch.1.zst
 %{_mandir}/man8/findmnt.8*
 %{_mandir}/man8/fsfreeze.8*
 %{_mandir}/man8/fstrim.8*
@@ -1020,6 +1088,7 @@ end
 %{_mandir}/man1/irqtop.1*
 %{_mandir}/man1/lsirq.1*
 %{_mandir}/man1/lsmem.1*
+%{_mandir}/man1/lsclocks.1.*
 %{_mandir}/man1/fincore.1*
 %{_mandir}/man1/hardlink.1*
 %{_mandir}/man1/mountpoint.1*
@@ -1027,6 +1096,7 @@ end
 %if ! %{with bootstrap}
 %{_mandir}/man1/setpriv.1*
 %endif
+%{_mandir}/man1/setpgid.1.*
 %{_mandir}/man1/scriptlive.1*
 %{_mandir}/man1/wall.1*
 %{_mandir}/man5/adjtime_config.5*
@@ -1047,6 +1117,17 @@ end
 %{_mandir}/man1/kill.1*
 %{_mandir}/man1/last.1*
 %{_mandir}/man1/lastb.1.*
+%{_mandir}/man3/lastlog2.3.*
+%{_mandir}/man3/ll2_import_lastlog.3.*
+%{_mandir}/man3/ll2_read_all.3.*
+%{_mandir}/man3/ll2_read_entry.3.*
+%{_mandir}/man3/ll2_remove_entry.3.*
+%{_mandir}/man3/ll2_rename_user.3.*
+%{_mandir}/man3/ll2_update_login_time.3.*
+%{_mandir}/man3/ll2_write_entry.3.*
+%{_mandir}/man5/scols-filter.5.*
+%{_mandir}/man8/lastlog2.8.*
+%{_mandir}/man8/pam_lastlog2.8.*
 %{_mandir}/man1/logger.1*
 %{_mandir}/man1/login.1*
 %{_mandir}/man1/look.1*
