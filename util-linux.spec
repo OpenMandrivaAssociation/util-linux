@@ -92,7 +92,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.41.2
-Release:	%{?beta:0.%{beta}.}1
+Release:	%{?beta:0.%{beta}.}2
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -106,8 +106,6 @@ Source6:	util-linux-su-l.pamd
 Source7:	util-linux-runuser.pamd
 Source8:	util-linux-runuser-l.pamd
 Source9:	%{name}.rpmlintrc
-Source11:	uuidd-tmpfiles.conf
-Source14:	uuidd.sysusers
 # 151635 - making /var/log/lastlog
 Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
@@ -633,9 +631,6 @@ sed -i -e 's,/usr/spool/mail,/var/spool/mail,' %{buildroot}%{_mandir}/man1/login
   cd -
 }
 
-install -D -p -m 644 %{SOURCE11} %{buildroot}%{_tmpfilesdir}/uuidd.conf
-install -D -p -m 644 %{SOURCE14} %{buildroot}%{_sysusersdir}/uuidd.conf
-
 # And a dirs uuidd needs that the makefiles don't create
 install -d %{buildroot}/run/uuidd
 install -d %{buildroot}/var/lib/libuuid
@@ -974,10 +969,8 @@ end
 %if ! %{with bootstrap}
 %{_unitdir}/uuidd.*
 %endif
-%{_tmpfilesdir}/uuidd.conf
-%{_sysusersdir}/uuidd.conf
-%{_prefix}/lib/tmpfiles.d/uuidd-tmpfiles.conf
-%{_prefix}/lib/sysusers.d/uuidd-sysusers.conf
+%{_tmpfilesdir}/uuidd-tmpfiles.conf
+%{_sysusersdir}/uuidd-sysusers.conf
 %{_sbindir}/uuidd
 %dir %attr(2775, uuidd, uuidd) /var/lib/libuuid
 %dir %attr(2775, uuidd, uuidd) /run/uuidd
