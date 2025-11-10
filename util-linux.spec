@@ -679,6 +679,17 @@ find  %{buildroot}%{_mandir}/man8 -regextype posix-egrep  \
     -regex ".*(linux32|linux64|s390|s390x|i386|ppc|ppc64|ppc32|sparc|sparc64|sparc32|sparc32bash|mips|mips64|mips32|ia64|x86_64|uname26)\.8.*" \
     -printf "%{_mandir}/man8/%f*\n" >> %{name}.files
 
+if ! [ -e %{buildroot}%{_tmpfilesdir}/uuidd-sysusers.conf ]; then
+	# We need the tmpfiles.d and sysusers.d files -- but util-linux got built
+	# without systemd support because of the circular dependency. So let's
+	# just create those files manually
+	mkdir -p %{buildroot}%{_tmpfilesdir} \
+		 %{buildroot}%{_sysusersdir}
+
+	sed -e 's,@localstatedir@,%{_localstatedir},g' misc-utils/uuidd-sysusers.conf.in >%{buildroot}%{_sysusersdir}/uuidd-sysusers.conf
+	sed -e 's,@localstatedir@,%{_localstatedir},g;s,@runstatedir@,/run,g' misc-utils/uuidd-tmpfiles.conf.in >%{buildroot}%{_tmpfilesdir}/uuidd-tmpfiles.conf
+fi
+
 %post -p <lua> core
 if arg[2] >= 2 then
     st = posix.stat("/etc/mtab")
