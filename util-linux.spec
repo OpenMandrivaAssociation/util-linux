@@ -688,6 +688,7 @@ if ! [ -e %{buildroot}%{_tmpfilesdir}/uuidd-sysusers.conf ]; then
 
 	sed -e 's,@localstatedir@,%{_localstatedir},g' misc-utils/uuidd-sysusers.conf.in >%{buildroot}%{_sysusersdir}/uuidd-sysusers.conf
 	sed -e 's,@localstatedir@,%{_localstatedir},g;s,@runstatedir@,/run,g' misc-utils/uuidd-tmpfiles.conf.in >%{buildroot}%{_tmpfilesdir}/uuidd-tmpfiles.conf
+	sed -e 's,@localstatedir@,%{_localstatedir},g;s,@runstatedir@,/run,g' misc-utils/lastlog2-tmpfiles.conf.in >%{buildroot}%{_tmpfilesdir}/lastlog2-tmpfiles.conf
 fi
 
 %post -p <lua> core
