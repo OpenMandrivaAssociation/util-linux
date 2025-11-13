@@ -92,7 +92,7 @@
 Summary:	A collection of basic system utilities
 Name:		util-linux
 Version:	2.41.2
-Release:	%{?beta:0.%{beta}.}2
+Release:	%{?beta:0.%{beta}.}3
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -157,7 +157,6 @@ Conflicts:	coreutils < 8.19-2
 # (proyvind): handle sulogin, wall, mountpoint being moved
 Conflicts:	sysvinit-tools < 2.87-24
 Conflicts:	bash-completion < 2:2.7-2
-Conflicts:	rfkill < 0.5-10
 Requires:	pam >= 1.3.0-1
 Requires:	shadow >= 4.2.1-24
 Requires:	%{libfdisk} = %{EVRD}
@@ -372,6 +371,8 @@ mountinfo, etc) and mount filesystems.
 Summary:	Simple /dev/rfkill userspace tool
 Group:		System/Base
 Conflicts:	bash-completion < 2:2.7-2
+# Get rid of old Epoch-ed version
+Obsoletes:	rfkill > 1:0.0-0
 
 %description -n rfkill
 Rfkill is a simple userspace tool to manipulate /dev/rfkill.
@@ -710,21 +711,6 @@ if arg[2] >= 2 then
     end
 end
 
-%pre -n uuidd
-%sysusers_create_package uuidd %{SOURCE14}
-
-%post -n uuidd
-%systemd_post uidd.socket
-%systemd_post uuidd.service
-
-%preun -n uuidd
-%systemd_preun uuidd.socket
-%systemd_preun uuidd.service
-
-%postun -n uuidd
-%systemd_postun_with_restart uuidd.socket
-%systemd_postun_with_restart uuidd.service
-
 %files -f %{name}.files
 %config(noreplace) %{_sysconfdir}/pam.d/chfn
 %config(noreplace) %{_sysconfdir}/pam.d/chsh
@@ -817,7 +803,6 @@ end
 %{_sbindir}/pivot_root
 %{_sbindir}/readprofile
 %{_sbindir}/resizepart
-%{_sbindir}/rfkill
 %{_sbindir}/rtcwake
 %{_sbindir}/runuser
 %{_sbindir}/sfdisk
@@ -876,7 +861,6 @@ end
 %{compldir}/rename
 %{compldir}/resizepart
 %{compldir}/rev
-%{compldir}/rfkill
 %{compldir}/rtcwake
 %{compldir}/runuser
 %{compldir}/script
@@ -990,6 +974,7 @@ end
 
 %files -n rfkill
 %{_sbindir}/rfkill
+%{_datadir}/bash-completion/completions/rfkill
 %doc %{_mandir}/man8/rfkill.8*
 
 %files -n %{libblkid}
