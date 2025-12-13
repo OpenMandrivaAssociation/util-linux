@@ -111,6 +111,7 @@ Patch5:		util-linux-2.26-login-lastlog-create.patch
 # (tpg) ClearLinux patches
 Patch2000:	0001-Speed-up-agetty-waits.patch
 Patch2001:	0003-Recommend-1M-topology-size-if-none-set.patch
+BuildRequires:	make
 BuildRequires:	libtool
 BuildRequires:	sed
 BuildRequires:	bison
