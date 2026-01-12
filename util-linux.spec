@@ -771,9 +771,9 @@ end
 %{_bindir}/script
 %{_bindir}/scriptlive
 %{_bindir}/setarch
-%if ! %{with bootstrap}
 %{_bindir}/setpriv
 %{compldir}/setpriv
+%if ! %{with bootstrap}
 %{_unitdir}/fstrim.*
 %endif
 %{_bindir}/setterm
@@ -1090,9 +1090,7 @@ end
 %{_mandir}/man1/hardlink.1*
 %{_mandir}/man1/mountpoint.1*
 %{_mandir}/man1/nsenter.1*
-%if ! %{with bootstrap}
 %{_mandir}/man1/setpriv.1*
-%endif
 %{_mandir}/man1/setpgid.1.*
 %{_mandir}/man1/scriptlive.1*
 %{_mandir}/man1/wall.1*
