@@ -91,8 +91,8 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.41.2
-Release:	%{?beta:0.%{beta}.}4
+Version:	2.41.3
+Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
 URL:		https://en.wikipedia.org/wiki/Util-linux
@@ -888,8 +888,11 @@ end
 %{compldir}/write
 %{compldir}/zramctl
 
+%{_datadir}/bash-completion/completions/bits
+%{_datadir}/bash-completion/completions/blkpr
 %{_datadir}/bash-completion/completions/choom
 %{_datadir}/bash-completion/completions/coresched
+%{_datadir}/bash-completion/completions/lsfd
 %{_datadir}/bash-completion/completions/pipesz
 %{_datadir}/bash-completion/completions/fadvise
 %{_datadir}/bash-completion/completions/waitpid
