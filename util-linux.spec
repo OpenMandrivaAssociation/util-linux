@@ -91,7 +91,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.41.3
+Version:	2.42
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -740,12 +740,14 @@ end
 %{_bindir}/colcrt
 %{_bindir}/colrm
 %{_bindir}/column
+%{_bindir}/copyfilerange
 %{_bindir}/coresched
 %{_bindir}/eject
 %{_bindir}/enosys
 %{_bindir}/exch
 %{_bindir}/fallocate
 %{_bindir}/fincore
+%{_bindir}/getino
 %{_bindir}/hexdump
 %{_bindir}/irqtop
 %{_bindir}/isosize
@@ -831,6 +833,7 @@ end
 %{compldir}/colcrt
 %{compldir}/colrm
 %{compldir}/column
+%{compldir}/copyfilerange
 %{compldir}/ctrlaltdel
 %{compldir}/delpart
 %{compldir}/eject
@@ -840,6 +843,7 @@ end
 %{compldir}/findfs
 %{compldir}/fsfreeze
 %{compldir}/fstrim
+%{compldir}/getino
 %{compldir}/hexdump
 %{compldir}/hwclock
 %{compldir}/irqtop
@@ -1084,6 +1088,8 @@ end
 %{_mandir}/man8/lsblk.8*
 %{_mandir}/man8/nologin.8*
 %{_mandir}/man8/swaplabel.8*
+%{_mandir}/man1/copyfilerange.1*
+%{_mandir}/man1/getino.1*
 %{_mandir}/man1/getopt.1*
 %{_mandir}/man1/irqtop.1*
 %{_mandir}/man1/lsirq.1*
@@ -1123,6 +1129,8 @@ end
 %{_mandir}/man3/ll2_rename_user.3.*
 %{_mandir}/man3/ll2_update_login_time.3.*
 %{_mandir}/man3/ll2_write_entry.3.*
+%{_mandir}/man3/ll2_new_context.3.*
+%{_mandir}/man3/ll2_unref_context.3.*
 %{_mandir}/man5/scols-filter.5.*
 %{_mandir}/man8/lastlog2.8.*
 %{_mandir}/man8/pam_lastlog2.8.*
