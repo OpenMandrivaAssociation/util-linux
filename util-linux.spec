@@ -692,7 +692,7 @@ if ! [ -e %{buildroot}%{_tmpfilesdir}/uuidd-sysusers.conf ]; then
 	mkdir -p %{buildroot}%{_tmpfilesdir} \
 		 %{buildroot}%{_sysusersdir}
 
-	sed -e 's,@localstatedir@,%{_localstatedir},g' misc-utils/uuidd-sysusers.conf.in >%{buildroot}%{_sysusersdir}/uuidd-sysusers.conf
+	sed -e 's,@localstatedir@,%{_localstatedir},g' -e 's,@SYSTEMD_USER_LOCK@,,g' misc-utils/uuidd-sysusers.conf.in >%{buildroot}%{_sysusersdir}/uuidd-sysusers.conf
 	sed -e 's,@localstatedir@,%{_localstatedir},g;s,@runstatedir@,/run,g' misc-utils/uuidd-tmpfiles.conf.in >%{buildroot}%{_tmpfilesdir}/uuidd-tmpfiles.conf
 	sed -e 's,@localstatedir@,%{_localstatedir},g;s,@runstatedir@,/run,g' misc-utils/lastlog2-tmpfiles.conf.in >%{buildroot}%{_tmpfilesdir}/lastlog2-tmpfiles.conf
 fi
