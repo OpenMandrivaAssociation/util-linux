@@ -91,7 +91,7 @@
 
 Summary:	A collection of basic system utilities
 Name:		util-linux
-Version:	2.42.2
+Version:	2.42.4
 Release:	%{?beta:0.%{beta}.}1
 License:	GPLv2 and GPLv2+ and BSD with advertising and Public Domain
 Group:		System/Base
@@ -168,8 +168,14 @@ Requires:	%{libfdisk} = %{EVRD}
 Requires:	util-linux-core = %{EVRD}
 Suggests:	%{name}-doc = %{EVRD}
 %if %{with compat32}
+# clang 23 -m32 links compiler-rt, not libgcc.a. The i386 builtins live
+# in the cross-i686 clang package, with matching libc/gcc/binutils sysroot.
 BuildRequires:	libcrypt-devel
 BuildRequires:	libc6
+BuildRequires:	cross-i686-openmandriva-linux-gnu-clang
+BuildRequires:	cross-i686-openmandriva-linux-gnu-libc
+BuildRequires:	cross-i686-openmandriva-linux-gnu-binutils
+BuildRequires:	cross-i686-openmandriva-linux-gnu-gcc
 %endif
 
 %description
